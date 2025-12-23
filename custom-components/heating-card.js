@@ -400,13 +400,18 @@ class HeatingKnobCard extends HTMLElement {
 customElements.define('heating-knob-card', HeatingKnobCard);
 
 class HeatingKnobCardEditor extends HTMLElement {
+  constructor() {
+    super();
+    this._config = {};
+  }
+
   setConfig(config) {
-    this._config = config;
+    this._config = config || {};
     this.render();
   }
 
   configChanged(newConfig) {
-    const event = new Event("config-changed", {
+    const event = new CustomEvent("config-changed", {
       bubbles: true,
       composed: true,
     });
@@ -419,8 +424,18 @@ class HeatingKnobCardEditor extends HTMLElement {
     this.render();
   }
 
+  connectedCallback() {
+    if (!this._config) {
+      this._config = {};
+    }
+    this.render();
+  }
+
   render() {
-    if (!this._hass || !this._config) return;
+    if (!this._hass) {
+      // Wait for hass to be set
+      return;
+    }
 
     // Create structure if it doesn't exist
     if (!this.querySelector('ha-entity-picker')) {
@@ -438,23 +453,27 @@ class HeatingKnobCardEditor extends HTMLElement {
 
         // Add listeners
         const picker = this.querySelector('ha-entity-picker');
-        picker.addEventListener('value-changed', (e) => {
-            const newConfig = { ...this._config, entity: e.detail.value };
-            this.configChanged(newConfig);
-        });
+        if (picker) {
+          picker.addEventListener('value-changed', (e) => {
+              const newConfig = { ...this._config, entity: e.detail.value };
+              this.configChanged(newConfig);
+          });
+        }
 
         const textField = this.querySelector('ha-textfield');
-        textField.addEventListener('input', (e) => {
-            const newConfig = { ...this._config, name: e.target.value };
-            this.configChanged(newConfig);
-        });
+        if (textField) {
+          textField.addEventListener('input', (e) => {
+              const newConfig = { ...this._config, name: e.target.value };
+              this.configChanged(newConfig);
+          });
+        }
     }
 
     // Update properties
     const picker = this.querySelector('ha-entity-picker');
-    if (picker) {
+    if (picker && this._hass) {
         picker.hass = this._hass;
-        picker.value = this._config.entity;
+        picker.value = this._config.entity || '';
         picker.includeDomains = ['climate'];
     }
 
