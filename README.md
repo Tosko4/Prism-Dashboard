@@ -3,12 +3,6 @@
 💎 Ein modernes, glassmorphism-inspiriertes Dashboard für Home Assistant, aufgebaut auf den beliebten Mushroom Cards.
 
 <p align="center">
-  <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FD26FHKRWS3US" target="_blank" rel="noopener noreferrer">
-    <img src="https://pics.paypal.com/00/s/N2EwMzk4NzUtOTQ4Yy00Yjc4LWIwYmUtMTA3MWExNWIzYzMz/file.PNG" alt="SUPPORT PRISM" height="51">
-  </a>
-</p>
-
-<p align="center">
   <img src="https://github.com/user-attachments/assets/6048858f-4ba0-40a8-95b8-7787cde1d8ab" alt="tac-dash-1" width="70%">
 </p>
 
