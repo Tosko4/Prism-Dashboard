@@ -24,8 +24,7 @@ Eine benutzerdefinierte Thermostat-Knob-Karte mit Glassmorphism-Design.
 
 Eine kompakte Heizungs-Karte mit Inlet-Styling und einfachen Temperatur-Controls.
 
-<img width="400" alt="prism-heat-small" src="<img width="381" height="147" alt="prism-heater-small" src="https://github.com/user-attachments/assets/992f981e-bbb2-4af8-b41f-06602d49e206" />
-" />
+<img width="400" alt="prism-heat-small" src="https://github.com/user-attachments/assets/992f981e-bbb2-4af8-b41f-06602d49e206" />
 
 **Verwendung:**
 ```yaml
