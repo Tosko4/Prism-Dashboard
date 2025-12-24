@@ -5,7 +5,121 @@
 ---
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/6048858f-4ba0-40a8-95b8-7787cde1d8ab" alt="tac-dash-1" width="80%">
+  <style>
+    .gallery-wrapper {
+      position: relative;
+      max-width: 80%;
+      margin: 0 auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+    .gallery-container {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+    .gallery-slides {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
+    .gallery-slide {
+      min-width: 100%;
+      flex-shrink: 0;
+    }
+    .gallery-slide img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .gallery-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 15px 20px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 20px;
+      z-index: 10;
+      transition: background 0.3s;
+      text-decoration: none;
+    }
+    .gallery-nav:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+    .gallery-prev {
+      left: 10px;
+    }
+    .gallery-next {
+      right: 10px;
+    }
+    .gallery-dots {
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 10;
+    }
+    .gallery-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+      transition: background 0.3s;
+      border: none;
+    }
+    .gallery-dot:hover {
+      background: rgba(255, 255, 255, 0.8);
+    }
+    #slide1:checked ~ .gallery-container .gallery-slides {
+      transform: translateX(0%);
+    }
+    #slide2:checked ~ .gallery-container .gallery-slides {
+      transform: translateX(-100%);
+    }
+    #slide1:checked ~ .gallery-container .gallery-dots label[for="slide1"] .gallery-dot,
+    #slide2:checked ~ .gallery-container .gallery-dots label[for="slide2"] .gallery-dot {
+      background: rgba(255, 255, 255, 0.8);
+    }
+    .gallery-radio {
+      display: none;
+    }
+  </style>
+  
+  <div class="gallery-wrapper">
+    <input type="radio" name="gallery" id="slide1" class="gallery-radio" checked>
+    <input type="radio" name="gallery" id="slide2" class="gallery-radio">
+    
+    <div class="gallery-container">
+      <div class="gallery-slides">
+        <div class="gallery-slide">
+          <img src="https://github.com/user-attachments/assets/6048858f-4ba0-40a8-95b8-7787cde1d8ab" alt="Prism Dashboard - Ansicht 1">
+        </div>
+        <div class="gallery-slide">
+          <img src="custom-components/images/prism-dashboard-new.png" alt="Prism Dashboard - Ansicht 2">
+        </div>
+      </div>
+      
+      <label for="slide1" class="gallery-nav gallery-prev">❮</label>
+      <label for="slide2" class="gallery-nav gallery-next">❯</label>
+      
+      <style>
+        #slide1:checked ~ .gallery-container .gallery-prev { opacity: 0.3; cursor: default; }
+        #slide2:checked ~ .gallery-container .gallery-next { opacity: 0.3; cursor: default; }
+      </style>
+      
+      <div class="gallery-dots">
+        <label for="slide1"><span class="gallery-dot"></span></label>
+        <label for="slide2"><span class="gallery-dot"></span></label>
+      </div>
+    </div>
+  </div>
 </p>
 
 ---
@@ -18,12 +132,8 @@
 - [Installation](#installation)
   - [1. Dateien vorbereiten](#1-dateien-vorbereiten)
   - [2. Dashboard anlegen](#2-dashboard-anlegen)
-  - [3. Code einfügen](#3-code-einfügen)
-  - [4. Custom Cards registrieren](#4-custom-cards-registrieren)
-- [Configuration](#configuration)
-  - [Entitäten anpassen](#entitäten-anpassen)
-  - [Custom Cards konfigurieren](#custom-cards-konfigurieren)
-  - [Styles ändern](#styles-ändern)
+  - [3. Custom Cards registrieren](#3-custom-cards-registrieren)
+- [Dashboard-Konfiguration](#dashboard-konfiguration)
 - [Support / Feedback](#support--feedback)
 - [Contributing](#contributing)
 - [Sponsorship](#sponsorship)
@@ -149,27 +259,19 @@ Damit dieses Dashboard funktioniert, müssen folgende Frontend-Integrationen üb
 ### 2. Dashboard anlegen
 
 1. In Home Assistant zu **Einstellungen → Dashboards** navigieren.  
-2. Auf **„Dashboard hinzufügen“** klicken → **„Neues Dashboard von Grund auf“** wählen.  
+2. Auf **„Dashboard hinzufügen"** klicken → **„Neues Dashboard von Grund auf"** wählen.  
 3. Folgende Einstellungen vornehmen:
    - **Titel:** `Prism` (oder ein Titel deiner Wahl)
    - **Ansichtstyp:** `Grid (layout-card)` (falls verfügbar, ansonsten später im Code definieren)
 
-### 3. Code einfügen
+> **Hinweis:** Für die Dashboard-Konfiguration und Anpassungen siehe [Dashboard-Konfiguration](#dashboard-konfiguration) und [Dashboard-README](dashboard/README.md).
 
-1. Das neue Dashboard öffnen.  
-2. Oben rechts auf die drei Punkte `(...)` klicken → **„Bearbeiten"**.  
-3. Erneut auf die drei Punkte klicken → **„Raw-Konfigurationseditor"** auswählen.  
-4. Den gesamten Inhalt löschen.  
-5. Den Inhalt der `dashboard.yaml` aus diesem Repository einfügen.  
-6. **WICHTIG:** Entitäten an deine eigene Hardware anpassen (siehe Abschnitt „Configuration").  
-7. Auf **„Speichern"** klicken.
-
-### 4. Custom Cards registrieren (nur bei manueller Installation)
+### 3. Custom Cards registrieren (nur bei manueller Installation)
 
 Falls du Option 2 (manuelle Installation) gewählt hast, müssen die Custom Cards manuell registriert werden:
 
-1. In Home Assistant zu **Einstellungen → Geräte & Dienste** navigieren.  
-2. Im Tab **„Lovelace Dashboards"** auf **„Ressourcen"** klicken.  
+1. In Home Assistant zu **Einstellungen → Dashboards** navigieren.  
+2. Auf **„Ressourcen"** (oben rechts) klicken.  
 3. Auf **„Ressource hinzufügen"** klicken.  
 4. Folgende Ressourcen hinzufügen:
    - **URL:** `/local/custom-components/prism-heat.js`  
@@ -190,7 +292,31 @@ Falls du Option 2 (manuelle Installation) gewählt hast, müssen die Custom Card
      **Typ:** `JavaScript-Modul`
    - **URL:** `/local/custom-components/prism-led.js`  
      **Typ:** `JavaScript-Modul`
+   - **URL:** `/local/custom-components/prism-3dprinter.js`  
+     **Typ:** `JavaScript-Modul`
    - **URL:** `/local/custom-components/prism-sidebar.js`  
+     **Typ:** `JavaScript-Modul`
+   
+   **Light Theme Karten (optional):**
+   - **URL:** `/local/custom-components/prism-heat-light.js`  
+     **Typ:** `JavaScript-Modul`
+   - **URL:** `/local/custom-components/prism-heat-small-light.js`  
+     **Typ:** `JavaScript-Modul`
+   - **URL:** `/local/custom-components/prism-button-light.js`  
+     **Typ:** `JavaScript-Modul`
+   - **URL:** `/local/custom-components/prism-media-light.js`  
+     **Typ:** `JavaScript-Modul`
+   - **URL:** `/local/custom-components/prism-calendar-light.js`  
+     **Typ:** `JavaScript-Modul`
+   - **URL:** `/local/custom-components/prism-shutter-light.js`  
+     **Typ:** `JavaScript-Modul`
+   - **URL:** `/local/custom-components/prism-shutter-vertical-light.js`  
+     **Typ:** `JavaScript-Modul`
+   - **URL:** `/local/custom-components/prism-vacuum-light.js`  
+     **Typ:** `JavaScript-Modul`
+   - **URL:** `/local/custom-components/prism-led-light.js`  
+     **Typ:** `JavaScript-Modul`
+   - **URL:** `/local/custom-components/prism-sidebar-light.js`  
      **Typ:** `JavaScript-Modul`
 5. Home Assistant neu starten, damit die Custom Cards geladen werden.
 
@@ -198,86 +324,52 @@ Falls du Option 2 (manuelle Installation) gewählt hast, müssen die Custom Card
 
 ---
 
-## Configuration
+## Projektstruktur
 
-Das Dashboard nutzt generische Platzhalter-Entitäten (z. B. `light.living_room_light`).  
-Diese existieren in deinem System in der Regel nicht und müssen durch deine **echten Entitäten** ersetzt werden.
-
-### Entitäten anpassen
-
-Öffne den Raw-Konfigurationseditor deines Dashboards und nutze die Suche (`Strg+F` oder `Cmd+F`), um die folgenden Platzhalter zu finden und zu ersetzen:
-
-- **Kameras**  
-  - `camera.garden_main`  
-  - `camera.front_door`  
-  - `camera.terrace`  
-  - `camera.driveway`
-
-- **Licht** (Beispiele)  
-  - `light.kitchen_strip`  
-  - `light.kitchen_bar`  
-  - `light.living_room_light`  
-  - `light.office_desk`
-
-- **Schalter**  
-  - `switch.pond_pump`  
-  - `switch.workshop_equipment`  
-  - `switch.bedroom_light`
-
-- **Sensoren**  
-  - `sensor.outdoor_temperature`  
-  - `sensor.power_total_consumption`  
-  - `sensor.kitchen_temperature`
-
-- **Klima**  
-  - `climate.living_room`  
-  - `climate.office`  
-  - `climate.bathroom_upstairs`  
-  > **Hinweis:** Diese werden in der Regel mit der `prism-heat` Custom Card verwendet.
-
-- **Spezial-Entitäten**  
-  - `calendar.family_shared` – dein Kalender  
-  - `weather.home` – dein Wetter-Dienst  
-  - `lock.garden_gate` – dein Smart Lock  
-  - `input_select.robot_vacuum_status` – Helper für deinen Saugroboter
-
-> **Tipp:** Ersetze die Platzhalter konsequent per „Suchen & Ersetzen", um Fehler zu vermeiden.
-
-### Custom Cards konfigurieren
-
-Das Dashboard nutzt zwei benutzerdefinierte Karten:
-
-**`prism-heat`** – Thermostat-Knob-Karte:
-```yaml
-- type: custom:prism-heat
-  entity: climate.living_room
-  name: Wohnzimmer
-  color: "#fb923c"  # Optional: Farbe des Rings und Indikators
+```
+Prism-Dashboard/
+├── custom-components/          # JavaScript Custom Cards (prism-heat.js, prism-button.js, etc.)
+│   ├── images/                  # Bilder für die Custom Cards
+│   └── README.md                # Dokumentation der Custom Cards
+├── dashboard/                   # Dashboard-Konfiguration
+│   ├── prism-dashboard.yml      # Hauptdashboard-Konfiguration
+│   ├── components/              # Wiederverwendbare YAML-Komponenten
+│   │   ├── custom-card.yml      # Template für Standard-Karten
+│   │   ├── navigation-bar.yml   # Navigationsleiste
+│   │   └── sidebar.yml          # Sidebar-Komponente
+│   └── README.md                # Dokumentation der Dashboard-Komponenten
+├── www/                         # Statische Dateien für Home Assistant
+│   ├── background/               # Hintergrundbilder
+│   └── custom-components/        # Kompilierte Custom Cards
+└── README.md                    # Diese Datei
 ```
 
-**`prism-button`** – Entity-Button-Karte:
-```yaml
-- type: custom:prism-button
-  entity: light.living_room_light
-  name: Wohnzimmer
-  icon: mdi:lightbulb
-  layout: horizontal  # oder "vertical"
-```
+> **Hinweis:** Die Dashboard-Komponenten im `dashboard/components/`-Ordner sind wiederverwendbare YAML-Vorlagen. Siehe [Dashboard-README](dashboard/README.md) für Details zur Verwendung.
 
-### Styles ändern
+---
 
-Dank der YAML-Anker musst du Styles in der Regel nur an wenigen zentralen Stellen ändern:
+## Dashboard-Konfiguration
 
-- **`&sidebar_content`**  
-  Definiert den Inhalt der linken Sidebar zentral.
+Die Dashboard-Konfiguration befindet sich im Ordner `dashboard/`. Dort findest du:
 
-- **`&active_chip_style` / `&inactive_chip_style`**  
-  Steuern das Aussehen der Navigations-Tabs (aktiv vs. inaktiv).
+- **`prism-dashboard.yml`** – Die komplette Dashboard-Konfiguration
+- **`components/`** – Wiederverwendbare YAML-Komponenten (Sidebar, Navigation, etc.)
 
-- **`&mush_card_style`**  
-  Haupt-Style für die Glassmorphism-Karten (Transparenz, Schatten, Blur, etc.).
+### Dashboard einrichten
 
-Einmal angepasst, werden diese Styles automatisch auf alle referenzierten Stellen angewendet.
+1. Öffne dein Dashboard in Home Assistant
+2. Gehe zu **Bearbeiten** → **Raw-Konfigurationseditor**
+3. Kopiere den Inhalt von `dashboard/prism-dashboard.yml` hinein
+4. **WICHTIG:** Passe alle Entitäten an deine Hardware an (siehe [Dashboard-README](dashboard/README.md))
+5. Speichere die Änderungen
+
+### Anpassungen
+
+Für detaillierte Informationen zur:
+- **Anpassung von Entitäten** – Siehe [Dashboard-README](dashboard/README.md#anpassungen)
+- **Verwendung der Komponenten** – Siehe [Dashboard-README](dashboard/README.md#wiederverwendbare-komponenten)
+- **Anpassung von Styles** – Siehe [Dashboard-README](dashboard/README.md#anpassungen)
+- **Custom Cards konfigurieren** – Siehe [Custom Components README](custom-components/README.md)
 
 ---
 
@@ -307,7 +399,7 @@ Beiträge sind ausdrücklich erwünscht:
 
 Wenn dir Prism gefällt und du die Weiterentwicklung unterstützen möchtest:
 
-Nutze gerne den **Support-Button oben** in der README (öffnet sich in einem neuen Tab/Fenster).
+Nutze gerne den **Support-Button oben** 
 
 Vielen Dank für deine Unterstützung! 💙
 
