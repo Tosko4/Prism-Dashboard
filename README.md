@@ -14,6 +14,9 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
       overflow: hidden;
     }
+    .gallery-radio {
+      display: none;
+    }
     .gallery-container {
       position: relative;
       width: 100%;
@@ -22,9 +25,10 @@
     .gallery-slides {
       display: flex;
       transition: transform 0.5s ease-in-out;
+      width: 200%;
     }
     .gallery-slide {
-      min-width: 100%;
+      width: 50%;
       flex-shrink: 0;
     }
     .gallery-slide img {
@@ -46,6 +50,7 @@
       z-index: 10;
       transition: background 0.3s;
       text-decoration: none;
+      display: block;
     }
     .gallery-nav:hover {
       background: rgba(0, 0, 0, 0.8);
@@ -72,30 +77,27 @@
       background: rgba(255, 255, 255, 0.4);
       cursor: pointer;
       transition: background 0.3s;
-      border: none;
+      display: block;
     }
     .gallery-dot:hover {
       background: rgba(255, 255, 255, 0.8);
     }
-    #slide1:checked ~ .gallery-container .gallery-slides {
+    #slide1:checked ~ .gallery-wrapper .gallery-slides {
       transform: translateX(0%);
     }
-    #slide2:checked ~ .gallery-container .gallery-slides {
-      transform: translateX(-100%);
+    #slide2:checked ~ .gallery-wrapper .gallery-slides {
+      transform: translateX(-50%);
     }
-    #slide1:checked ~ .gallery-container .gallery-dots label[for="slide1"] .gallery-dot,
-    #slide2:checked ~ .gallery-container .gallery-dots label[for="slide2"] .gallery-dot {
+    #slide1:checked ~ .gallery-wrapper .gallery-dots label[for="slide1"] .gallery-dot,
+    #slide2:checked ~ .gallery-wrapper .gallery-dots label[for="slide2"] .gallery-dot {
       background: rgba(255, 255, 255, 0.8);
-    }
-    .gallery-radio {
-      display: none;
     }
   </style>
   
+  <input type="radio" name="gallery" id="slide1" class="gallery-radio" checked>
+  <input type="radio" name="gallery" id="slide2" class="gallery-radio">
+  
   <div class="gallery-wrapper">
-    <input type="radio" name="gallery" id="slide1" class="gallery-radio" checked>
-    <input type="radio" name="gallery" id="slide2" class="gallery-radio">
-    
     <div class="gallery-container">
       <div class="gallery-slides">
         <div class="gallery-slide">
@@ -108,11 +110,6 @@
       
       <label for="slide1" class="gallery-nav gallery-prev">❮</label>
       <label for="slide2" class="gallery-nav gallery-next">❯</label>
-      
-      <style>
-        #slide1:checked ~ .gallery-container .gallery-prev { opacity: 0.3; cursor: default; }
-        #slide2:checked ~ .gallery-container .gallery-next { opacity: 0.3; cursor: default; }
-      </style>
       
       <div class="gallery-dots">
         <label for="slide1"><span class="gallery-dot"></span></label>
