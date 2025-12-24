@@ -316,11 +316,11 @@ class PrismLedLightCard extends HTMLElement {
         const headerIcon = this.shadowRoot.querySelector('#header-icon-box');
         const opacity = 0.5 + (this.localBrightness / 200);
         
-        if(powerBtn && this._entity.state === 'on') {
+        if(powerBtn && this._entity && this._entity.state === 'on') {
             powerBtn.style.color = color;
             powerBtn.style.opacity = 0.6 + (this.localBrightness / 250);
         }
-        if(headerIcon && this._entity.state === 'on') {
+        if(headerIcon && this._entity && this._entity.state === 'on') {
             headerIcon.style.backgroundColor = `${color}33`;
             headerIcon.style.color = color;
             headerIcon.style.boxShadow = `0 0 15px ${color}66`;

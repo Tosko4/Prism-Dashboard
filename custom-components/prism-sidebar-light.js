@@ -16,6 +16,7 @@ class PrismSidebarLightCard extends HTMLElement {
             camera_entity_3: "",
             rotation_interval: 10,
             weather_entity: "weather.example",
+            forecast_days: 3,
             grid_entity: "sensor.example",
             solar_entity: "sensor.example",
             home_entity: "sensor.example",
@@ -46,6 +47,11 @@ class PrismSidebarLightCard extends HTMLElement {
                 {
                     name: "weather_entity",
                     selector: { entity: { domain: "weather" } }
+                },
+                {
+                    name: "forecast_days",
+                    selector: { number: { min: 1, max: 7, step: 1, unit_of_measurement: "Tage" } },
+                    default: 3
                 },
                 {
                     name: "grid_entity",
@@ -97,6 +103,9 @@ class PrismSidebarLightCard extends HTMLElement {
             ? this.config.rotation_interval * 1000 
             : 10000; // Default 10 seconds
         
+        // Get forecast days (default 3)
+        this.forecastDays = this.config.forecast_days || 3;
+        
         // Reset camera index
         this.currentCameraIndex = 0;
         
@@ -124,7 +133,6 @@ class PrismSidebarLightCard extends HTMLElement {
             this.startCameraRotation();
         } else {
             this.updateValues();
-            this.setupMiniGraph();
         }
     }
 
@@ -285,7 +293,8 @@ class PrismSidebarLightCard extends HTMLElement {
 
         // Update weather forecast
         if (weatherState && weatherState.attributes.forecast) {
-            const forecast = weatherState.attributes.forecast.slice(0, 3);
+            const forecastDays = this.forecastDays || 3;
+            const forecast = weatherState.attributes.forecast.slice(0, forecastDays);
             forecast.forEach((day, i) => {
                 const dayNameEl = this.shadowRoot?.getElementById(`day-name-${i}`);
                 const dayTempEl = this.shadowRoot?.getElementById(`day-temp-${i}`);
@@ -297,10 +306,12 @@ class PrismSidebarLightCard extends HTMLElement {
                     dayNameEl.textContent = date.toLocaleDateString('de-DE', { weekday: 'short' });
                 }
                 if (dayTempEl) {
-                    dayTempEl.textContent = `${day.temperature || '0'}°`;
+                    const temp = day.temperature !== undefined ? day.temperature : (day.templow !== undefined ? day.templow : '0');
+                    dayTempEl.textContent = `${temp}°`;
                 }
                 if (dayLowEl) {
-                    dayLowEl.textContent = `${day.templow || '0'}°`;
+                    const low = day.templow !== undefined ? day.templow : (day.temperature !== undefined ? day.temperature : '0');
+                    dayLowEl.textContent = `${low}°`;
                 }
                 if (dayIconEl && day.condition) {
                     const iconMap = {
@@ -319,12 +330,22 @@ class PrismSidebarLightCard extends HTMLElement {
 
 
     render() {
-        // Get weather data for graph
+        // Get weather data for graph from forecast (24h hourly data)
         let weatherData = [1.2, 1.5, 2.1, 2.8, 2.5, 1.9, 1.4, 1.0, 0.8]; // Default
         if (this._hass && this.weatherEntity) {
             const weatherState = this._hass.states[this.weatherEntity];
             if (weatherState && weatherState.attributes.forecast) {
-                weatherData = weatherState.attributes.forecast.slice(0, 9).map(f => f.temperature || 0);
+                // Get hourly forecast for next 24 hours (or available data)
+                const forecast = weatherState.attributes.forecast;
+                // Filter hourly forecasts (those with datetime, not just date)
+                const hourlyForecast = forecast.filter(f => f.datetime && f.datetime.includes('T'));
+                if (hourlyForecast.length > 0) {
+                    // Take first 24 hours or available data
+                    weatherData = hourlyForecast.slice(0, 24).map(f => f.temperature || f.templow || 0);
+                } else {
+                    // Fallback: use daily forecast temperatures
+                    weatherData = forecast.slice(0, 9).map(f => f.temperature || f.templow || 0);
+                }
             }
         }
         const graphPath = this.generateGraphPath(weatherData, 280, 60);
@@ -353,8 +374,9 @@ class PrismSidebarLightCard extends HTMLElement {
         const solarValue = solarState ? `${solarState.state} ${solarState.attributes.unit_of_measurement || 'kW'}` : '0 kW';
         const homeValue = homeState ? `${homeState.state} ${homeState.attributes.unit_of_measurement || 'kW'}` : '0 kW';
 
-        // Get forecast
-        const forecast = weatherState?.attributes?.forecast?.slice(0, 3) || [];
+        // Get forecast (daily forecast for display)
+        const forecastDays = this.forecastDays || 3;
+        const forecast = weatherState?.attributes?.forecast?.slice(0, forecastDays) || [];
 
         this.shadowRoot.innerHTML = `
         <style>
@@ -592,7 +614,16 @@ class PrismSidebarLightCard extends HTMLElement {
                 </div>
                 
                 <div class="graph-container">
-                    <div id="mini-graph-wrapper" style="width: 100%; height: 100%;"></div>
+                    <svg width="100%" height="100%" viewBox="0 0 280 60" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="grad-sidebar-light-${Date.now()}" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.4" />
+                                <stop offset="50%" style="stop-color:#3b82f6;stop-opacity:0.2" />
+                                <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0" />
+                            </linearGradient>
+                        </defs>
+                        <path d="${graphPath}" fill="url(#grad-sidebar-light-${Date.now()})" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
                 </div>
 
                 <div class="forecast-grid">
@@ -611,8 +642,8 @@ class PrismSidebarLightCard extends HTMLElement {
                             <div class="forecast-item">
                                 <span class="day-name" id="day-name-${i}">${dayName}</span>
                                 <ha-icon icon="${icon}" id="day-icon-${i}" style="color: ${icon === 'mdi:weather-sunny' ? '#f59e0b' : 'rgba(0,0,0,0.6)'}; width: 20px;"></ha-icon>
-                                <span class="day-temp" id="day-temp-${i}">${day.temperature || '0'}°</span>
-                                <span class="day-low" id="day-low-${i}">${day.templow || '0'}°</span>
+                                <span class="day-temp" id="day-temp-${i}">${day.temperature !== undefined ? day.temperature : (day.templow !== undefined ? day.templow : '0')}°</span>
+                                <span class="day-low" id="day-low-${i}">${day.templow !== undefined ? day.templow : (day.temperature !== undefined ? day.temperature : '0')}°</span>
                             </div>
                         `;
                     }).join('') || `
@@ -662,42 +693,6 @@ class PrismSidebarLightCard extends HTMLElement {
 
         // Setup event listeners
         this.setupListeners();
-        
-        // Setup mini-graph-card after render
-        this.setupMiniGraph();
-    }
-    
-    setupMiniGraph() {
-        if (!this._hass || !this.weatherEntity) return;
-        
-        const wrapper = this.shadowRoot?.getElementById('mini-graph-wrapper');
-        if (!wrapper) return;
-        
-        // Create mini-graph-card element
-        const graphCard = document.createElement('hui-mini-graph-card');
-        graphCard.hass = this._hass;
-        graphCard.config = {
-            type: 'custom:mini-graph-card',
-            entities: [this.weatherEntity],
-            hours_to_show: 168,
-            points_per_hour: 1,
-            line_width: 2,
-            height: 64,
-            show: {
-                fill: true,
-                icon: false,
-                name: false,
-                state: false
-            },
-            color_thresholds: [
-                { value: 0, color: '#3b82f6' },
-                { value: 20, color: '#3b82f6' }
-            ]
-        };
-        
-        // Clear and append
-        wrapper.innerHTML = '';
-        wrapper.appendChild(graphCard);
     }
 
     setupListeners() {
