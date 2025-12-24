@@ -108,26 +108,26 @@ Damit dieses Dashboard funktioniert, müssen folgende Frontend-Integrationen üb
 7. Klicke auf **"Ressource hinzufügen"** und füge die gewünschten Custom Cards hinzu:
    
    **Dark Theme Karten:**
-   - `/hacsfiles/prism-dashboard/prism-heat.js`
-   - `/hacsfiles/prism-dashboard/prism-heat-small.js`
-   - `/hacsfiles/prism-dashboard/prism-button.js`
-   - `/hacsfiles/prism-dashboard/prism-media.js`
-   - `/hacsfiles/prism-dashboard/prism-calendar.js`
-   - `/hacsfiles/prism-dashboard/prism-shutter.js`
-   - `/hacsfiles/prism-dashboard/prism-shutter-vertical.js`
-   - `/hacsfiles/prism-dashboard/prism-vacuum.js`
-   - `/hacsfiles/prism-dashboard/prism-led.js`
+   - `/hacsfiles/Prism-Dashboard/prism-heat.js`
+   - `/hacsfiles/Prism-Dashboard/prism-heat-small.js`
+   - `/hacsfiles/Prism-Dashboard/prism-button.js`
+   - `/hacsfiles/Prism-Dashboard/prism-media.js`
+   - `/hacsfiles/Prism-Dashboard/prism-calendar.js`
+   - `/hacsfiles/Prism-Dashboard/prism-shutter.js`
+   - `/hacsfiles/Prism-Dashboard/prism-shutter-vertical.js`
+   - `/hacsfiles/Prism-Dashboard/prism-vacuum.js`
+   - `/hacsfiles/Prism-Dashboard/prism-led.js`
    
    **Light Theme Karten (optional):**
-   - `/hacsfiles/prism-dashboard/prism-heat-light.js`
-   - `/hacsfiles/prism-dashboard/prism-heat-small-light.js`
-   - `/hacsfiles/prism-dashboard/prism-button-light.js`
-   - `/hacsfiles/prism-dashboard/prism-media-light.js`
-   - `/hacsfiles/prism-dashboard/prism-calendar-light.js`
-   - `/hacsfiles/prism-dashboard/prism-shutter-light.js`
-   - `/hacsfiles/prism-dashboard/prism-shutter-vertical-light.js`
-   - `/hacsfiles/prism-dashboard/prism-vacuum-light.js`
-   - `/hacsfiles/prism-dashboard/prism-led-light.js`
+   - `/hacsfiles/Prism-Dashboard/prism-heat-light.js`
+   - `/hacsfiles/Prism-Dashboard/prism-heat-small-light.js`
+   - `/hacsfiles/Prism-Dashboard/prism-button-light.js`
+   - `/hacsfiles/Prism-Dashboard/prism-media-light.js`
+   - `/hacsfiles/Prism-Dashboard/prism-calendar-light.js`
+   - `/hacsfiles/Prism-Dashboard/prism-shutter-light.js`
+   - `/hacsfiles/Prism-Dashboard/prism-shutter-vertical-light.js`
+   - `/hacsfiles/Prism-Dashboard/prism-vacuum-light.js`
+   - `/hacsfiles/Prism-Dashboard/prism-led-light.js`
    
    > **Hinweis:** Du musst nur die Karten hinzufügen, die du auch tatsächlich verwenden möchtest. Du kannst Dark und Light Theme Karten auch parallel verwenden.
 8. Wähle für alle den Typ **"JavaScript-Modul"**

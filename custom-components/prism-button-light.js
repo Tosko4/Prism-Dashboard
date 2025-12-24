@@ -46,7 +46,8 @@ class PrismButtonLightCard extends HTMLElement {
     if (!config.entity) {
       throw new Error('Please define an entity');
     }
-    this._config = config;
+    // Create a copy to avoid modifying read-only config object
+    this._config = { ...config };
     if (!this._config.icon) {
       this._config.icon = "mdi:lightbulb";
     }

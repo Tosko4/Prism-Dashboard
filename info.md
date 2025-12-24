@@ -26,17 +26,17 @@ Nach der Installation über HACS:
 2. Klicke auf **"Ressource hinzufügen"**
 3. Füge die gewünschten Custom Cards hinzu (nur die, die du verwenden möchtest):
    
-   - `/hacsfiles/prism-dashboard/prism-heat.js`
-   - `/hacsfiles/prism-dashboard/prism-heat-small.js`
-   - `/hacsfiles/prism-dashboard/prism-button.js`
-   - `/hacsfiles/prism-dashboard/prism-media.js`
-   - `/hacsfiles/prism-dashboard/prism-calendar.js`
-   - `/hacsfiles/prism-dashboard/prism-shutter.js`
-   - `/hacsfiles/prism-dashboard/prism-shutter-vertical.js`
-   - `/hacsfiles/prism-dashboard/prism-vacuum.js`
-   - `/hacsfiles/prism-dashboard/prism-led.js`
+   - `/hacsfiles/Prism-Dashboard/prism-heat.js`
+   - `/hacsfiles/Prism-Dashboard/prism-heat-small.js`
+   - `/hacsfiles/Prism-Dashboard/prism-button.js`
+   - `/hacsfiles/Prism-Dashboard/prism-media.js`
+   - `/hacsfiles/Prism-Dashboard/prism-calendar.js`
+   - `/hacsfiles/Prism-Dashboard/prism-shutter.js`
+   - `/hacsfiles/Prism-Dashboard/prism-shutter-vertical.js`
+   - `/hacsfiles/Prism-Dashboard/prism-vacuum.js`
+   - `/hacsfiles/Prism-Dashboard/prism-led.js`
    
-   Light Theme Versionen (optional): `/hacsfiles/prism-dashboard/prism-*-light.js`
+   Light Theme Versionen (optional): `/hacsfiles/Prism-Dashboard/prism-*-light.js`
 
 4. Wähle für alle den Typ **"JavaScript-Modul"**
 5. Starte Home Assistant neu
