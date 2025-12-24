@@ -14,6 +14,7 @@ Dieses Repository enthält folgende Custom Cards:
 - **prism-shutter** - Horizontale Jalousien-Karte mit Inlet-Slider
 - **prism-shutter-vertical** - Vertikale Jalousien-Karte mit kompaktem Design
 - **prism-vacuum** - Staubsauger-Roboter-Karte mit Animation und Saugleistungssteuerung
+- **prism-led** - Licht-Karte mit Farbrad und Temperatursteuerung
 
 Alle Karten sind auch als **Light Theme** Versionen verfügbar (mit `-light` Suffix).
 
@@ -21,22 +22,22 @@ Alle Karten sind auch als **Light Theme** Versionen verfügbar (mit `-light` Suf
 
 Nach der Installation über HACS:
 
-1. Gehe zu **Einstellungen → Geräte & Dienste → Lovelace Dashboards → Ressourcen**
+1. Gehe zu **Einstellungen → Dashboards → Ressourcen** (oben rechts)
 2. Klicke auf **"Ressource hinzufügen"**
 3. Füge die gewünschten Custom Cards hinzu (nur die, die du verwenden möchtest):
    
-   **Hinweis:** Bei HACS-Installation verwende `/hacsfiles/prism-dashboard/custom-components/...` statt `/local/custom-components/...`
+   - `/hacsfiles/prism-dashboard/prism-heat.js`
+   - `/hacsfiles/prism-dashboard/prism-heat-small.js`
+   - `/hacsfiles/prism-dashboard/prism-button.js`
+   - `/hacsfiles/prism-dashboard/prism-media.js`
+   - `/hacsfiles/prism-dashboard/prism-calendar.js`
+   - `/hacsfiles/prism-dashboard/prism-shutter.js`
+   - `/hacsfiles/prism-dashboard/prism-shutter-vertical.js`
+   - `/hacsfiles/prism-dashboard/prism-vacuum.js`
+   - `/hacsfiles/prism-dashboard/prism-led.js`
    
-   - `/hacsfiles/prism-dashboard/custom-components/prism-heat.js` (oder `/local/custom-components/prism-heat.js`)
-   - `/hacsfiles/prism-dashboard/custom-components/prism-heat-small.js`
-   - `/hacsfiles/prism-dashboard/custom-components/prism-button.js`
-   - `/hacsfiles/prism-dashboard/custom-components/prism-media.js`
-   - `/hacsfiles/prism-dashboard/custom-components/prism-calendar.js`
-   - `/hacsfiles/prism-dashboard/custom-components/prism-shutter.js`
-   - `/hacsfiles/prism-dashboard/custom-components/prism-shutter-vertical.js`
-   - `/hacsfiles/prism-dashboard/custom-components/prism-vacuum.js`
-   
-   Light Theme Versionen (optional): `prism-*-light.js`
+   Light Theme Versionen (optional): `/hacsfiles/prism-dashboard/prism-*-light.js`
+
 4. Wähle für alle den Typ **"JavaScript-Modul"**
 5. Starte Home Assistant neu
 
@@ -44,5 +45,4 @@ Nach der Installation über HACS:
 
 Alle Karten können im visuellen Dashboard-Editor verwendet werden. Suche einfach nach "prism" im Karten-Browser.
 
-Weitere Informationen findest du in der [README.md](README.md).
-
+Weitere Informationen findest du in der [README.md](https://github.com/BangerTech/Prism-Dashboard).

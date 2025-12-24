@@ -1,7 +1,5 @@
 {
   "name": "Prism Dashboard",
   "render_readme": true,
-  "filename": "prism-dashboard",
-  "homeassistant": "2023.1.0"
+  "homeassistant": "2024.1.0"
 }
-
