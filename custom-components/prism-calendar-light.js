@@ -94,37 +94,107 @@ class PrismCalendarLightCard extends HTMLElement {
       const startDate = now.toISOString();
       const endDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
       
-      // Use Home Assistant's calendar API
-      const response = await this._hass.callWS({
-        type: "calendar/get_events",
-        entity_id: this.config.entity,
-        start: startDate,
-        end: endDate
-      });
-      
-      if (response && response.events && Array.isArray(response.events)) {
-        this._events = response.events
-          .map(event => ({
-            title: event.summary || event.title || 'Unbenannt',
-            start: event.start?.dateTime || event.start?.date || event.start,
-            end: event.end?.dateTime || event.end?.date || event.end
-          }))
-          .filter(event => event.start)
-          .sort((a, b) => new Date(a.start) - new Date(b.start))
-          .slice(0, this.config.max_events || 3);
+      // Use Home Assistant's calendar API - try with entity_ids (array)
+      let response;
+      try {
+        response = await this._hass.callWS({
+          type: "calendar/get_events",
+          entity_ids: [this.config.entity],
+          start_date_time: startDate,
+          end_date_time: endDate
+        });
+      } catch (e1) {
+        // Try alternative API format
+        try {
+          response = await this._hass.callWS({
+            type: "calendar/get_events",
+            entity_id: this.config.entity,
+            start: startDate,
+            end: endDate
+          });
+        } catch (e2) {
+          // Try with entity_ids as array but different parameter names
+          response = await this._hass.callWS({
+            type: "calendar/get_events",
+            entity_ids: [this.config.entity],
+            start: startDate,
+            end: endDate
+          });
+        }
       }
-    } catch (error) {
-      console.warn('Prism Calendar Light: Could not fetch calendar events:', error);
-      // Fallback to entity attributes
-      if (this._entity && this._entity.attributes) {
+      
+      // Handle different response structures
+      let eventsArray = [];
+      
+      if (response) {
+        // Response might be an object with events array, or directly an array
+        if (Array.isArray(response)) {
+          eventsArray = response;
+        } else if (response.events && Array.isArray(response.events)) {
+          eventsArray = response.events;
+        } else if (response[this.config.entity] && Array.isArray(response[this.config.entity])) {
+          eventsArray = response[this.config.entity];
+        }
+      }
+      
+      // Also check entity attributes as fallback
+      if (eventsArray.length === 0 && this._entity && this._entity.attributes) {
         const attr = this._entity.attributes;
-        if (attr.message && attr.start_time) {
-          this._events = [{
-            title: attr.message,
-            start: attr.start_time
+        
+        // Try all_events attribute
+        if (attr.all_events && Array.isArray(attr.all_events)) {
+          eventsArray = attr.all_events;
+        }
+        // Try entries attribute
+        else if (attr.entries && Array.isArray(attr.entries)) {
+          eventsArray = attr.entries;
+        }
+        // Fallback to single next event
+        else if (attr.message && attr.start_time) {
+          eventsArray = [{
+            summary: attr.message,
+            start: { dateTime: attr.start_time },
+            end: { dateTime: attr.end_time || attr.start_time }
           }];
         }
       }
+      
+      // Process events
+      if (eventsArray.length > 0) {
+        this._events = eventsArray
+          .map(event => {
+            // Handle different event structures
+            const title = event.summary || event.title || event.message || 'Unbenannt';
+            const start = event.start?.dateTime || event.start?.date || event.start_time || event.start;
+            const end = event.end?.dateTime || event.end?.date || event.end_time || event.end;
+            
+            return { title, start, end };
+          })
+          .filter(event => event.start)
+          .sort((a, b) => {
+            const dateA = new Date(a.start);
+            const dateB = new Date(b.start);
+            return dateA - dateB;
+          })
+          .slice(0, this.config.max_events || 3);
+      } else {
+        this._events = [];
+      }
+      
+    } catch (error) {
+      console.warn('Prism Calendar Light: Could not fetch calendar events:', error);
+      // Log the response for debugging
+      if (response) {
+        console.log('Prism Calendar Light: API Response structure:', {
+          isArray: Array.isArray(response),
+          hasEvents: !!response.events,
+          hasEntityKey: !!(response[this.config.entity]),
+          keys: Object.keys(response || {}),
+          response: response
+        });
+      }
+      // Fallback to empty array
+      this._events = [];
     }
     
     this._loading = false;
