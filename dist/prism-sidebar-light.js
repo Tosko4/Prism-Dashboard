@@ -134,8 +134,18 @@ class PrismSidebarLightCard extends HTMLElement {
             this.cameraTimer = null;
         }
         
-        // Initialize preview values
-        if (!this._hass) {
+        // Force re-render when config changes (important for forecast_days change)
+        if (this.hasRendered) {
+            this.hasRendered = false;
+            this.render();
+            this.hasRendered = true;
+            this.startClock();
+            this.startCameraRotation();
+            if (this._hass) {
+                this.updateValues();
+            }
+        } else if (!this._hass) {
+            // Initialize preview values
             this.render();
             this.hasRendered = true;
             this.startClock();
@@ -271,8 +281,10 @@ class PrismSidebarLightCard extends HTMLElement {
             homeEl.textContent = `${homeState.state} ${homeState.attributes.unit_of_measurement || 'kW'}`;
         }
         
-        if (tempEl && weatherState) {
-            tempEl.textContent = weatherState.attributes.temperature || '0';
+        // Get temperature from the configured temperature entity, not weather
+        const temperatureState = this._hass.states[this.temperatureEntity];
+        if (tempEl && temperatureState) {
+            tempEl.textContent = temperatureState.state || '0';
         }
 
         if (camImgEl && cameraState) {
@@ -537,9 +549,15 @@ class PrismSidebarLightCard extends HTMLElement {
             .temp-unit { font-size: 20px; color: rgba(0, 0, 0, 0.4); margin-top: -10px; margin-left: 4px; }
             
             .graph-container {
-                height: 64px; width: 100%; margin-bottom: 24px; position: relative;
-                padding: 8px 0;
+                height: 80px; 
+                width: 100%; 
+                margin-bottom: 24px; 
+                position: relative;
+                padding: 12px 0;
                 overflow: hidden;
+                border-radius: 12px;
+                background: rgba(240, 240, 240, 0.5);
+                border: 1px solid rgba(59, 130, 246, 0.15);
             }
             .graph-container svg {
                 display: block;
@@ -549,6 +567,7 @@ class PrismSidebarLightCard extends HTMLElement {
             }
             .graph-container svg path {
                 vector-effect: non-scaling-stroke;
+                transition: all 0.3s ease;
             }
             .forecast-grid {
                 display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
@@ -625,12 +644,30 @@ class PrismSidebarLightCard extends HTMLElement {
                     <svg width="100%" height="100%" viewBox="0 0 280 60" preserveAspectRatio="none">
                         <defs>
                             <linearGradient id="grad-sidebar-light-${Date.now()}" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.4" />
-                                <stop offset="50%" style="stop-color:#3b82f6;stop-opacity:0.2" />
+                                <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.5" />
+                                <stop offset="40%" style="stop-color:#3b82f6;stop-opacity:0.25" />
                                 <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0" />
                             </linearGradient>
+                            <filter id="shadow-sidebar-light-${Date.now()}">
+                                <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+                                <feOffset dx="0" dy="1" result="offsetblur"/>
+                                <feComponentTransfer>
+                                    <feFuncA type="linear" slope="0.3"/>
+                                </feComponentTransfer>
+                                <feMerge>
+                                    <feMergeNode/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
                         </defs>
-                        <path d="${graphPath}" fill="url(#grad-sidebar-light-${Date.now()})" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="${graphPath}" 
+                              fill="url(#grad-sidebar-light-${Date.now()})" 
+                              stroke="#3b82f6" 
+                              stroke-width="2.5" 
+                              stroke-linecap="round" 
+                              stroke-linejoin="round" 
+                              filter="url(#shadow-sidebar-light-${Date.now()})"
+                              opacity="0.9" />
                     </svg>
                 </div>
 
@@ -815,7 +852,7 @@ class PrismSidebarLightCard extends HTMLElement {
         }
     }
 
-    // Helper to create smooth SVG path from data points (mini-graph-card style)
+    // Helper to create smooth SVG path from data points with curved lines
     generateGraphPath(data, width, height) {
         if (!data || data.length === 0) return '';
         
@@ -833,7 +870,7 @@ class PrismSidebarLightCard extends HTMLElement {
         // Ensure we have a valid range
         if (range <= 0) {
             const midY = height / 2;
-            return `M 0,${height} L 0,${midY} L ${width},${midY} L ${width},${height} Z`;
+            return `M 0,${midY} L ${width},${midY} L ${width},${height} L 0,${height} Z`;
         }
         
         const stepX = data.length > 1 ? width / (data.length - 1) : 0;
@@ -849,23 +886,37 @@ class PrismSidebarLightCard extends HTMLElement {
             return [x, y];
         });
 
-        // Build path: ONLY the line and fill, NO vertical sides
         if (points.length === 0) return '';
         
-        // Start from first point
+        // Create smooth curve using Catmull-Rom spline
         const [firstX, firstY] = points[0];
         let path = `M ${firstX},${firstY} `;
         
-        // Draw line through all points
-        for (let i = 1; i < points.length; i++) {
-            const [x, y] = points[i];
+        if (points.length === 1) {
+            // Single point - just draw horizontal line
+            path += `L ${width},${firstY} `;
+        } else if (points.length === 2) {
+            // Two points - straight line
+            const [x, y] = points[1];
             path += `L ${x},${y} `;
+        } else {
+            // Multiple points - use smooth curves
+            for (let i = 0; i < points.length - 1; i++) {
+                const [x0, y0] = points[i];
+                const [x1, y1] = points[i + 1];
+                
+                // Control points for smooth bezier curve
+                const tension = 0.3; // Smoothness factor (0 = sharp, 1 = very smooth)
+                const d = Math.abs(x1 - x0) * tension;
+                
+                path += `C ${x0 + d},${y0} ${x1 - d},${y1} ${x1},${y1} `;
+            }
         }
         
-        // Close the fill area by going to bottom-right, then bottom-left, then back up
-        const [lastX] = points[points.length - 1];
-        path += `L ${lastX},${height} `; // Down to bottom at last X
-        path += `L ${firstX},${height} `; // Horizontal line to first X at bottom
+        // Close the fill area smoothly - NO vertical lines!
+        const [lastX, lastY] = points[points.length - 1];
+        path += `L ${lastX},${height} `; // Horizontal to bottom-right corner
+        path += `L ${firstX},${height} `; // Horizontal line along bottom
         path += `Z`; // Close path back to start
         
         return path;
