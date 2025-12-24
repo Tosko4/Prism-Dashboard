@@ -187,6 +187,8 @@ class PrismSidebarCard extends HTMLElement {
             this.startClock();
             this.startCameraRotation();
             this.fetchTemperatureHistory();
+            // Initial forecast update
+            setTimeout(() => this.updateForecastGrid(), 100);
         } else {
             this.updateValues();
         }
@@ -349,41 +351,64 @@ class PrismSidebarCard extends HTMLElement {
             }
         }
 
-        // Update weather forecast
-        if (weatherState && weatherState.attributes.forecast) {
-            const forecastCount = this.forecastDays || 3;
-            const forecast = weatherState.attributes.forecast.slice(0, forecastCount);
-            forecast.forEach((day, i) => {
-                const dayNameEl = this.shadowRoot?.getElementById(`day-name-${i}`);
-                const dayTempEl = this.shadowRoot?.getElementById(`day-temp-${i}`);
-                const dayLowEl = this.shadowRoot?.getElementById(`day-low-${i}`);
-                const dayIconEl = this.shadowRoot?.getElementById(`day-icon-${i}`);
+        // Update weather forecast - rebuild entire forecast grid
+        this.updateForecastGrid();
+    }
 
-                if (dayNameEl && day.datetime) {
-                    const date = new Date(day.datetime);
-                    dayNameEl.textContent = date.toLocaleDateString('de-DE', { weekday: 'short' });
-                }
-                if (dayTempEl) {
-                    const temp = day.temperature !== undefined ? day.temperature : (day.templow !== undefined ? day.templow : '0');
-                    dayTempEl.textContent = `${temp}°`;
-                }
-                if (dayLowEl) {
-                    const low = day.templow !== undefined ? day.templow : (day.temperature !== undefined ? day.temperature : '0');
-                    dayLowEl.textContent = `${low}°`;
-                }
-                if (dayIconEl && day.condition) {
-                    const iconMap = {
-                        'sunny': 'mdi:weather-sunny',
-                        'partlycloudy': 'mdi:weather-partly-cloudy',
-                        'cloudy': 'mdi:cloud',
-                        'rainy': 'mdi:weather-rainy',
-                        'snowy': 'mdi:weather-snowy'
-                    };
-                    const icon = iconMap[day.condition.toLowerCase()] || 'mdi:weather-cloudy';
-                    dayIconEl.setAttribute('icon', icon);
-                }
-            });
+    updateForecastGrid() {
+        if (!this._hass) return;
+        
+        const weatherState = this._hass.states[this.weatherEntity];
+        const forecastGridEl = this.shadowRoot?.querySelector('.forecast-grid');
+        
+        if (!forecastGridEl || !weatherState) {
+            console.warn('Prism Sidebar: Missing forecast grid or weather entity:', this.weatherEntity);
+            return;
         }
+        
+        // Get forecast from attributes
+        const forecast = weatherState.attributes.forecast;
+        
+        if (!forecast || forecast.length === 0) {
+            console.warn('Prism Sidebar: No forecast data in weather entity', this.weatherEntity);
+            console.log('Weather state:', weatherState);
+            return;
+        }
+        
+        const forecastCount = this.forecastDays || 3;
+        const forecastSlice = forecast.slice(0, forecastCount);
+        
+        console.log(`Prism Sidebar: Updating forecast with ${forecastSlice.length} days`);
+        
+        // Rebuild the entire forecast grid
+        forecastGridEl.innerHTML = forecastSlice.map((day, i) => {
+            const date = day.datetime ? new Date(day.datetime) : new Date();
+            const dayName = date.toLocaleDateString('de-DE', { weekday: 'short' });
+            const iconMap = {
+                'sunny': 'mdi:weather-sunny',
+                'partlycloudy': 'mdi:weather-partly-cloudy',
+                'cloudy': 'mdi:cloud',
+                'rainy': 'mdi:weather-rainy',
+                'snowy': 'mdi:weather-snowy',
+                'pouring': 'mdi:weather-pouring',
+                'lightning': 'mdi:weather-lightning',
+                'fog': 'mdi:weather-fog',
+                'windy': 'mdi:weather-windy',
+                'clear-night': 'mdi:weather-night'
+            };
+            const icon = iconMap[day.condition?.toLowerCase()] || 'mdi:weather-cloudy';
+            const temp = day.temperature !== undefined ? day.temperature : (day.templow !== undefined ? day.templow : '0');
+            const low = day.templow !== undefined ? day.templow : (day.temperature !== undefined ? day.temperature : '0');
+            
+            return `
+                <div class="forecast-item">
+                    <span class="day-name">${dayName}</span>
+                    <ha-icon icon="${icon}" style="color: ${icon === 'mdi:weather-sunny' ? '#f59e0b' : 'rgba(255,255,255,0.8)'}; width: 20px;"></ha-icon>
+                    <span class="day-temp">${temp}°</span>
+                    <span class="day-low">${low}°</span>
+                </div>
+            `;
+        }).join('');
     }
 
 
