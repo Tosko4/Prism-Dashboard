@@ -117,6 +117,7 @@ Damit dieses Dashboard funktioniert, müssen folgende Frontend-Integrationen üb
    - `/hacsfiles/Prism-Dashboard/prism-shutter-vertical.js`
    - `/hacsfiles/Prism-Dashboard/prism-vacuum.js`
    - `/hacsfiles/Prism-Dashboard/prism-led.js`
+   - `/hacsfiles/Prism-Dashboard/prism-sidebar.js`
    
    **Light Theme Karten (optional):**
    - `/hacsfiles/Prism-Dashboard/prism-heat-light.js`
@@ -128,6 +129,7 @@ Damit dieses Dashboard funktioniert, müssen folgende Frontend-Integrationen üb
    - `/hacsfiles/Prism-Dashboard/prism-shutter-vertical-light.js`
    - `/hacsfiles/Prism-Dashboard/prism-vacuum-light.js`
    - `/hacsfiles/Prism-Dashboard/prism-led-light.js`
+   - `/hacsfiles/Prism-Dashboard/prism-sidebar-light.js`
    
    > **Hinweis:** Du musst nur die Karten hinzufügen, die du auch tatsächlich verwenden möchtest. Du kannst Dark und Light Theme Karten auch parallel verwenden.
 8. Wähle für alle den Typ **"JavaScript-Modul"**
@@ -182,6 +184,12 @@ Falls du Option 2 (manuelle Installation) gewählt hast, müssen die Custom Card
    - **URL:** `/local/custom-components/prism-shutter.js`  
      **Typ:** `JavaScript-Modul`
    - **URL:** `/local/custom-components/prism-shutter-vertical.js`  
+     **Typ:** `JavaScript-Modul`
+   - **URL:** `/local/custom-components/prism-vacuum.js`  
+     **Typ:** `JavaScript-Modul`
+   - **URL:** `/local/custom-components/prism-led.js`  
+     **Typ:** `JavaScript-Modul`
+   - **URL:** `/local/custom-components/prism-sidebar.js`  
      **Typ:** `JavaScript-Modul`
 5. Home Assistant neu starten, damit die Custom Cards geladen werden.
 

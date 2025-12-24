@@ -164,6 +164,25 @@ calendar_entity: calendar.termine
 
 ---
 
+### prism-sidebar-light
+
+Light Theme Version der Sidebar-Karte mit hellem Glassmorphism-Design.
+
+<img width="300" alt="prism-sidebar-light" src="images/prism-sidebar.png" />
+
+**Verwendung:**
+```yaml
+type: custom:prism-sidebar-light
+camera_entity: camera.garden_main
+weather_entity: weather.home
+grid_entity: sensor.power_grid
+solar_entity: sensor.power_solar
+home_entity: sensor.power_home
+calendar_entity: calendar.termine
+```
+
+---
+
 ## Layout Components
 
 ### navigation-bar
