@@ -10,6 +10,7 @@ class PrismSidebarLightCard extends HTMLElement {
         this.temperatureHistory = [];
         this.temperatureHistoryWithTime = []; // Store data with timestamps
         this.historyLoading = false;
+        this.forecastSubscriber = null; // For weather forecast subscription
     }
 
     static getStubConfig() {
@@ -206,6 +207,11 @@ class PrismSidebarLightCard extends HTMLElement {
     disconnectedCallback() {
         if (this.timer) clearInterval(this.timer);
         if (this.cameraTimer) clearInterval(this.cameraTimer);
+        // Unsubscribe from forecast
+        if (this.forecastSubscriber) {
+            this.forecastSubscriber().catch(() => {});
+            this.forecastSubscriber = null;
+        }
     }
 
     startClock() {
@@ -355,6 +361,20 @@ class PrismSidebarLightCard extends HTMLElement {
         this.updateForecastGrid();
     }
 
+    // Check if weather entity supports forecast features (like clock-weather-card does)
+    isLegacyWeather() {
+        if (!this._hass || !this.weatherEntity) return true;
+        const weatherState = this._hass.states[this.weatherEntity];
+        if (!weatherState || !weatherState.attributes) return true;
+        
+        // WeatherEntityFeature.FORECAST_DAILY = 1, FORECAST_HOURLY = 2
+        const supportedFeatures = weatherState.attributes.supported_features || 0;
+        const supportsDaily = (supportedFeatures & 1) !== 0;
+        const supportsHourly = (supportedFeatures & 2) !== 0;
+        
+        return !supportsDaily && !supportsHourly;
+    }
+
     async updateForecastGrid() {
         if (!this._hass) return;
         
@@ -368,52 +388,90 @@ class PrismSidebarLightCard extends HTMLElement {
         
         let forecast = [];
         
-        // Try to get forecast from attributes (legacy method)
-        if (weatherState.attributes.forecast && weatherState.attributes.forecast.length > 0) {
-            forecast = weatherState.attributes.forecast;
-            console.log('Prism Sidebar Light: Using forecast from attributes');
+        // Check if legacy weather (has forecast in attributes) - like clock-weather-card does
+        if (this.isLegacyWeather()) {
+            // Legacy: Get forecast from attributes
+            if (weatherState.attributes.forecast && weatherState.attributes.forecast.length > 0) {
+                forecast = weatherState.attributes.forecast;
+                console.log('Prism Sidebar Light: Using forecast from attributes (legacy)');
+            }
         } else {
-            // Try to fetch forecast via WebSocket API (new method for HA 2024+)
+            // Modern: Use subscribeMessage (like clock-weather-card does)
+            // Based on: https://github.com/pkissling/clock-weather-card
             try {
-                console.log('Prism Sidebar Light: Fetching forecast via API for', this.weatherEntity);
-                const response = await this._hass.callWS({
-                    type: 'weather/get_forecast',
-                    entity_id: this.weatherEntity,
-                    forecast_type: 'daily'
-                });
+                console.log('Prism Sidebar Light: Subscribing to forecast via subscribeMessage for', this.weatherEntity);
                 
-                if (response && response.forecast && response.forecast.length > 0) {
-                    forecast = response.forecast;
-                    console.log('Prism Sidebar Light: Successfully fetched forecast via API:', forecast.length, 'days');
-                } else {
-                    // Try hourly forecast if daily doesn't work
-                    const hourlyResponse = await this._hass.callWS({
-                        type: 'weather/get_forecast',
-                        entity_id: this.weatherEntity,
-                        forecast_type: 'hourly'
-                    });
-                    
-                    if (hourlyResponse && hourlyResponse.forecast && hourlyResponse.forecast.length > 0) {
-                        // Convert hourly to daily (group by day)
-                        const dailyForecast = this.convertHourlyToDaily(hourlyResponse.forecast);
-                        forecast = dailyForecast;
-                        console.log('Prism Sidebar Light: Using hourly forecast converted to daily:', forecast.length, 'days');
+                // Unsubscribe from previous subscription
+                if (this.forecastSubscriber) {
+                    try {
+                        await this.forecastSubscriber();
+                    } catch (e) {
+                        // Ignore errors when unsubscribing
                     }
+                    this.forecastSubscriber = null;
                 }
+                
+                // Subscribe to forecast updates
+                const callback = (event) => {
+                    if (event && event.forecast && Array.isArray(event.forecast)) {
+                        forecast = event.forecast;
+                        this.renderForecastGrid(forecast, forecastGridEl);
+                    }
+                };
+                
+                const message = {
+                    type: 'weather/subscribe_forecast',
+                    forecast_type: 'daily',
+                    entity_id: this.weatherEntity
+                };
+                
+                this.forecastSubscriber = await this._hass.connection.subscribeMessage(callback, message, { resubscribe: false });
+                console.log('Prism Sidebar Light: Successfully subscribed to forecast');
+                
+                // Wait a bit for the first callback
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
             } catch (error) {
-                console.error('Prism Sidebar Light: Error fetching forecast via API:', error);
+                console.error('Prism Sidebar Light: Error subscribing to forecast:', error);
+                // Fallback to attributes if subscription fails
+                if (weatherState.attributes.forecast && weatherState.attributes.forecast.length > 0) {
+                    forecast = weatherState.attributes.forecast;
+                    console.log('Prism Sidebar Light: Fallback to attributes after subscription error');
+                }
             }
         }
         
-        if (!forecast || forecast.length === 0) {
+        // Render forecast (either from attributes or from subscription)
+        if (forecast && forecast.length > 0) {
+            this.renderForecastGrid(forecast, forecastGridEl);
+        } else {
+            // Show helpful message if no forecast available
             console.warn('Prism Sidebar Light: No forecast data available for', this.weatherEntity);
-            return;
+            console.log('Prism Sidebar Light: Available weather attributes:', Object.keys(weatherState.attributes));
+            console.log('Prism Sidebar Light: Supported features:', weatherState.attributes.supported_features);
+            
+            if (forecastGridEl) {
+                forecastGridEl.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; color: rgba(0,0,0,0.5); padding: 20px;">
+                        <div style="font-size: 12px; margin-bottom: 8px;">Forecast nicht verfügbar</div>
+                        <div style="font-size: 10px; color: rgba(0,0,0,0.3);">
+                            ${this.weatherEntity}<br>
+                            <small>Bitte verwende eine Weather-Integration, die Forecast unterstützt<br>
+                            (z.B. Open-Meteo, Met.no, oder aktualisiere OpenWeatherMap)</small>
+                        </div>
+                    </div>
+                `;
+            }
         }
+    }
+
+    renderForecastGrid(forecast, forecastGridEl) {
+        if (!forecast || !forecastGridEl) return;
         
         const forecastCount = this.forecastDays || 3;
         const forecastSlice = forecast.slice(0, forecastCount);
         
-        console.log(`Prism Sidebar Light: Updating forecast with ${forecastSlice.length} days`);
+        console.log(`Prism Sidebar Light: Rendering forecast with ${forecastSlice.length} days`);
         
         // Rebuild the entire forecast grid
         forecastGridEl.innerHTML = forecastSlice.map((day, i) => {
