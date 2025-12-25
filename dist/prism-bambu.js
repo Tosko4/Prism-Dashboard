@@ -402,6 +402,9 @@ class PrismBambuCard extends HTMLElement {
     const cameraState = cameraEntity ? this._hass.states[cameraEntity] : null;
     const cameraImage = cameraState?.attributes?.entity_picture || null;
     
+    // Debug: Log camera entity
+    console.log('Prism Bambu: Camera entity:', cameraEntity, 'Has image:', !!cameraImage);
+    
     // Image path - use configured image or default
     // Supports both .png and .jpg formats
     const printerImg = this.config.image || '/local/custom-components/images/prism-bambu-pic.png';
@@ -547,7 +550,7 @@ class PrismBambuCard extends HTMLElement {
       ];
     }
 
-    return {
+    const returnData = {
       stateStr,
       progress: isIdle ? 0 : progress,
       printTimeLeft,
@@ -572,6 +575,12 @@ class PrismBambuCard extends HTMLElement {
       isLightOn,
       chamberLightEntity: chamberLightEntityId
     };
+    
+    // Debug: Log key data for icons and status
+    console.log('Prism Bambu: Icons - Light:', chamberLightEntityId, 'Camera:', cameraEntity);
+    console.log('Prism Bambu: Status - isPrinting:', isPrinting, 'isPaused:', isPaused, 'isIdle:', isIdle);
+    
+    return returnData;
   }
 
   getPreviewData() {
