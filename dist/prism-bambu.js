@@ -115,9 +115,7 @@ class PrismBambuCard extends HTMLElement {
   }
 
   setConfig(config) {
-    if (!config.printer) {
-      throw new Error('Please select a Bambu Lab printer device');
-    }
+    // Don't throw error if printer is empty - show preview instead
     this.config = { ...config };
     this._imageLoaded = false;
     this._validatedImagePath = null;
@@ -133,8 +131,8 @@ class PrismBambuCard extends HTMLElement {
     const firstTime = hass && !this._hass;
     this._hass = hass;
     
-    // Cache device entities on first hass assignment or if empty
-    if (firstTime || Object.keys(this._deviceEntities).length === 0) {
+    // Cache device entities on first hass assignment or if empty (only if printer is configured)
+    if (this.config?.printer && (firstTime || Object.keys(this._deviceEntities).length === 0)) {
       this._deviceEntities = this.getBambuDeviceEntities();
       console.log('Prism Bambu: Found device entities:', Object.keys(this._deviceEntities));
     }
@@ -285,6 +283,11 @@ class PrismBambuCard extends HTMLElement {
       return this.getPreviewData();
     }
 
+    // If no printer selected, show preview
+    if (!this.config.printer) {
+      return this.getPreviewData();
+    }
+
     // If no device entities found, show preview
     if (Object.keys(this._deviceEntities).length === 0) {
       console.warn('Prism Bambu: No device entities found for device:', this.config.printer);
@@ -298,6 +301,7 @@ class PrismBambuCard extends HTMLElement {
     // Get remaining time - format it nicely
     const remainingTimeEntity = this._deviceEntities['remaining_time'];
     let printTimeLeft = '0m';
+    let printEndTime = '--:--';
     if (remainingTimeEntity?.entity_id) {
       const state = this._hass.states[remainingTimeEntity.entity_id];
       if (state) {
@@ -308,6 +312,11 @@ class PrismBambuCard extends HTMLElement {
           printTimeLeft = `${hours}h ${mins}m`;
         } else {
           printTimeLeft = `${mins}m`;
+        }
+        // Calculate end time
+        if (minutes > 0) {
+          const endTime = new Date(Date.now() + minutes * 60 * 1000);
+          printEndTime = endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
       }
     }

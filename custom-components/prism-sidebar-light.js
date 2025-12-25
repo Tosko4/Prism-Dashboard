@@ -172,7 +172,7 @@ class PrismSidebarLightCard extends HTMLElement {
                 this.updateValues();
             }
         } else if (!this._hass) {
-            // Initialize preview values
+        // Initialize preview values
             this.render();
             this.hasRendered = true;
             this.startClock();
@@ -477,18 +477,18 @@ class PrismSidebarLightCard extends HTMLElement {
         forecastGridEl.innerHTML = forecastSlice.map((day, i) => {
             const date = day.datetime ? new Date(day.datetime) : new Date();
             const dayName = date.toLocaleDateString('de-DE', { weekday: 'short' });
-            const iconMap = {
-                'sunny': 'mdi:weather-sunny',
-                'partlycloudy': 'mdi:weather-partly-cloudy',
-                'cloudy': 'mdi:cloud',
-                'rainy': 'mdi:weather-rainy',
+                    const iconMap = {
+                        'sunny': 'mdi:weather-sunny',
+                        'partlycloudy': 'mdi:weather-partly-cloudy',
+                        'cloudy': 'mdi:cloud',
+                        'rainy': 'mdi:weather-rainy',
                 'snowy': 'mdi:weather-snowy',
                 'pouring': 'mdi:weather-pouring',
                 'lightning': 'mdi:weather-lightning',
                 'fog': 'mdi:weather-fog',
                 'windy': 'mdi:weather-windy',
                 'clear-night': 'mdi:weather-night'
-            };
+                    };
             const icon = iconMap[day.condition?.toLowerCase()] || 'mdi:weather-cloudy';
             const temp = day.temperature !== undefined ? day.temperature : (day.templow !== undefined ? day.templow : '0');
             const low = day.templow !== undefined ? day.templow : (day.temperature !== undefined ? day.temperature : '0');
