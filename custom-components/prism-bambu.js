@@ -226,6 +226,27 @@ class PrismBambuCard extends HTMLElement {
       pillLabels[0].textContent = `/${Math.round(data.targetNozzleTemp)}°`;
       pillLabels[1].textContent = `/${Math.round(data.targetBedTemp)}°`;
     }
+    
+    // Update camera stream hass if it exists
+    const cameraStream = this.shadowRoot.querySelector('ha-camera-stream');
+    if (cameraStream && this._hass) {
+      cameraStream.hass = this._hass;
+      if (data.cameraEntity) {
+        cameraStream.stateObj = this._hass.states[data.cameraEntity];
+      }
+    }
+    
+    // Update light button state from actual HA state
+    if (data.chamberLightEntity) {
+      const lightBtn = this.shadowRoot.querySelector('.btn-light');
+      if (lightBtn) {
+        if (data.isLightOn) {
+          lightBtn.classList.add('active');
+        } else {
+          lightBtn.classList.remove('active');
+        }
+      }
+    }
   }
 
   connectedCallback() {
@@ -279,6 +300,32 @@ class PrismBambuCard extends HTMLElement {
         this.toggleView();
       };
     }
+    
+    // Camera container - create ha-camera-stream element programmatically
+    const cameraContainer = this.shadowRoot?.querySelector('.camera-container');
+    if (cameraContainer && this._hass) {
+      const entityId = cameraContainer.dataset.entity;
+      const stateObj = this._hass.states[entityId];
+      
+      if (stateObj) {
+        // Create the camera stream element
+        const cameraStream = document.createElement('ha-camera-stream');
+        cameraStream.hass = this._hass;
+        cameraStream.stateObj = stateObj;
+        cameraStream.className = 'camera-feed';
+        cameraStream.style.cursor = 'pointer';
+        
+        // Click to open popup
+        cameraStream.onclick = (e) => {
+          e.stopPropagation();
+          this.openCameraPopup();
+        };
+        
+        // Clear container and add stream
+        cameraContainer.innerHTML = '';
+        cameraContainer.appendChild(cameraStream);
+      }
+    }
   }
 
   toggleView() {
@@ -320,7 +367,48 @@ class PrismBambuCard extends HTMLElement {
   handleLightToggle() {
     if (!this._hass || !this._deviceEntities['chamber_light']) return;
     const entityId = this._deviceEntities['chamber_light'].entity_id;
+    
+    // Call the service
     this._hass.callService('light', 'toggle', { entity_id: entityId });
+    
+    // Optimistically update UI immediately (don't wait for HA state update)
+    const lightBtn = this.shadowRoot?.querySelector('.btn-light');
+    const currentState = this._hass.states[entityId]?.state;
+    const newState = currentState === 'on' ? 'off' : 'on';
+    
+    if (lightBtn) {
+      // Toggle active class
+      if (newState === 'on') {
+        lightBtn.classList.add('active');
+        lightBtn.innerHTML = '<ha-icon icon="mdi:lightbulb"></ha-icon>';
+      } else {
+        lightBtn.classList.remove('active');
+        lightBtn.innerHTML = '<ha-icon icon="mdi:lightbulb-outline"></ha-icon>';
+      }
+    }
+    
+    // Also update printer image dimming
+    const printerImg = this.shadowRoot?.querySelector('.printer-img');
+    if (printerImg) {
+      if (newState === 'on') {
+        printerImg.classList.remove('dimmed');
+      } else {
+        printerImg.classList.add('dimmed');
+      }
+    }
+  }
+  
+  openCameraPopup() {
+    if (!this._hass || !this._deviceEntities['camera']) return;
+    const entityId = this._deviceEntities['camera'].entity_id;
+    
+    // Fire the more-info event to open the camera popup
+    const event = new CustomEvent('hass-more-info', {
+      bubbles: true,
+      composed: true,
+      detail: { entityId: entityId }
+    });
+    this.dispatchEvent(event);
   }
 
   getPrinterData() {
@@ -966,10 +1054,22 @@ class PrismBambuCard extends HTMLElement {
             width: 80px;
             height: 80px;
         }
+        .camera-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         .camera-feed {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .camera-feed:hover {
+            opacity: 0.9;
         }
         
         /* Overlays */
@@ -1210,15 +1310,7 @@ class PrismBambuCard extends HTMLElement {
 
         <div class="main-visual ${!data.isLightOn ? 'light-off' : ''}">
             ${data.cameraEntity && this.showCamera ? `
-                ${data.cameraImage ? `
-                    <img src="${data.cameraImage}" class="camera-feed" />
-                ` : `
-                    <ha-camera-stream
-                        .hass=${this._hass}
-                        .stateObj=${this._hass?.states[data.cameraEntity]}
-                        class="camera-feed"
-                    ></ha-camera-stream>
-                `}
+                <div class="camera-container" data-entity="${data.cameraEntity}"></div>
             ` : `
                 <img src="${data.printerImg}" class="printer-img ${!data.isLightOn ? 'dimmed' : ''}" />
                 <div class="printer-fallback-icon" style="display: none;">
