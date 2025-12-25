@@ -7,6 +7,11 @@ const BAMBU_PRINTER_MODELS = [
   'X1', 'X1C', 'X1E'
 ];
 
+// AMS Models
+const BAMBU_AMS_MODELS = [
+  'AMS', 'AMS Lite', 'AMS Hub'
+];
+
 // Entity keys to look for (based on translation_key from ha-bambulab)
 const ENTITY_KEYS = [
   'aux_fan_speed', 'bed_temp', 'chamber_fan_speed', 'chamber_light', 'chamber_temp',
@@ -22,8 +27,6 @@ class PrismBambuCard extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     this.showCamera = false;
     this.hasRendered = false;
-    this._imageLoaded = false;
-    this._validatedImagePath = null;
     this._deviceEntities = {}; // Cache for device entities
   }
 
@@ -37,8 +40,14 @@ class PrismBambuCard extends HTMLElement {
   }
 
   static getConfigForm() {
-    // Build filter for device selector
-    const filterCombinations = BAMBU_PRINTER_MODELS.map(model => ({
+    // Build filter for printer device selector
+    const printerFilterCombinations = BAMBU_PRINTER_MODELS.map(model => ({
+      manufacturer: BAMBU_MANUFACTURER,
+      model: model
+    }));
+    
+    // Build filter for AMS device selector
+    const amsFilterCombinations = BAMBU_AMS_MODELS.map(model => ({
       manufacturer: BAMBU_MANUFACTURER,
       model: model
     }));
@@ -49,7 +58,12 @@ class PrismBambuCard extends HTMLElement {
           name: 'printer',
           label: 'Bambu Lab Printer (select your printer device)',
           required: true,
-          selector: { device: { filter: filterCombinations } }
+          selector: { device: { filter: printerFilterCombinations } }
+        },
+        {
+          name: 'ams_device',
+          label: 'AMS Device (optional - select your AMS)',
+          selector: { device: { filter: amsFilterCombinations } }
         },
         {
           name: 'name',
@@ -63,7 +77,7 @@ class PrismBambuCard extends HTMLElement {
         },
         {
           name: 'image',
-          label: 'Printer image path (optional)',
+          label: 'Printer image path (optional, supports .png and .jpg)',
           selector: { text: {} }
         }
       ]
@@ -117,8 +131,6 @@ class PrismBambuCard extends HTMLElement {
   setConfig(config) {
     // Don't throw error if printer is empty - show preview instead
     this.config = { ...config };
-    this._imageLoaded = false;
-    this._validatedImagePath = null;
     this._deviceEntities = {}; // Reset cache
     if (!this.hasRendered) {
       this.render();
@@ -162,7 +174,7 @@ class PrismBambuCard extends HTMLElement {
     };
     
     // Update progress bar
-    const progressBar = this.shadowRoot.querySelector('.progress-fill');
+    const progressBar = this.shadowRoot.querySelector('.progress-bar-fill');
     if (progressBar) {
       progressBar.style.width = `${data.progress}%`;
     }
@@ -240,6 +252,18 @@ class PrismBambuCard extends HTMLElement {
     if (speedBtn) {
       speedBtn.addEventListener('click', () => this.handleSpeed());
     }
+    
+    // Header light button
+    const lightBtn = this.shadowRoot?.querySelector('.btn-light');
+    if (lightBtn) {
+      lightBtn.addEventListener('click', () => this.handleLightToggle());
+    }
+    
+    // Header camera button
+    const cameraBtn = this.shadowRoot?.querySelector('.btn-camera');
+    if (cameraBtn) {
+      cameraBtn.addEventListener('click', () => this.toggleView());
+    }
   }
 
   toggleView() {
@@ -277,6 +301,12 @@ class PrismBambuCard extends HTMLElement {
     });
     this.dispatchEvent(event);
   }
+  
+  handleLightToggle() {
+    if (!this._hass || !this._deviceEntities['chamber_light']) return;
+    const entityId = this._deviceEntities['chamber_light'].entity_id;
+    this._hass.callService('light', 'toggle', { entity_id: entityId });
+  }
 
   getPrinterData() {
     if (!this._hass || !this.config) {
@@ -298,23 +328,28 @@ class PrismBambuCard extends HTMLElement {
     const progress = this.getEntityValue('print_progress');
     const stateStr = this.getEntityState('print_status') || this.getEntityState('stage') || 'unavailable';
     
-    // Get remaining time - format it nicely
+    // Determine if printer is actively printing
+    const isPrinting = ['printing', 'prepare', 'running'].includes(stateStr.toLowerCase());
+    const isPaused = ['paused', 'pause'].includes(stateStr.toLowerCase());
+    const isIdle = ['idle', 'finish', 'finished', 'failed', 'offline', 'unavailable', 'unknown'].includes(stateStr.toLowerCase());
+    
+    // Get remaining time - format it nicely (only if printing)
     const remainingTimeEntity = this._deviceEntities['remaining_time'];
-    let printTimeLeft = '0m';
+    let printTimeLeft = '--';
     let printEndTime = '--:--';
-    if (remainingTimeEntity?.entity_id) {
+    if (remainingTimeEntity?.entity_id && (isPrinting || isPaused)) {
       const state = this._hass.states[remainingTimeEntity.entity_id];
       if (state) {
         const minutes = parseFloat(state.state) || 0;
-        const hours = Math.floor(minutes / 60);
-        const mins = Math.round(minutes % 60);
-        if (hours > 0) {
-          printTimeLeft = `${hours}h ${mins}m`;
-        } else {
-          printTimeLeft = `${mins}m`;
-        }
-        // Calculate end time
         if (minutes > 0) {
+          const hours = Math.floor(minutes / 60);
+          const mins = Math.round(minutes % 60);
+          if (hours > 0) {
+            printTimeLeft = `${hours}h ${mins}m`;
+          } else {
+            printTimeLeft = `${mins}m`;
+          }
+          // Calculate end time
           const endTime = new Date(Date.now() + minutes * 60 * 1000);
           printEndTime = endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
@@ -332,9 +367,19 @@ class PrismBambuCard extends HTMLElement {
     const partFanSpeed = this.getEntityValue('cooling_fan_speed');
     const auxFanSpeed = this.getEntityValue('aux_fan_speed');
     
-    // Layer info
-    const currentLayer = parseInt(this.getEntityState('current_layer')) || 0;
-    const totalLayers = parseInt(this.getEntityState('total_layers')) || 0;
+    // Layer info (only show when printing)
+    let currentLayer = 0;
+    let totalLayers = 0;
+    if (isPrinting || isPaused) {
+      currentLayer = parseInt(this.getEntityState('current_layer')) || 0;
+      totalLayers = parseInt(this.getEntityState('total_layers')) || 0;
+    }
+    
+    // Chamber light state
+    const chamberLightEntity = this._deviceEntities['chamber_light'];
+    const chamberLightState = chamberLightEntity?.entity_id ? 
+      this._hass.states[chamberLightEntity.entity_id]?.state : null;
+    const isLightOn = chamberLightState === 'on';
     
     // Get printer name from device
     const deviceId = this.config.printer;
@@ -349,33 +394,53 @@ class PrismBambuCard extends HTMLElement {
     const cameraState = cameraEntity ? this._hass.states[cameraEntity] : null;
     const cameraImage = cameraState?.attributes?.entity_picture || null;
     
-    // Image path - cache validated path to prevent flickering
-    if (!this._validatedImagePath) {
-      this._validatedImagePath = this.config.image || '/local/custom-components/images/prism-bambu-pic.png';
-    }
+    // Image path - use configured image or default
+    // Supports both .png and .jpg formats
+    const printerImg = this.config.image || '/local/custom-components/images/prism-bambu-pic.png';
 
-    // AMS Data - Find AMS devices connected to this printer via device relationships
+    // AMS Data - Use configured AMS device or find connected devices
     let amsData = [];
     let foundAnyAms = false;
-    
-    // Find AMS/tray entities by looking at devices connected via this printer
-    const printerDeviceId = this.config.printer;
-    const connectedDevices = Object.values(this._hass.devices || {})
-      .filter(d => d.via_device_id === printerDeviceId);
-    
-    // Look for AMS tray entities in connected devices
     const trayEntities = [];
-    for (const connectedDevice of connectedDevices) {
+    
+    // Method 1: Use manually configured AMS device
+    if (this.config.ams_device) {
+      const amsDeviceId = this.config.ams_device;
       for (const entityId in this._hass.entities) {
         const entityInfo = this._hass.entities[entityId];
-        if (entityInfo.device_id === connectedDevice.id) {
-          // Check if this is a tray entity
-          if (entityInfo.translation_key && entityInfo.translation_key.includes('tray')) {
+        if (entityInfo.device_id === amsDeviceId) {
+          // Check if this is a tray entity (has "tray" in translation_key or entity_id)
+          if ((entityInfo.translation_key && entityInfo.translation_key.includes('tray')) ||
+              entityId.includes('tray')) {
             trayEntities.push({
               entityId,
-              translationKey: entityInfo.translation_key,
+              translationKey: entityInfo.translation_key || entityId,
               ...entityInfo
             });
+          }
+        }
+      }
+    }
+    
+    // Method 2: Auto-detect AMS by looking at devices connected via this printer
+    if (trayEntities.length === 0) {
+      const printerDeviceId = this.config.printer;
+      const connectedDevices = Object.values(this._hass.devices || {})
+        .filter(d => d.via_device_id === printerDeviceId);
+      
+      for (const connectedDevice of connectedDevices) {
+        for (const entityId in this._hass.entities) {
+          const entityInfo = this._hass.entities[entityId];
+          if (entityInfo.device_id === connectedDevice.id) {
+            // Check if this is a tray entity
+            if ((entityInfo.translation_key && entityInfo.translation_key.includes('tray')) ||
+                entityId.includes('tray')) {
+              trayEntities.push({
+                entityId,
+                translationKey: entityInfo.translation_key || entityId,
+                ...entityInfo
+              });
+            }
           }
         }
       }
@@ -387,6 +452,11 @@ class PrismBambuCard extends HTMLElement {
       const numB = parseInt(b.translationKey.match(/\d+/)?.[0] || '0');
       return numA - numB;
     });
+    
+    // Debug: Log found AMS tray entities
+    if (trayEntities.length > 0) {
+      console.log('Prism Bambu: Found AMS tray entities:', trayEntities.map(e => e.entityId));
+    }
     
     // Build AMS data from found tray entities
     for (let i = 0; i < Math.max(4, trayEntities.length); i++) {
@@ -439,7 +509,7 @@ class PrismBambuCard extends HTMLElement {
 
     return {
       stateStr,
-      progress,
+      progress: isIdle ? 0 : progress,
       printTimeLeft,
       printEndTime,
       nozzleTemp,
@@ -454,8 +524,13 @@ class PrismBambuCard extends HTMLElement {
       name,
       cameraEntity,
       cameraImage,
-      printerImg: this._validatedImagePath,
-      amsData
+      printerImg,
+      amsData,
+      isPrinting,
+      isPaused,
+      isIdle,
+      isLightOn,
+      chamberLightEntity: chamberLightEntity?.entity_id
     };
   }
 
@@ -483,7 +558,12 @@ class PrismBambuCard extends HTMLElement {
         { id: 2, type: 'PETG', color: '#4488FF', remaining: 42, active: true },
         { id: 3, type: 'ABS', color: '#111111', remaining: 12, active: false },
         { id: 4, type: 'TPU', color: '#FFFFFF', remaining: 0, active: false, empty: true }
-      ]
+      ],
+      isPrinting: true,
+      isPaused: false,
+      isIdle: false,
+      isLightOn: true,
+      chamberLightEntity: null
     };
   }
 
@@ -575,15 +655,52 @@ class PrismBambuCard extends HTMLElement {
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background-color: ${data.stateStr === 'printing' ? '#22c55e' : 'rgba(255,255,255,0.2)'};
-            animation: ${data.stateStr === 'printing' ? 'pulse 2s infinite' : 'none'};
+            background-color: ${data.isPrinting ? '#22c55e' : data.isPaused ? '#fbbf24' : 'rgba(255,255,255,0.2)'};
+            animation: ${data.isPrinting ? 'pulse 2s infinite' : 'none'};
         }
         .status-text {
             font-size: 0.75rem;
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: ${data.stateStr === 'printing' ? '#4ade80' : 'rgba(255,255,255,0.6)'};
+            color: ${data.isPrinting ? '#4ade80' : data.isPaused ? '#fbbf24' : 'rgba(255,255,255,0.6)'};
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .header-icon-btn {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            min-height: 36px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .header-icon-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .header-icon-btn.active {
+            color: #fbbf24;
+            background-color: rgba(251, 191, 36, 0.1);
+            border-color: rgba(251, 191, 36, 0.3);
+        }
+        .header-icon-btn ha-icon {
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         /* AMS Grid */
@@ -906,7 +1023,7 @@ class PrismBambuCard extends HTMLElement {
             border: 1px solid rgba(255, 255, 255, 0.05);
             color: rgba(255, 255, 255, 0.6);
         }
-        .btn-secondary:hover {
+        .btn-secondary:hover:not(:disabled) {
             background-color: rgba(255, 255, 255, 0.1);
         }
         .btn-primary {
@@ -918,9 +1035,13 @@ class PrismBambuCard extends HTMLElement {
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             border-top: 1px solid rgba(0, 0, 0, 0.2);
         }
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             color: #00c94d;
             background-color: rgba(20, 20, 20, 0.9);
+        }
+        .btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
         }
         
         @keyframes pulse {
@@ -944,6 +1065,18 @@ class PrismBambuCard extends HTMLElement {
                         <span class="status-text">${data.stateStr}</span>
                     </div>
                 </div>
+            </div>
+            <div class="header-right">
+                ${data.chamberLightEntity ? `
+                <button class="header-icon-btn btn-light ${data.isLightOn ? 'active' : ''}" title="Chamber Light">
+                    <ha-icon icon="mdi:lightbulb${data.isLightOn ? '' : '-outline'}"></ha-icon>
+                </button>
+                ` : ''}
+                ${data.cameraEntity ? `
+                <button class="header-icon-btn btn-camera" title="Toggle Camera">
+                    <ha-icon icon="mdi:camera${this.showCamera ? '' : '-outline'}"></ha-icon>
+                </button>
+                ` : ''}
             </div>
         </div>
 
@@ -1039,7 +1172,7 @@ class PrismBambuCard extends HTMLElement {
             </div>
             <div class="stat-group" style="align-items: flex-end;">
                 <span class="stat-label">Layer</span>
-                <span class="stat-val">${data.currentLayer} <span style="font-size: 0.875rem; opacity: 0.4;">/ ${data.totalLayers}</span></span>
+                <span class="stat-val">${data.isIdle ? '--' : data.currentLayer} <span style="font-size: 0.875rem; opacity: 0.4;">/ ${data.isIdle ? '--' : data.totalLayers}</span></span>
             </div>
         </div>
 
@@ -1049,15 +1182,15 @@ class PrismBambuCard extends HTMLElement {
         </div>
 
         <div class="controls">
-            <button class="btn btn-secondary btn-speed">
+            <button class="btn btn-secondary btn-speed" ${data.isIdle ? 'disabled' : ''}>
                 <ha-icon icon="mdi:speedometer"></ha-icon>
             </button>
-            <button class="btn btn-secondary btn-stop">
+            <button class="btn btn-secondary btn-stop" ${data.isIdle ? 'disabled' : ''}>
                 <ha-icon icon="mdi:stop"></ha-icon>
             </button>
-            <button class="btn btn-primary btn-pause">
-                <ha-icon icon="mdi:pause"></ha-icon>
-                Pause Print
+            <button class="btn btn-primary btn-pause" ${data.isIdle ? 'disabled' : ''}>
+                <ha-icon icon="${data.isPaused ? 'mdi:play' : 'mdi:pause'}"></ha-icon>
+                ${data.isPaused ? 'Resume Print' : data.isPrinting ? 'Pause Print' : 'Control'}
             </button>
         </div>
 
