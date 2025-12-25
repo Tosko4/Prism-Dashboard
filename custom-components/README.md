@@ -170,58 +170,71 @@ Eine Bambu Lab 3D-Drucker-Karte mit AMS (Automatic Material System) Support, Gla
 
 **Verwendung:**
 
-**Basis-Konfiguration (alle Daten aus einer Entity):**
+**Basis-Konfiguration (Visual Editor):**
 ```yaml
 - type: custom:prism-bambu
-  entity: sensor.x1c_1  # Haupt-Printer Entity (wie X1C_1, bambu_lab_printer, etc.)
-  name: Bambu Lab Printer
-  camera_entity: camera.x1c_1  # Optional: Camera Entity
+  printer: <device_id>  # Bambu Lab Drucker-Gerät (z.B. aus Device-Registry)
+  name: Bambu Lab Printer  # Optional: Custom Name
   image: /local/custom-components/images/prism-bambu-pic.png  # Optional: Drucker-Bild
 ```
 
-**Erweiterte Konfiguration (mit zusätzlichen Sensoren):**
+**Erweiterte Konfiguration (mit AMS und Kamera):**
 ```yaml
 - type: custom:prism-bambu
-  entity: sensor.x1c_1  # Haupt-Printer Entity
+  printer: <device_id>  # Bambu Lab Drucker-Gerät
+  ams_device: <ams_device_id>  # Optional: AMS-Gerät (falls mehrere AMS vorhanden)
   name: Bambu Lab Printer
-  camera_entity: camera.x1c_1  # Optional: Camera Entity
-  ams_entity: sensor.x1c_1_ams_1  # Optional: Separate AMS Entity (falls nicht in Haupt-Entity)
-  temperature_sensor: sensor.custom_nozzle_temp  # Optional: Custom Temperatur-Sensor
-  humidity_sensor: sensor.custom_humidity  # Optional: Custom Luftfeuchtigkeits-Sensor
-  image: /local/custom-components/images/prism-bambu-pic.png
+  camera_entity: camera.x1c_1_kamera  # Optional: Camera Entity
+  image: /local/custom-components/images/prism-bambu-pic.png  # Optional: .png oder .jpg
 ```
 
-**Hinweis:** Die Karte arbeitet wie die offiziellen [ha-bambulab Cards](https://github.com/greghesp/ha-bambulab-cards) und liest standardmäßig **alle Daten aus den Attributen einer einzelnen Printer-Entity**. Optional können zusätzliche Sensor-Entities konfiguriert werden, z.B. für andere Drucker-Modelle oder Custom-Sensoren.
+**Hinweis:** Die Karte verwendet die **Device-Registry** von Home Assistant und filtert automatisch alle relevanten Entities basierend auf dem ausgewählten Drucker-Gerät. Dies funktioniert genau wie die offiziellen [ha-bambulab Cards](https://github.com/greghesp/ha-bambulab-cards).
 
 **Features:**
-- ✅ AMS Support: Zeigt alle 4 AMS-Slots mit Farb-Visualisierung
-- ✅ Filament-Typ und Restmenge in %
-- ✅ Aktiver Slot wird hervorgehoben
-- ✅ Camera-Toggle zwischen Printer-Image und Live-Feed
-- ✅ Interaktive Buttons für Pause/Stop/Speed
-- ✅ Temperatur-Overlays (Nozzle, Bed, Chamber)
-- ✅ Fan-Geschwindigkeiten (Part & Aux)
-- ✅ Layer-Informationen und Fortschrittsbalken
+- ✅ **AMS Support**: Zeigt alle 4 AMS-Slots mit Farb-Visualisierung
+- ✅ **Filament-Typ Erkennung**: Unterstützt PCTG, PETG, PLA, ABS, TPU, ASA, PA-CF, PA, PC, PVA, HIPS, PP
+- ✅ **Restmenge-Anzeige**: Zeigt `?` wenn RFID-Tracking nicht aktiv, sonst Prozent
+- ✅ **Aktiver Slot**: Wird automatisch hervorgehoben
+- ✅ **Live Kamera-Stream**: Toggle zwischen Drucker-Bild und Live-Video-Stream
+- ✅ **Kamera-Popup**: Klick auf Kamera öffnet großes More-Info Fenster
+- ✅ **Chamber Light Control**: Licht-Button zum Ein/Ausschalten der Druckraum-Beleuchtung
+- ✅ **Dynamisches Bild**: Drucker-Bild wird abgedunkelt wenn Licht aus ist
+- ✅ **Interaktive Buttons**: Pause/Stop/Speed mit korrekter State-Logik
+- ✅ **Temperatur-Overlays**: Nozzle, Bed, Chamber mit Ziel-Temperaturen
+- ✅ **Fan-Geschwindigkeiten**: Part & Aux Fan Anzeige
+- ✅ **Layer-Informationen**: Aktuelle Layer / Gesamt-Layer
+- ✅ **Fortschrittsbalken**: Visueller Progress-Bar mit Prozent
+- ✅ **Status-Indikator**: Farbiger Punkt (grün=pulsierend beim Drucken, gelb=pausiert, grau=idle)
 
-**Daten aus Printer-Entity Attributen:**
+**Konfiguration im Visual Editor:**
 
-Die Karte liest standardmäßig alle Daten aus den Attributen der Haupt-Printer-Entity:
+1. **Printer Device**: Wähle dein Bambu Lab Drucker-Gerät aus der Device-Liste
+2. **AMS Device** (optional): Falls mehrere AMS vorhanden, wähle das gewünschte AMS-Gerät
+3. **Name** (optional): Custom Name für die Karte
+4. **Camera Entity** (optional): Camera Entity für Live-Stream
+5. **Image** (optional): Pfad zum Drucker-Bild (`.png` oder `.jpg`)
 
-- **Print Data:** `print_progress` / `progress`, `remaining_time`, `end_time`
-- **Temperatures:** `nozzle_temp` / `nozzle`, `target_nozzle_temp`, `bed_temp` / `bed`, `target_bed_temp`, `chamber_temp` / `chamber`
-- **Fans:** `cooling_fan_speed` / `cooling`, `aux_fan_speed` / `aux`
-- **Layer:** `current_layer`, `total_layer_count` / `total_layers`
-- **AMS:** `ams` / `ams_data` / `ams_slots` - Array mit AMS-Slot-Daten (type, color, remaining, active, empty)
+**Automatische Entity-Erkennung:**
 
-**Optional: Zusätzliche Sensor-Entities:**
+Die Karte erkennt automatisch alle relevanten Entities basierend auf dem Drucker-Gerät:
 
-Falls bestimmte Daten nicht in der Haupt-Entity vorhanden sind, können separate Entities konfiguriert werden:
+- **Print Status**: `print_status` Entity
+- **Temperatures**: `nozzle_temp`, `bed_temp`, `chamber_temp` mit Ziel-Temperaturen
+- **Fans**: `cooling_fan_speed` (Part Fan), `aux_fan_speed` (Aux Fan)
+- **Progress**: `print_progress`, `remaining_time`, `current_layer`, `total_layers`
+- **Chamber Light**: `chamber_light` Entity (wird automatisch erkannt)
+- **Camera**: `camera` Entity (wird automatisch erkannt oder kann manuell gesetzt werden)
+- **AMS Slots**: `tray_1`, `tray_2`, `tray_3`, `tray_4` Entities (via `translation_key`)
 
-- **`ams_entity`**: Separate AMS-Entity (z.B. `sensor.x1c_1_ams_1`)
-- **`temperature_sensor`**: Custom Temperatur-Sensor (z.B. `sensor.chamber_temperature`)
-- **`humidity_sensor`**: Custom Luftfeuchtigkeits-Sensor (z.B. `sensor.chamber_humidity`)
+**AMS Daten:**
 
-**Beispiel Entity:** `sensor.x1c_1` (Haupt-Printer-Entity mit allen Daten in den Attributen)
+Die Karte liest AMS-Daten aus den Tray-Entities (`sensor.*_slot_1`, `sensor.*_slot_2`, etc.):
+
+- **Filament Type**: Wird aus `attributes.name` oder `attributes.type` extrahiert (z.B. "Bambu PCTG Basic" → "PCTG")
+- **Color**: `attributes.color` (wird automatisch von #RRGGBBAA zu #RRGGBB konvertiert)
+- **Remaining**: `attributes.remain` (zeigt `?` wenn `remain_enabled: false`)
+- **Active**: `attributes.active` oder `attributes.in_use`
+- **Empty**: `attributes.empty` oder leere State
 
 **Bild hochladen:**
 
@@ -229,8 +242,14 @@ Das Drucker-Bild muss manuell in Home Assistant hochgeladen werden:
 1. Kopiere das Bild nach `/config/www/custom-components/images/prism-bambu-pic.png` (oder `.jpg`)
 2. Oder verwende einen anderen Pfad und gib ihn im `image`-Feld an
 3. Die Karte unterstützt sowohl `.png` als auch `.jpg` Formate
-4. Falls das Bild nicht geladen werden kann, versucht die Karte automatisch die andere Endung (.png ↔ .jpg)
-5. Als letzter Fallback wird ein Drucker-Icon angezeigt
+4. Als letzter Fallback wird ein Drucker-Icon angezeigt
+
+**Interaktionen:**
+
+- **Licht-Button**: Toggle Chamber Light an/aus (Button zeigt sofortigen Feedback)
+- **Kamera-Button**: Wechselt zwischen Drucker-Bild und Live-Kamera-Stream
+- **Kamera-Bild klicken**: Öffnet großes More-Info Popup (wie bei HA Bild-Entities)
+- **Pause-Button**: Öffnet More-Info Dialog für Print-Status (nur aktiv wenn Drucker druckt/pausiert)
 
 **ha-bambulab Integration:**
 Die Karte ist kompatibel mit der [ha-bambulab Integration](https://github.com/greghesp/ha-bambulab) und arbeitet wie die [offiziellen Bambu Lab Cards](https://github.com/greghesp/ha-bambulab-cards).

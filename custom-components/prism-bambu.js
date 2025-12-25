@@ -80,6 +80,26 @@ class PrismBambuCard extends HTMLElement {
           name: 'image',
           label: 'Printer image path (optional, supports .png and .jpg)',
           selector: { text: {} }
+        },
+        {
+          name: 'custom_humidity',
+          label: 'Custom humidity sensor (optional)',
+          selector: { entity: { domain: 'sensor', device_class: 'humidity' } }
+        },
+        {
+          name: 'custom_temperature',
+          label: 'Custom temperature sensor (optional)',
+          selector: { entity: { domain: 'sensor', device_class: 'temperature' } }
+        },
+        {
+          name: 'custom_light',
+          label: 'Custom light entity (optional - overrides auto-detected)',
+          selector: { entity: { domain: 'light' } }
+        },
+        {
+          name: 'power_switch',
+          label: 'Power switch (optional)',
+          selector: { entity: { domain: 'switch' } }
         }
       ]
     };
@@ -326,6 +346,21 @@ class PrismBambuCard extends HTMLElement {
         cameraContainer.appendChild(cameraStream);
       }
     }
+    
+    // Power button click handler
+    const powerBtn = this.shadowRoot?.querySelector('.btn-power');
+    if (powerBtn) {
+      powerBtn.onclick = (e) => {
+        e.stopPropagation();
+        this.handlePowerToggle();
+      };
+    }
+  }
+  
+  handlePowerToggle() {
+    if (!this._hass || !this.config.power_switch) return;
+    const entityId = this.config.power_switch;
+    this._hass.callService('switch', 'toggle', { entity_id: entityId });
   }
 
   toggleView() {
@@ -482,12 +517,24 @@ class PrismBambuCard extends HTMLElement {
       totalLayers = parseInt(this.getEntityState('total_layers')) || 0;
     }
     
-    // Chamber light state
-    const chamberLightEntityInfo = this._deviceEntities['chamber_light'];
-    const chamberLightEntityId = chamberLightEntityInfo?.entity_id;
+    // Chamber light state - use custom light if configured, otherwise auto-detected
+    let chamberLightEntityId = this.config.custom_light || this._deviceEntities['chamber_light']?.entity_id;
     const chamberLightState = chamberLightEntityId ? 
       this._hass.states[chamberLightEntityId]?.state : null;
     const isLightOn = chamberLightState === 'on';
+    
+    // Custom sensors
+    const customHumidity = this.config.custom_humidity;
+    const customHumidityState = customHumidity ? this._hass.states[customHumidity] : null;
+    const humidity = customHumidityState ? parseFloat(customHumidityState.state) || 0 : null;
+    
+    const customTemperature = this.config.custom_temperature;
+    const customTemperatureState = customTemperature ? this._hass.states[customTemperature] : null;
+    const customTemp = customTemperatureState ? parseFloat(customTemperatureState.state) || 0 : null;
+    
+    const powerSwitch = this.config.power_switch;
+    const powerSwitchState = powerSwitch ? this._hass.states[powerSwitch] : null;
+    const isPowerOn = powerSwitchState?.state === 'on';
     
     // Debug: Log light entity
     console.log('Prism Bambu: Chamber light entity:', chamberLightEntityId, 'State:', chamberLightState);
@@ -718,7 +765,12 @@ class PrismBambuCard extends HTMLElement {
       isPaused,
       isIdle,
       isLightOn,
-      chamberLightEntity: chamberLightEntityId
+      chamberLightEntity: chamberLightEntityId,
+      // Custom sensors
+      humidity,
+      customTemp,
+      powerSwitch,
+      isPowerOn
     };
     
     // Debug: Log key data for icons and status
@@ -757,7 +809,12 @@ class PrismBambuCard extends HTMLElement {
       isPaused: false,
       isIdle: false,
       isLightOn: true,
-      chamberLightEntity: null
+      chamberLightEntity: null,
+      // Custom sensors
+      humidity: null,
+      customTemp: null,
+      powerSwitch: null,
+      isPowerOn: true
     };
   }
 
@@ -991,12 +1048,65 @@ class PrismBambuCard extends HTMLElement {
             border-radius: 24px;
             background-color: rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            overflow: hidden;
+            overflow: visible;
             margin-bottom: 24px;
             min-height: 300px;
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+        .main-visual-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Power Corner Button - positioned at top-right corner, half outside */
+        .power-corner-btn {
+            position: absolute;
+            top: -14px;
+            right: -14px;
+            z-index: 50;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        .power-corner-btn.on {
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.9), rgba(34, 197, 94, 0.9));
+            color: white;
+            box-shadow: 0 4px 12px rgba(74, 222, 128, 0.4), 0 0 20px rgba(74, 222, 128, 0.3);
+        }
+        .power-corner-btn.off {
+            background: linear-gradient(135deg, rgba(60, 60, 60, 0.9), rgba(40, 40, 40, 0.9));
+            color: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .power-corner-btn:hover {
+            transform: scale(1.1);
+        }
+        .power-corner-btn.on:hover {
+            box-shadow: 0 6px 16px rgba(74, 222, 128, 0.5), 0 0 30px rgba(74, 222, 128, 0.4);
+        }
+        .power-corner-btn.off:hover {
+            background: linear-gradient(135deg, rgba(248, 113, 113, 0.8), rgba(220, 38, 38, 0.8));
+            color: white;
+            box-shadow: 0 6px 16px rgba(248, 113, 113, 0.4);
+        }
+        .power-corner-btn ha-icon {
+            width: 24px;
+            height: 24px;
         }
         .view-toggle {
             position: absolute;
@@ -1309,6 +1419,12 @@ class PrismBambuCard extends HTMLElement {
         </div>
 
         <div class="main-visual ${!data.isLightOn ? 'light-off' : ''}">
+            ${data.powerSwitch ? `
+            <button class="power-corner-btn btn-power ${data.isPowerOn ? 'on' : 'off'}" title="Power ${data.isPowerOn ? 'Off' : 'On'}">
+                <ha-icon icon="mdi:power"></ha-icon>
+            </button>
+            ` : ''}
+            <div class="main-visual-inner">
             ${data.cameraEntity && this.showCamera ? `
                 <div class="camera-container" data-entity="${data.cameraEntity}"></div>
             ` : `
@@ -1332,6 +1448,15 @@ class PrismBambuCard extends HTMLElement {
                             <span class="pill-label">Aux</span>
                         </div>
                     </div>
+                    ${data.humidity !== null ? `
+                    <div class="overlay-pill">
+                        <div class="pill-icon-container"><ha-icon icon="mdi:water-percent" style="color: #60a5fa;"></ha-icon></div>
+                        <div class="pill-content">
+                            <span class="pill-value">${Math.round(data.humidity)}%</span>
+                            <span class="pill-label">Humid</span>
+                        </div>
+                    </div>
+                    ` : ''}
                 </div>
                 
                 <div class="overlay-right">
@@ -1356,8 +1481,18 @@ class PrismBambuCard extends HTMLElement {
                             <span class="pill-label">Cham</span>
                         </div>
                     </div>
+                    ${data.customTemp !== null ? `
+                    <div class="overlay-pill right">
+                        <div class="pill-icon-container"><ha-icon icon="mdi:thermometer-lines" style="color: #a78bfa;"></ha-icon></div>
+                        <div class="pill-content">
+                            <span class="pill-value">${Math.round(data.customTemp)}°</span>
+                            <span class="pill-label">Custom</span>
+                        </div>
+                    </div>
+                    ` : ''}
                 </div>
             `}
+            </div>
         </div>
 
         <div class="stats-row">
