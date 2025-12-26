@@ -260,7 +260,7 @@ Die Karte ist kompatibel mit der [ha-bambulab Integration](https://github.com/gr
 
 Eine Energie-Flow-Karte mit Glassmorphism-Design zur Visualisierung von Solar-Erzeugung, Netz-Bezug/Einspeisung, Batterie-Speicher, Hausverbrauch und E-Auto-Ladung. Optimiert für die [OpenEMS/Fenecon Integration](https://github.com/Lamarqe/ha_openems).
 
-<img width="400" alt="prism-energy" src="images/prism-energy-home.png" />
+<img width="400" alt="prism-energy" src="images/prism-energy.jpg" />
 
 **Features:**
 - ✅ **Animierte Energieflüsse**: Visualisiert den Energiefluss zwischen allen Komponenten

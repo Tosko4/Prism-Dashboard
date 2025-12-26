@@ -75,12 +75,17 @@ class PrismCrealityCard extends HTMLElement {
         },
         {
           name: 'camera_entity',
-          label: 'Camera entity (optional - auto-detected if not set)',
+          label: 'Camera entity (e.g. camera.creality_k1_se_camera)',
           selector: { entity: { domain: 'camera' } }
         },
         {
+          name: 'light_switch',
+          label: 'Light switch entity (e.g. switch.creality_light)',
+          selector: { entity: { domain: ['light', 'switch'] } }
+        },
+        {
           name: 'image',
-          label: 'Printer image path (optional, supports .png and .jpg)',
+          label: 'Printer image path (optional, supports .png, .jpg, .webp)',
           selector: { text: {} }
         },
         {
@@ -92,11 +97,6 @@ class PrismCrealityCard extends HTMLElement {
           name: 'custom_temperature',
           label: 'Custom temperature sensor (optional)',
           selector: { entity: { domain: 'sensor', device_class: 'temperature' } }
-        },
-        {
-          name: 'custom_light',
-          label: 'Custom light entity (optional - overrides auto-detected)',
-          selector: { entity: { domain: ['light', 'switch'] } }
         },
         {
           name: 'power_switch',
@@ -138,17 +138,35 @@ class PrismCrealityCard extends HTMLElement {
   }
 
   // Get entity by name pattern (searches entity_id)
-  findEntityByPattern(pattern) {
+  findEntityByPattern(pattern, domain = null) {
     if (!this._hass) return null;
     
     const deviceId = this.config?.printer;
     for (const entityId in this._hass.entities) {
       const entityInfo = this._hass.entities[entityId];
       if (entityInfo.device_id === deviceId && entityId.toLowerCase().includes(pattern.toLowerCase())) {
-        return entityId;
+        // If domain filter is specified, check it
+        if (domain) {
+          const entityDomain = entityId.split('.')[0];
+          if (entityDomain === domain) {
+            return entityId;
+          }
+        } else {
+          return entityId;
+        }
       }
     }
     return null;
+  }
+
+  // Find entity by pattern with specific domain preference (tries domain first, then falls back)
+  findEntityByPatternPreferDomain(pattern, preferredDomain) {
+    // First try with the preferred domain
+    const withDomain = this.findEntityByPattern(pattern, preferredDomain);
+    if (withDomain) return withDomain;
+    
+    // Fall back to any matching entity
+    return this.findEntityByPattern(pattern);
   }
 
   // Get entity state by entity_id
@@ -473,15 +491,18 @@ class PrismCrealityCard extends HTMLElement {
   handleLightToggle() {
     if (!this._hass) return;
     
-    // Use custom light if configured
-    let entityId = this.config.custom_light;
+    // Use configured light_switch or auto-detect switch domain
+    let entityId = this.config.light_switch;
     
-    // Otherwise find the light switch
+    // Otherwise find the light switch (must be switch domain for control)
     if (!entityId) {
-      entityId = this.findEntityByPattern('light');
+      entityId = this.findEntityByPattern('light', 'switch');
     }
     
-    if (!entityId) return;
+    if (!entityId) {
+      console.warn('Prism Creality: No light switch entity found. Please configure light_switch in card settings.');
+      return;
+    }
     
     // Determine domain from entity_id
     const domain = entityId.startsWith('light.') ? 'light' : 'switch';
@@ -518,13 +539,16 @@ class PrismCrealityCard extends HTMLElement {
   openCameraPopup() {
     if (!this._hass) return;
     
-    // Get camera entity
+    // Get camera entity (must be camera domain)
     let entityId = this.config.camera_entity;
     if (!entityId) {
-      entityId = this.findEntityByPattern('camera');
+      entityId = this.findEntityByPattern('camera', 'camera');
     }
     
-    if (!entityId) return;
+    if (!entityId || !entityId.startsWith('camera.')) {
+      console.warn('Prism Creality: No valid camera entity found. Please configure camera_entity in card settings.');
+      return;
+    }
     
     // Fire the more-info event to open the camera popup
     const event = new CustomEvent('hass-more-info', {
@@ -565,8 +589,11 @@ class PrismCrealityCard extends HTMLElement {
     const modelFanEntity = this.findEntityByPattern('model_fan');
     const auxFanEntity = this.findEntityByPattern('auxiliary_fan');
     const caseFanEntity = this.findEntityByPattern('case_fan');
-    const lightEntity = this.findEntityByPattern('light');
-    const cameraEntity = this.findEntityByPattern('camera');
+    // Light: prefer switch domain for control, sensor for status
+    const lightSwitchEntity = this.findEntityByPattern('light', 'switch');
+    const lightSensorEntity = this.findEntityByPattern('light', 'sensor');
+    // Camera: must be camera domain
+    const cameraEntityAuto = this.findEntityByPattern('camera', 'camera');
     const fileNameEntity = this.findEntityByPattern('filename') || this.findEntityByPattern('print_filename');
     
     // Read values
@@ -645,10 +672,21 @@ class PrismCrealityCard extends HTMLElement {
       totalLayers = parseInt(this.getEntityStateById(totalLayerEntity)) || 0;
     }
     
-    // Light state
-    let lightEntityId = this.config.custom_light || lightEntity;
-    const lightState = lightEntityId ? this._hass.states[lightEntityId]?.state : null;
-    const isLightOn = lightState === 'on';
+    // Light: Use configured light_switch, or auto-detected switch, or sensor for status
+    let lightEntityId = this.config.light_switch || lightSwitchEntity;
+    let lightState = null;
+    
+    if (lightEntityId) {
+      // Use the switch state directly
+      lightState = this._hass.states[lightEntityId]?.state;
+    } else if (lightSensorEntity) {
+      // Fall back to sensor for status display (but won't be controllable)
+      lightState = this._hass.states[lightSensorEntity]?.state;
+      // Sensor uses "1" for on, "0" for off
+      lightState = lightState === '1' ? 'on' : lightState === '0' ? 'off' : lightState;
+    }
+    
+    const isLightOn = lightState === 'on' || lightState === '1';
     
     // Custom sensors
     const customHumidity = this.config.custom_humidity;
@@ -671,8 +709,8 @@ class PrismCrealityCard extends HTMLElement {
     const device = this._hass.devices?.[deviceId];
     const name = this.config.name || device?.name || 'Creality Printer';
     
-    // Camera
-    let resolvedCameraEntity = this.config.camera_entity || cameraEntity;
+    // Camera: Use configured camera_entity or auto-detected from camera domain
+    let resolvedCameraEntity = this.config.camera_entity || cameraEntityAuto;
     if (resolvedCameraEntity && !resolvedCameraEntity.startsWith('camera.')) {
       console.warn('Prism Creality: Camera entity is not from camera domain:', resolvedCameraEntity);
       resolvedCameraEntity = null;
@@ -681,7 +719,7 @@ class PrismCrealityCard extends HTMLElement {
     const cameraImage = cameraState?.attributes?.entity_picture || null;
     
     // Debug: Log camera entity
-    console.log('Prism Creality: Camera entity:', resolvedCameraEntity, 'Has image:', !!cameraImage);
+    console.log('Prism Creality: Camera entity:', resolvedCameraEntity, 'Has image:', !!cameraImage, 'Auto-detected:', cameraEntityAuto);
     
     // Image path
     const printerImg = this.config.image || '/local/custom-components/images/prism-creality.webp';
