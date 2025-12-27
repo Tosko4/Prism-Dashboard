@@ -26,7 +26,19 @@ class PrismEnergyCard extends HTMLElement {
       home_consumption: "",
       ev_power: "",
       autarky: "",
-      image: "/local/custom-components/images/prism-energy-home.png"
+      image: "/local/custom-components/images/prism-energy-home.png",
+      max_solar_power: 10000,
+      max_grid_power: 10000,
+      max_consumption: 10000,
+      // Solar modules (optional)
+      solar_module1: "",
+      solar_module1_name: "",
+      solar_module2: "",
+      solar_module2_name: "",
+      solar_module3: "",
+      solar_module3_name: "",
+      solar_module4: "",
+      solar_module4_name: ""
     };
   }
 
@@ -49,8 +61,12 @@ class PrismEnergyCard extends HTMLElement {
           selector: { boolean: {} }
         },
         {
+          name: "",
+          type: "divider"
+        },
+        {
           name: "solar_power",
-          label: "Solar Leistung",
+          label: "Solar Leistung (Gesamt)",
           required: true,
           selector: { entity: { domain: "sensor" } }
         },
@@ -87,6 +103,79 @@ class PrismEnergyCard extends HTMLElement {
           name: "autarky",
           label: "Autarkie % (optional)",
           selector: { entity: { domain: "sensor" } }
+        },
+        {
+          name: "",
+          type: "divider"
+        },
+        {
+          type: "expandable",
+          name: "",
+          title: "📊 Maximalwerte für Fortschrittsbalken",
+          schema: [
+            {
+              name: "max_solar_power",
+              label: "Max. Solar-Leistung (Watt) - z.B. 10000 für 10kW",
+              selector: { number: { min: 1000, max: 100000, step: 100, mode: "box", unit_of_measurement: "W" } }
+            },
+            {
+              name: "max_grid_power",
+              label: "Max. Netz-Leistung (Watt)",
+              selector: { number: { min: 1000, max: 100000, step: 100, mode: "box", unit_of_measurement: "W" } }
+            },
+            {
+              name: "max_consumption",
+              label: "Max. Verbrauch (Watt)",
+              selector: { number: { min: 1000, max: 100000, step: 100, mode: "box", unit_of_measurement: "W" } }
+            }
+          ]
+        },
+        {
+          type: "expandable",
+          name: "",
+          title: "☀️ Solar Module (optional - für Einzelanzeige im Detail-Bereich)",
+          schema: [
+            {
+              name: "solar_module1",
+              label: "Solar Modul 1 (Entity)",
+              selector: { entity: { domain: "sensor" } }
+            },
+            {
+              name: "solar_module1_name",
+              label: "Modul 1 Name (z.B. Büro links)",
+              selector: { text: {} }
+            },
+            {
+              name: "solar_module2",
+              label: "Solar Modul 2 (Entity)",
+              selector: { entity: { domain: "sensor" } }
+            },
+            {
+              name: "solar_module2_name",
+              label: "Modul 2 Name (z.B. Büro rechts)",
+              selector: { text: {} }
+            },
+            {
+              name: "solar_module3",
+              label: "Solar Modul 3 (Entity)",
+              selector: { entity: { domain: "sensor" } }
+            },
+            {
+              name: "solar_module3_name",
+              label: "Modul 3 Name (z.B. Wohnhaus)",
+              selector: { text: {} }
+            },
+            {
+              name: "solar_module4",
+              label: "Solar Modul 4 (Entity)",
+              selector: { entity: { domain: "sensor" } }
+            },
+            {
+              name: "solar_module4_name",
+              label: "Modul 4 Name",
+              selector: { text: {} }
+            }
+          ]
         }
       ]
     };
@@ -103,13 +192,108 @@ class PrismEnergyCard extends HTMLElement {
       ev_power: config.ev_power || "",
       autarky: config.autarky || "",
       image: config.image || "/local/custom-components/images/prism-energy-home.png",
-      show_details: config.show_details !== false
+      show_details: config.show_details !== false,
+      // Max values for progress bars (in Watts)
+      max_solar_power: config.max_solar_power || 10000,
+      max_grid_power: config.max_grid_power || 10000,
+      max_consumption: config.max_consumption || 10000,
+      // Solar modules
+      solar_module1: config.solar_module1 || "",
+      solar_module1_name: config.solar_module1_name || "Modul 1",
+      solar_module2: config.solar_module2 || "",
+      solar_module2_name: config.solar_module2_name || "Modul 2",
+      solar_module3: config.solar_module3 || "",
+      solar_module3_name: config.solar_module3_name || "Modul 3",
+      solar_module4: config.solar_module4 || "",
+      solar_module4_name: config.solar_module4_name || "Modul 4"
     };
   }
 
   set hass(hass) {
     this._hass = hass;
-    this.render();
+    // Only do full render on first load, then just update values
+    if (!this._initialized) {
+      this.render();
+      this._initialized = true;
+    } else {
+      this._updateValues();
+    }
+  }
+
+  // Update only the dynamic values without re-rendering (preserves animations)
+  _updateValues() {
+    if (!this.shadowRoot || !this._hass) return;
+
+    const solarPower = this._getState(this._config.solar_power, 0);
+    const gridPower = this._getState(this._config.grid_power, 0);
+    const batterySoc = this._getState(this._config.battery_soc, 0);
+    const batteryPower = this._getState(this._config.battery_power, 0);
+    const homeConsumption = this._getState(this._config.home_consumption, 0);
+    const evPower = this._getState(this._config.ev_power, 0);
+    const autarky = this._getState(this._config.autarky, 0);
+
+    // Update pill values
+    this._updateElement('.pill-solar .pill-val', this._formatPower(solarPower));
+    this._updateElement('.pill-grid .pill-val', this._formatPower(gridPower));
+    this._updateElement('.pill-home .pill-val', this._formatPower(homeConsumption));
+    this._updateElement('.pill-battery .pill-val', `${Math.round(batterySoc)}%`);
+    
+    if (this._config.ev_power) {
+      const isEvCharging = evPower > 50;
+      this._updateElement('.pill-ev .pill-val', isEvCharging ? this._formatPower(evPower) : 'Idle');
+    }
+    
+    if (this._config.autarky) {
+      this._updateElement('.autarkie-text', `${Math.round(autarky)}%`);
+    }
+
+    // Update flow visibility
+    this._updateFlows();
+  }
+
+  _updateElement(selector, value) {
+    const el = this.shadowRoot.querySelector(selector);
+    if (el && el.textContent !== value) {
+      el.textContent = value;
+    }
+  }
+
+  _updateFlows() {
+    const solarPower = this._getState(this._config.solar_power, 0);
+    const gridPower = this._getState(this._config.grid_power, 0);
+    const batteryPower = this._getState(this._config.battery_power, 0);
+    const homeConsumption = this._getState(this._config.home_consumption, 0);
+    const evPower = this._getState(this._config.ev_power, 0);
+
+    const isSolarActive = solarPower > 50;
+    const isGridImport = gridPower > 50;
+    const isGridExport = gridPower < -50;
+    const isBatteryCharging = batteryPower < -50;
+    const isBatteryDischarging = batteryPower > 50;
+    const isEvCharging = evPower > 50;
+    const hasEV = !!this._config.ev_power;
+
+    // Show/hide flow groups based on state
+    this._setFlowVisibility('flow-solar-home', isSolarActive && homeConsumption > 0);
+    this._setFlowVisibility('flow-solar-battery', isSolarActive && isBatteryCharging);
+    this._setFlowVisibility('flow-solar-grid', isSolarActive && isGridExport);
+    this._setFlowVisibility('flow-grid-home', isGridImport);
+    this._setFlowVisibility('flow-grid-battery', isGridImport && isBatteryCharging);
+    this._setFlowVisibility('flow-battery-home', isBatteryDischarging);
+    this._setFlowVisibility('flow-battery-grid', isBatteryDischarging && isGridExport);
+    
+    if (hasEV) {
+      this._setFlowVisibility('flow-solar-ev', isSolarActive && isEvCharging);
+      this._setFlowVisibility('flow-grid-ev', isGridImport && isEvCharging);
+      this._setFlowVisibility('flow-battery-ev', isBatteryDischarging && isEvCharging);
+    }
+  }
+
+  _setFlowVisibility(className, visible) {
+    const el = this.shadowRoot.querySelector(`.${className}`);
+    if (el) {
+      el.style.display = visible ? 'block' : 'none';
+    }
   }
 
   getCardSize() {
@@ -118,11 +302,48 @@ class PrismEnergyCard extends HTMLElement {
 
   connectedCallback() {
     this.render();
+    this._setupEventListeners();
   }
 
   disconnectedCallback() {
     if (this._animationFrame) {
       cancelAnimationFrame(this._animationFrame);
+    }
+  }
+
+  // Open more-info dialog for an entity (shows history)
+  _openMoreInfo(entityId) {
+    if (!entityId || !this._hass) return;
+    
+    const event = new Event('hass-more-info', {
+      bubbles: true,
+      composed: true
+    });
+    event.detail = { entityId: entityId };
+    this.dispatchEvent(event);
+  }
+
+  // Setup click event listeners for pills
+  _setupEventListeners() {
+    if (!this.shadowRoot) return;
+    
+    // Add click listeners to all pills with data-entity attribute
+    this.shadowRoot.querySelectorAll('.pill[data-entity]').forEach(pill => {
+      pill.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const entityId = pill.getAttribute('data-entity');
+        if (entityId) {
+          this._openMoreInfo(entityId);
+        }
+      });
+    });
+
+    // Add click listener to house image (opens home consumption history)
+    const houseImg = this.shadowRoot.querySelector('.house-img');
+    if (houseImg && this._config.home_consumption) {
+      houseImg.addEventListener('click', () => {
+        this._openMoreInfo(this._config.home_consumption);
+      });
     }
   }
 
@@ -144,14 +365,77 @@ class PrismEnergyCard extends HTMLElement {
     return `${Math.round(absWatts)} W`;
   }
 
-  // Generate animated flow path
-  _renderFlow(path, color, active, reverse = false) {
-    if (!active) return '';
+  // Helper to render solar details (modules or total) - just the rows, bar is added externally
+  _renderSolarDetails(totalPower, color) {
+    // Check if any solar modules are configured
+    const modules = [];
+    if (this._config.solar_module1) {
+      modules.push({
+        entity: this._config.solar_module1,
+        name: this._config.solar_module1_name || "Modul 1"
+      });
+    }
+    if (this._config.solar_module2) {
+      modules.push({
+        entity: this._config.solar_module2,
+        name: this._config.solar_module2_name || "Modul 2"
+      });
+    }
+    if (this._config.solar_module3) {
+      modules.push({
+        entity: this._config.solar_module3,
+        name: this._config.solar_module3_name || "Modul 3"
+      });
+    }
+    if (this._config.solar_module4) {
+      modules.push({
+        entity: this._config.solar_module4,
+        name: this._config.solar_module4_name || "Modul 4"
+      });
+    }
+
+    // If modules are configured, show individual values
+    if (modules.length > 0) {
+      let html = '';
+      modules.forEach(mod => {
+        const power = this._getState(mod.entity, 0);
+        html += `
+          <div class="detail-row">
+            <span class="detail-label">${mod.name}</span>
+            <span class="detail-val" style="color: ${color};">${this._formatPower(power)}</span>
+          </div>
+        `;
+      });
+      return html;
+    }
+
+    // Default: show total power only
     return `
-      <g class="flow-group">
-        <path d="${path}" fill="none" stroke="${color}" stroke-width="1" stroke-opacity="0.15" stroke-linecap="round" />
-        <path d="${path}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-opacity="0.1" class="flow-glow" />
-        <path d="${path}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="4 200" class="flow-stream ${reverse ? 'reverse' : ''}" style="filter: drop-shadow(0 0 3px ${color}); opacity: 0.8;" />
+      <div class="detail-row">
+        <span class="detail-label">Leistung</span>
+        <span class="detail-val" style="color: ${color};">${this._formatPower(totalPower)}</span>
+      </div>
+    `;
+  }
+
+  // Generate animated flow path with "Fake Glow" - 3 layered paths instead of filters
+  _renderFlow(path, color, active, reverse = false, className = '') {
+    const direction = reverse ? 'reverse' : '';
+    const display = active ? 'block' : 'none';
+    
+    return `
+      <g class="flow-group ${className}" style="display: ${display};">
+        <!-- Background track (always visible when flow is active) -->
+        <path d="${path}" fill="none" stroke="${color}" stroke-width="0.6" stroke-opacity="0.15" stroke-linecap="round" />
+        
+        <!-- LAYER 1: Breiter, sehr transparenter Outer Glow -->
+        <path d="${path}" fill="none" stroke="${color}" stroke-width="3" stroke-opacity="0.1" stroke-linecap="round" class="flow-beam ${direction}" />
+        
+        <!-- LAYER 2: Mittlerer Inner Glow -->
+        <path d="${path}" fill="none" stroke="${color}" stroke-width="1.5" stroke-opacity="0.4" stroke-linecap="round" class="flow-beam ${direction}" />
+        
+        <!-- LAYER 3: Dünner, heller Kern -->
+        <path d="${path}" fill="none" stroke="#ffffff" stroke-width="0.1" stroke-opacity="0.3" stroke-linecap="round" class="flow-beam ${direction}" />
       </g>
     `;
   }
@@ -385,31 +669,36 @@ class PrismEnergyCard extends HTMLElement {
           50% { opacity: 0.5; transform: scale(0.9); }
         }
         
-        @keyframes flow-glow {
-          0%, 100% { opacity: 0.05; }
-          50% { opacity: 0.15; }
+        /* 
+         * Smooth flow animation - simple dash moving along path
+         * Like reference: https://www.mediaevent.de/wp-content/uploads/2021/06/schach-dashline-lineart.svg
+         */
+        @keyframes flow-animation {
+          0% {
+            stroke-dashoffset: 100;
+          }
+          100% {
+            stroke-dashoffset: 0;
+          }
         }
         
-        .flow-glow {
-          animation: flow-glow 3s ease-in-out infinite;
+        @keyframes flow-animation-reverse {
+          0% {
+            stroke-dashoffset: 0;
+          }
+          100% {
+            stroke-dashoffset: 100;
+          }
         }
         
-        @keyframes flow-stream {
-          0% { stroke-dashoffset: 0; }
-          100% { stroke-dashoffset: -204; }
+        .flow-beam {
+          stroke-dasharray: 25 75;
+          animation: flow-animation 3s linear infinite;
         }
         
-        @keyframes flow-stream-reverse {
-          0% { stroke-dashoffset: 0; }
-          100% { stroke-dashoffset: 204; }
-        }
-        
-        .flow-stream {
-          animation: flow-stream 4s linear infinite;
-        }
-        
-        .flow-stream.reverse {
-          animation: flow-stream-reverse 4s linear infinite;
+        .flow-beam.reverse {
+          stroke-dasharray: 25 75;
+          animation: flow-animation-reverse 3s linear infinite;
         }
 
         /* Data Pills - Inlet Style */
@@ -438,6 +727,23 @@ class PrismEnergyCard extends HTMLElement {
         
         .pill:hover {
           transform: translate(-50%, -50%) scale(1.03);
+        }
+        
+        .pill[data-entity] {
+          cursor: pointer;
+        }
+        
+        .pill[data-entity]:active {
+          transform: translate(-50%, -50%) scale(0.97);
+        }
+        
+        .house-img {
+          cursor: pointer;
+          transition: filter 0.2s ease;
+        }
+        
+        .house-img:hover {
+          filter: drop-shadow(0 20px 40px rgba(0,0,0,0.4)) brightness(1.05);
         }
         
         .pill-icon {
@@ -533,7 +839,14 @@ class PrismEnergyCard extends HTMLElement {
         .detail-col {
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          min-height: 90px;
+        }
+        
+        .detail-content {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
         }
         
         .detail-header {
@@ -542,6 +855,7 @@ class PrismEnergyCard extends HTMLElement {
           text-transform: uppercase;
           color: rgba(255, 255, 255, 0.4);
           letter-spacing: 0.08em;
+          margin-bottom: 4px;
         }
         
         .detail-row {
@@ -561,19 +875,25 @@ class PrismEnergyCard extends HTMLElement {
           color: rgba(255, 255, 255, 0.9);
         }
         
+        /* Inlet-style progress bar - aligned at bottom */
         .detail-bar {
-          height: 4px;
+          height: 6px;
           width: 100%;
-          background: rgba(255, 255, 255, 0.1);
           border-radius: 999px;
           overflow: hidden;
-          margin-top: 4px;
+          margin-top: auto;
+          background: rgba(0, 0, 0, 0.4);
+          box-shadow: 
+            inset 1px 1px 3px rgba(0, 0, 0, 0.5),
+            inset -1px -1px 2px rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(0, 0, 0, 0.3);
         }
         
         .detail-fill {
           height: 100%;
           border-radius: 999px;
           transition: width 0.5s ease;
+          box-shadow: 0 0 6px currentColor;
         }
 
         ha-icon {
@@ -616,25 +936,36 @@ class PrismEnergyCard extends HTMLElement {
 
           <!-- SVG Flows -->
           <svg class="svg-overlay" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <!-- Glow filter definition -->
+            <defs>
+              <filter id="glow-filter" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="5" result="coloredBlur" />
+                <feMerge>
+                  <feMergeNode in="coloredBlur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            
             <!-- Solar Flows -->
-            ${this._renderFlow(paths.solarToHome, colors.solar, isSolarActive && homeConsumption > 0)}
-            ${this._renderFlow(paths.solarToBattery, colors.solar, isSolarActive && isBatteryCharging)}
-            ${this._renderFlow(paths.solarToGrid, colors.solar, isSolarActive && isGridExport)}
-            ${hasEV ? this._renderFlow(paths.solarToEv, colors.solar, isSolarActive && isEvCharging) : ''}
+            ${this._renderFlow(paths.solarToHome, colors.solar, isSolarActive && homeConsumption > 0, false, 'flow-solar-home')}
+            ${this._renderFlow(paths.solarToBattery, colors.solar, isSolarActive && isBatteryCharging, false, 'flow-solar-battery')}
+            ${this._renderFlow(paths.solarToGrid, colors.solar, isSolarActive && isGridExport, false, 'flow-solar-grid')}
+            ${hasEV ? this._renderFlow(paths.solarToEv, colors.solar, isSolarActive && isEvCharging, false, 'flow-solar-ev') : ''}
 
             <!-- Grid Flows -->
-            ${this._renderFlow(paths.gridToHome, colors.grid, isGridImport)}
-            ${this._renderFlow(paths.gridToBattery, colors.grid, isGridImport && isBatteryCharging)}
-            ${hasEV ? this._renderFlow(paths.gridToEv, colors.grid, isGridImport && isEvCharging) : ''}
+            ${this._renderFlow(paths.gridToHome, colors.grid, isGridImport, false, 'flow-grid-home')}
+            ${this._renderFlow(paths.gridToBattery, colors.grid, isGridImport && isBatteryCharging, false, 'flow-grid-battery')}
+            ${hasEV ? this._renderFlow(paths.gridToEv, colors.grid, isGridImport && isEvCharging, false, 'flow-grid-ev') : ''}
 
             <!-- Battery Flows -->
-            ${this._renderFlow(paths.batteryToHome, colors.battery, isBatteryDischarging)}
-            ${hasEV ? this._renderFlow(paths.batteryToEv, colors.battery, isBatteryDischarging && isEvCharging) : ''}
-            ${this._renderFlow(paths.batteryToGrid, colors.battery, isBatteryDischarging && isGridExport)}
+            ${this._renderFlow(paths.batteryToHome, colors.battery, isBatteryDischarging, false, 'flow-battery-home')}
+            ${hasEV ? this._renderFlow(paths.batteryToEv, colors.battery, isBatteryDischarging && isEvCharging, false, 'flow-battery-ev') : ''}
+            ${this._renderFlow(paths.batteryToGrid, colors.battery, isBatteryDischarging && isGridExport, false, 'flow-battery-grid')}
           </svg>
 
-          <!-- Solar Pill (Top - Roof) -->
-          <div class="pill" style="top: 22%; left: 52%;">
+          <!-- Solar Pill (Top - Roof) - Clickable for history -->
+          <div class="pill pill-solar" style="top: 22%; left: 52%;" data-entity="${this._config.solar_power}" title="Klicken für Historie">
             <div class="pill-icon ${isSolarActive ? 'bg-solar' : 'bg-inactive'}">
               <ha-icon icon="mdi:solar-power" class="${isSolarActive ? 'color-solar' : 'color-inactive'}"></ha-icon>
             </div>
@@ -644,8 +975,8 @@ class PrismEnergyCard extends HTMLElement {
             </div>
           </div>
 
-          <!-- Grid Pill (Left - Power Pole) -->
-          <div class="pill" style="top: 32%; left: 18%;">
+          <!-- Grid Pill (Left - Power Pole) - Clickable for history -->
+          <div class="pill pill-grid" style="top: 32%; left: 18%;" data-entity="${this._config.grid_power}" title="Klicken für Historie">
             <div class="pill-icon ${isGridImport || isGridExport ? 'bg-grid' : 'bg-inactive'}">
               <ha-icon icon="mdi:transmission-tower" class="${isGridImport || isGridExport ? 'color-grid' : 'color-inactive'}"></ha-icon>
             </div>
@@ -655,8 +986,8 @@ class PrismEnergyCard extends HTMLElement {
             </div>
           </div>
 
-          <!-- Home Pill (Center - House) -->
-          <div class="pill" style="top: 54%; left: 55%;">
+          <!-- Home Pill (Center - House) - Clickable for history -->
+          <div class="pill pill-home" style="top: 54%; left: 55%;" data-entity="${this._config.home_consumption}" title="Klicken für Historie">
             <div class="pill-icon bg-home">
               <ha-icon icon="mdi:home-lightning-bolt" class="color-home"></ha-icon>
             </div>
@@ -666,8 +997,8 @@ class PrismEnergyCard extends HTMLElement {
             </div>
           </div>
 
-          <!-- Battery Pill (Right - Battery Storage) -->
-          <div class="pill" style="top: 60%; left: 88%;">
+          <!-- Battery Pill (Right - Battery Storage) - Clickable for history -->
+          <div class="pill pill-battery" style="top: 60%; left: 88%;" data-entity="${this._config.battery_soc}" title="Klicken für Historie">
             <div class="pill-icon ${isBatteryCharging || isBatteryDischarging ? 'bg-battery' : 'bg-inactive'}">
               <ha-icon icon="${batteryIcon}" class="${isBatteryCharging || isBatteryDischarging ? 'color-battery' : 'color-inactive'}"></ha-icon>
             </div>
@@ -677,9 +1008,9 @@ class PrismEnergyCard extends HTMLElement {
             </div>
           </div>
 
-          <!-- EV Pill (Bottom Left - Carport) -->
+          <!-- EV Pill (Bottom Left - Carport) - Clickable for history -->
           ${hasEV ? `
-          <div class="pill" style="top: 72%; left: 22%;">
+          <div class="pill pill-ev" style="top: 72%; left: 22%;" data-entity="${this._config.ev_power}" title="Klicken für Historie">
             <div class="pill-icon ${isEvCharging ? 'bg-ev' : 'bg-inactive'}">
               <ha-icon icon="mdi:car-electric" class="${isEvCharging ? 'color-ev' : 'color-inactive'}"></ha-icon>
             </div>
@@ -697,49 +1028,54 @@ class PrismEnergyCard extends HTMLElement {
           <!-- Erzeugung -->
           <div class="detail-col">
             <div class="detail-header">Solar</div>
-            <div class="detail-row">
-              <span class="detail-label">Leistung</span>
-              <span class="detail-val" style="color: ${colors.solar};">${this._formatPower(solarPower)}</span>
+            <div class="detail-content">
+              ${this._renderSolarDetails(solarPower, colors.solar)}
             </div>
             <div class="detail-bar">
-              <div class="detail-fill" style="width: ${Math.min(100, (solarPower / 10000) * 100)}%; background: ${colors.solar};"></div>
+              <div class="detail-fill" style="width: ${Math.min(100, (solarPower / this._config.max_solar_power) * 100)}%; background: ${colors.solar};"></div>
             </div>
           </div>
 
           <!-- Netz -->
           <div class="detail-col">
             <div class="detail-header">Netz</div>
-            <div class="detail-row">
-              <span class="detail-label">${isGridExport ? 'Einspeisung' : 'Bezug'}</span>
-              <span class="detail-val" style="color: ${isGridExport ? colors.battery : '#ef4444'};">${this._formatPower(gridPower)}</span>
+            <div class="detail-content">
+              <div class="detail-row">
+                <span class="detail-label">${isGridExport ? 'Einspeisung' : 'Bezug'}</span>
+                <span class="detail-val" style="color: ${isGridExport ? colors.battery : '#ef4444'};">${this._formatPower(gridPower)}</span>
+              </div>
             </div>
             <div class="detail-bar">
-              <div class="detail-fill" style="width: ${Math.min(100, (Math.abs(gridPower) / 10000) * 100)}%; background: ${isGridExport ? colors.battery : '#ef4444'};"></div>
+              <div class="detail-fill" style="width: ${Math.min(100, (Math.abs(gridPower) / this._config.max_grid_power) * 100)}%; background: ${isGridExport ? colors.battery : '#ef4444'};"></div>
             </div>
           </div>
 
           <!-- Verbrauch -->
           <div class="detail-col">
             <div class="detail-header">Verbrauch</div>
-            <div class="detail-row">
-              <span class="detail-label">Aktuell</span>
-              <span class="detail-val">${this._formatPower(homeConsumption)}</span>
+            <div class="detail-content">
+              <div class="detail-row">
+                <span class="detail-label">Aktuell</span>
+                <span class="detail-val">${this._formatPower(homeConsumption)}</span>
+              </div>
             </div>
             <div class="detail-bar">
-              <div class="detail-fill" style="width: ${Math.min(100, (homeConsumption / 10000) * 100)}%; background: ${colors.home};"></div>
+              <div class="detail-fill" style="width: ${Math.min(100, (homeConsumption / this._config.max_consumption) * 100)}%; background: ${colors.home};"></div>
             </div>
           </div>
 
           <!-- Speicher -->
           <div class="detail-col">
             <div class="detail-header">Speicher</div>
-            <div class="detail-row">
-              <span class="detail-label">SOC</span>
-              <span class="detail-val" style="color: ${colors.battery};">${Math.round(batterySoc)}%</span>
-            </div>
-            <div class="detail-row">
-              <span class="detail-label">Leistung</span>
-              <span class="detail-val">${this._formatPower(Math.abs(batteryPower))}</span>
+            <div class="detail-content">
+              <div class="detail-row">
+                <span class="detail-label">Leistung</span>
+                <span class="detail-val">${this._formatPower(Math.abs(batteryPower))}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">SOC</span>
+                <span class="detail-val" style="color: ${colors.battery};">${Math.round(batterySoc)}%</span>
+              </div>
             </div>
             <div class="detail-bar">
               <div class="detail-fill" style="width: ${batterySoc}%; background: ${colors.battery};"></div>
@@ -749,6 +1085,9 @@ class PrismEnergyCard extends HTMLElement {
         ` : ''}
       </div>
     `;
+    
+    // Setup click event listeners after rendering
+    this._setupEventListeners();
   }
 }
 

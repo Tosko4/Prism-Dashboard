@@ -403,13 +403,54 @@ Gehe zu **Einstellungen → Geräte & Dienste → OpenEMS → X Entitäten** und
 |---------|---------|--------------|
 | `sensor.<system>_evcs0_chargepower` | ChargePower | 🚗 E-Auto Ladeleistung (Watt) |
 
+**Solar-Module (Charger) Entitäten:**
+
+Wenn du mehrere Solar-Charger/Wechselrichter hast, kannst du diese einzeln anzeigen lassen:
+
+| Entität | Channel | Beschreibung |
+|---------|---------|--------------|
+| `sensor.<system>_charger0_actualpower` | ActualPower | ☀️ Charger 0 Leistung (Watt) |
+| `sensor.<system>_charger1_actualpower` | ActualPower | ☀️ Charger 1 Leistung (Watt) |
+| `sensor.<system>_charger2_actualpower` | ActualPower | ☀️ Charger 2 Leistung (Watt) |
+| `sensor.<system>_charger3_actualpower` | ActualPower | ☀️ Charger 3 Leistung (Watt) |
+
+> 💡 **Tipp:** Die Charger-Nummern entsprechen den einzelnen Wechselrichtern/PV-Strings deines Systems. Konfiguriere diese in der Karte unter "Solar Module" und gib jedem einen sprechenden Namen (z.B. "Dach Süd", "Carport", etc.).
+
 ---
 
 #### Autarkie-Sensor erstellen
 
 > ⚠️ **Wichtig:** Die ha_openems Integration bietet **keine direkte Autarkie-Entität**. Du musst einen Template-Sensor erstellen!
 
-Füge folgenden Code zu deiner `configuration.yaml` hinzu:
+**Methode 1: Über die Home Assistant UI (empfohlen, ab HA 2023.3)**
+
+1. Gehe zu **Einstellungen → Geräte & Dienste → Helfer**
+2. Klicke auf **Helfer erstellen** (unten rechts)
+3. Wähle **Template** aus der Liste
+4. Fülle die Felder aus:
+   - **Name**: `Energie Autarkie`
+   - **Einheit**: `%`
+   - **Icon**: `mdi:leaf`
+   - **Template**: Kopiere den folgenden Code (ersetze `DEINE_SYSTEM_ID` mit deiner System-ID):
+
+```jinja2
+{% set consumption = states('sensor.DEINE_SYSTEM_ID_sum_consumptionactivepower') | float(0) %}
+{% set grid_import = states('sensor.DEINE_SYSTEM_ID_sum_gridactivepower') | float(0) %}
+{% if consumption > 0 %}
+  {% set grid_used = [grid_import, 0] | max %}
+  {{ ((1 - (grid_used / consumption)) * 100) | round(0) }}
+{% else %}
+  100
+{% endif %}
+```
+
+5. Klicke auf **Erstellen**
+
+**Beispiel:** Wenn deine Entität `sensor.fems79420_sum_consumptionactivepower` heißt, dann ist deine System-ID `fems79420`. Ersetze also `DEINE_SYSTEM_ID` mit `fems79420`.
+
+**Methode 2: Über configuration.yaml (für erfahrene Nutzer)**
+
+Falls du lieber YAML verwendest, füge folgenden Code zu deiner `configuration.yaml` hinzu:
 
 ```yaml
 template:
@@ -431,8 +472,6 @@ template:
 ```
 
 **Ersetze `DEINE_SYSTEM_ID` mit deiner tatsächlichen System-ID!**
-
-Beispiel: Wenn deine Entität `sensor.fems79420_sum_consumptionactivepower` heißt, dann ist deine System-ID `fems79420`.
 
 Nach dem Neustart von Home Assistant hast du `sensor.energie_autarkie` zur Verfügung.
 
@@ -469,6 +508,25 @@ image: /hacsfiles/images/prism-energy-home.png
 show_details: true
 ```
 
+**Erweiterte Konfiguration mit Solar-Modulen:**
+```yaml
+type: custom:prism-energy
+name: Energy Monitor
+solar_power: sensor.fems79420_sum_productionactivepower
+grid_power: sensor.fems79420_sum_gridactivepower
+battery_soc: sensor.fems79420_sum_esssoc
+battery_power: sensor.fems79420_sum_essdischargepower
+home_consumption: sensor.fems79420_sum_consumptionactivepower
+show_details: true
+# Solar Module einzeln anzeigen (optional)
+solar_module1: sensor.fems79420_charger0_actualpower
+solar_module1_name: "Büro links"
+solar_module2: sensor.fems79420_charger1_actualpower
+solar_module2_name: "Büro rechts"
+solar_module3: sensor.fems79420_charger2_actualpower
+solar_module3_name: "Wohnhaus"
+```
+
 ---
 
 #### Konfigurationsoptionen
@@ -476,7 +534,7 @@ show_details: true
 | Option | Typ | Pflicht | Beschreibung |
 |--------|-----|---------|--------------|
 | `name` | string | Nein | Kartenname (Standard: "Energy Monitor") |
-| `solar_power` | entity | Ja | Solar-Produktions-Sensor |
+| `solar_power` | entity | Ja | Solar-Produktions-Sensor (Gesamt) |
 | `grid_power` | entity | Ja | Netz-Leistungs-Sensor (positiv=Bezug, negativ=Einspeisung) |
 | `battery_soc` | entity | Ja | Batterie-Ladezustand in % |
 | `battery_power` | entity | Ja | Batterie-Leistung (positiv=Entladung, negativ=Ladung) |
@@ -485,6 +543,15 @@ show_details: true
 | `autarky` | entity | Nein | Autarkie-Prozent (wenn nicht gesetzt, wird Badge nicht angezeigt) |
 | `image` | string | Nein | Pfad zum Haus-Bild (Standard: prism-energy-home.png) |
 | `show_details` | boolean | Nein | Details-Bereich unten anzeigen (Standard: true) |
+| **Solar Module** | | | *Optionale Einzelanzeige der Solar-Charger im Detail-Bereich* |
+| `solar_module1` | entity | Nein | Solar Charger 1 Entity (z.B. `charger0_actualpower`) |
+| `solar_module1_name` | string | Nein | Name für Modul 1 (z.B. "Büro links") |
+| `solar_module2` | entity | Nein | Solar Charger 2 Entity |
+| `solar_module2_name` | string | Nein | Name für Modul 2 (z.B. "Büro rechts") |
+| `solar_module3` | entity | Nein | Solar Charger 3 Entity |
+| `solar_module3_name` | string | Nein | Name für Modul 3 (z.B. "Wohnhaus") |
+| `solar_module4` | entity | Nein | Solar Charger 4 Entity |
+| `solar_module4_name` | string | Nein | Name für Modul 4 |
 
 ---
 
