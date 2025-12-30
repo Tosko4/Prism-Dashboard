@@ -1,4 +1,4 @@
-## <img src="https://raw.githubusercontent.com/BangerTech/Prism-Dashboard/main/custom-components/images/prism-logo.png" alt="Prism" width="28"> Prism Dashboard
+## <img src="https://raw.githubusercontent.com/BangerTech/Prism-Dashboard/main/custom-components/images/prism-logo.png" alt="Prism" width="80" align="center"> Prism Dashboard
 
 A modern, glassmorphism-inspired dashboard for Home Assistant.
 
