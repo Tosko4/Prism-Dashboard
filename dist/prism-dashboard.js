@@ -3,7 +3,7 @@
  * https://github.com/BangerTech/Prism-Dashboard
  * 
  * Version: 1.0.0
- * Build Date: 2025-12-30T10:46:57.924Z
+ * Build Date: 2025-12-30T13:01:32.829Z
  * 
  * This file contains all Prism custom cards bundled together.
  * Just add this single file as a resource in Lovelace:
@@ -10794,7 +10794,7 @@ window.customCards.push({
  * - Day/Night transitions with house dimming
  * - Sunrise/Sunset effects
  * 
- * @version 1.2.0
+ * @version 1.2.1
  * @author BangerTech
  */
 
@@ -11195,13 +11195,14 @@ class PrismEnergyCard extends HTMLElement {
   _updateValues() {
     if (!this.shadowRoot || !this._hass) return;
 
-    const solarPower = this._getState(this._config.solar_power, 0);
-    const gridPower = this._getState(this._config.grid_power, 0);
-    const batterySoc = this._getState(this._config.battery_soc, 0);
-    const batteryPower = this._getState(this._config.battery_power, 0);
-    const homeConsumption = this._getState(this._config.home_consumption, 0);
-    const evPower = this._getState(this._config.ev_power, 0);
-    const autarky = this._getState(this._config.autarky, 0);
+    // Use _getStateInWatts for power sensors to handle kW units (e.g. from evcc)
+    const solarPower = this._getStateInWatts(this._config.solar_power, 0);
+    const gridPower = this._getStateInWatts(this._config.grid_power, 0);
+    const batterySoc = this._getState(this._config.battery_soc, 0); // SOC is percentage, not power
+    const batteryPower = this._getStateInWatts(this._config.battery_power, 0);
+    const homeConsumption = this._getStateInWatts(this._config.home_consumption, 0);
+    const evPower = this._getStateInWatts(this._config.ev_power, 0);
+    const autarky = this._getState(this._config.autarky, 0); // Autarky is percentage
 
     // Update pill values
     this._updateElement('.pill-solar .pill-val', this._formatPower(solarPower));
@@ -11230,11 +11231,12 @@ class PrismEnergyCard extends HTMLElement {
   }
 
   _updateFlows() {
-    const solarPower = this._getState(this._config.solar_power, 0);
-    const gridPower = this._getState(this._config.grid_power, 0);
-    const batteryPower = this._getState(this._config.battery_power, 0);
-    const homeConsumption = this._getState(this._config.home_consumption, 0);
-    const evPower = this._getState(this._config.ev_power, 0);
+    // Use _getStateInWatts for power sensors to handle kW units (e.g. from evcc)
+    const solarPower = this._getStateInWatts(this._config.solar_power, 0);
+    const gridPower = this._getStateInWatts(this._config.grid_power, 0);
+    const batteryPower = this._getStateInWatts(this._config.battery_power, 0);
+    const homeConsumption = this._getStateInWatts(this._config.home_consumption, 0);
+    const evPower = this._getStateInWatts(this._config.ev_power, 0);
 
     const isSolarActive = solarPower > 50;
     const isGridImport = gridPower > 50;
@@ -11327,6 +11329,23 @@ class PrismEnergyCard extends HTMLElement {
     return isNaN(val) ? defaultVal : val;
   }
 
+  // Helper to get power entity state normalized to Watts
+  // Handles entities that report in kW (like evcc) and converts them to W
+  _getStateInWatts(entityId, defaultVal = 0) {
+    if (!entityId || !this._hass) return defaultVal;
+    const stateObj = this._hass.states[entityId];
+    if (!stateObj) return defaultVal;
+    const val = parseFloat(stateObj.state);
+    if (isNaN(val)) return defaultVal;
+    
+    // Check unit of measurement and convert kW to W if needed
+    const unit = stateObj.attributes?.unit_of_measurement?.toLowerCase() || '';
+    if (unit === 'kw') {
+      return val * 1000; // Convert kW to W
+    }
+    return val;
+  }
+
   // Helper to format power values
   _formatPower(watts) {
     const absWatts = Math.abs(watts);
@@ -11369,7 +11388,7 @@ class PrismEnergyCard extends HTMLElement {
     if (modules.length > 0) {
       let html = '';
       modules.forEach(mod => {
-        const power = this._getState(mod.entity, 0);
+        const power = this._getStateInWatts(mod.entity, 0);
         html += `
           <div class="detail-row">
             <span class="detail-label">${mod.name}</span>
@@ -12000,14 +12019,14 @@ class PrismEnergyCard extends HTMLElement {
   render() {
     if (!this.shadowRoot) return;
 
-    // Get current values
-    const solarPower = this._getState(this._config.solar_power, 0);
-    const gridPower = this._getState(this._config.grid_power, 0);
-    const batterySoc = this._getState(this._config.battery_soc, 0);
-    const batteryPower = this._getState(this._config.battery_power, 0);
-    const homeConsumption = this._getState(this._config.home_consumption, 0);
-    const evPower = this._getState(this._config.ev_power, 0);
-    const autarky = this._getState(this._config.autarky, 0);
+    // Get current values - use _getStateInWatts for power sensors to handle kW units (e.g. from evcc)
+    const solarPower = this._getStateInWatts(this._config.solar_power, 0);
+    const gridPower = this._getStateInWatts(this._config.grid_power, 0);
+    const batterySoc = this._getState(this._config.battery_soc, 0); // SOC is percentage, not power
+    const batteryPower = this._getStateInWatts(this._config.battery_power, 0);
+    const homeConsumption = this._getStateInWatts(this._config.home_consumption, 0);
+    const evPower = this._getStateInWatts(this._config.ev_power, 0);
+    const autarky = this._getState(this._config.autarky, 0); // Autarky is percentage
     
     const hasEV = !!this._config.ev_power;
     const hasAutarky = !!this._config.autarky;
@@ -12722,7 +12741,7 @@ window.customCards.push({
 });
 
 console.info(
-  `%c PRISM-ENERGY %c v1.2.0 %c Configurable Positions `,
+  `%c PRISM-ENERGY %c v1.2.1 %c kW/W Auto-Detection `,
   'background: #F59E0B; color: black; font-weight: bold; padding: 2px 6px; border-radius: 4px 0 0 4px;',
   'background: #1e2024; color: white; font-weight: bold; padding: 2px 6px;',
   'background: #3B82F6; color: white; font-weight: bold; padding: 2px 6px; border-radius: 0 4px 4px 0;'
@@ -12745,7 +12764,7 @@ console.info(
  * - Weather effects (rain, snow, fog, sun, moon, stars)
  * - Day/Night transitions with house dimming
  * 
- * @version 1.2.0
+ * @version 1.2.1
  * @author BangerTech
  */
 
@@ -13147,13 +13166,14 @@ class PrismEnergyHorizontalCard extends HTMLElement {
   _updateValues() {
     if (!this.shadowRoot || !this._hass) return;
 
-    const solarPower = this._getState(this._config.solar_power, 0);
-    const gridPower = this._getState(this._config.grid_power, 0);
-    const batterySoc = this._getState(this._config.battery_soc, 0);
-    const batteryPower = this._getState(this._config.battery_power, 0);
-    const homeConsumption = this._getState(this._config.home_consumption, 0);
-    const evPower = this._getState(this._config.ev_power, 0);
-    const autarky = this._getState(this._config.autarky, 0);
+    // Use _getStateInWatts for power sensors to handle kW units (e.g. from evcc)
+    const solarPower = this._getStateInWatts(this._config.solar_power, 0);
+    const gridPower = this._getStateInWatts(this._config.grid_power, 0);
+    const batterySoc = this._getState(this._config.battery_soc, 0); // SOC is percentage, not power
+    const batteryPower = this._getStateInWatts(this._config.battery_power, 0);
+    const homeConsumption = this._getStateInWatts(this._config.home_consumption, 0);
+    const evPower = this._getStateInWatts(this._config.ev_power, 0);
+    const autarky = this._getState(this._config.autarky, 0); // Autarky is percentage
 
     // Update pill values
     this._updateElement('.pill-solar .pill-val', this._formatPower(solarPower));
@@ -13185,10 +13205,11 @@ class PrismEnergyHorizontalCard extends HTMLElement {
   }
 
   _updateGauges() {
-    const solarPower = this._getState(this._config.solar_power, 0);
-    const gridPower = this._getState(this._config.grid_power, 0);
-    const batterySoc = this._getState(this._config.battery_soc, 0);
-    const homeConsumption = this._getState(this._config.home_consumption, 0);
+    // Use _getStateInWatts for power sensors to handle kW units (e.g. from evcc)
+    const solarPower = this._getStateInWatts(this._config.solar_power, 0);
+    const gridPower = this._getStateInWatts(this._config.grid_power, 0);
+    const batterySoc = this._getState(this._config.battery_soc, 0); // SOC is percentage, not power
+    const homeConsumption = this._getStateInWatts(this._config.home_consumption, 0);
 
     // Update inlet gauge arcs
     this._updateGaugeArc('solar-gauge-arc', solarPower / this._config.max_solar_power);
@@ -13217,11 +13238,12 @@ class PrismEnergyHorizontalCard extends HTMLElement {
   }
 
   _updateFlows() {
-    const solarPower = this._getState(this._config.solar_power, 0);
-    const gridPower = this._getState(this._config.grid_power, 0);
-    const batteryPower = this._getState(this._config.battery_power, 0);
-    const homeConsumption = this._getState(this._config.home_consumption, 0);
-    const evPower = this._getState(this._config.ev_power, 0);
+    // Use _getStateInWatts for power sensors to handle kW units (e.g. from evcc)
+    const solarPower = this._getStateInWatts(this._config.solar_power, 0);
+    const gridPower = this._getStateInWatts(this._config.grid_power, 0);
+    const batteryPower = this._getStateInWatts(this._config.battery_power, 0);
+    const homeConsumption = this._getStateInWatts(this._config.home_consumption, 0);
+    const evPower = this._getStateInWatts(this._config.ev_power, 0);
 
     const isSolarActive = solarPower > 50;
     const isGridImport = gridPower > 50;
@@ -13332,6 +13354,23 @@ class PrismEnergyHorizontalCard extends HTMLElement {
     if (!stateObj) return defaultVal;
     const val = parseFloat(stateObj.state);
     return isNaN(val) ? defaultVal : val;
+  }
+
+  // Helper to get power entity state normalized to Watts
+  // Handles entities that report in kW (like evcc) and converts them to W
+  _getStateInWatts(entityId, defaultVal = 0) {
+    if (!entityId || !this._hass) return defaultVal;
+    const stateObj = this._hass.states[entityId];
+    if (!stateObj) return defaultVal;
+    const val = parseFloat(stateObj.state);
+    if (isNaN(val)) return defaultVal;
+    
+    // Check unit of measurement and convert kW to W if needed
+    const unit = stateObj.attributes?.unit_of_measurement?.toLowerCase() || '';
+    if (unit === 'kw') {
+      return val * 1000; // Convert kW to W
+    }
+    return val;
   }
 
   // Helper to format power values
@@ -13664,14 +13703,14 @@ class PrismEnergyHorizontalCard extends HTMLElement {
   render() {
     if (!this.shadowRoot) return;
 
-    // Get current values
-    const solarPower = this._getState(this._config.solar_power, 0);
-    const gridPower = this._getState(this._config.grid_power, 0);
-    const batterySoc = this._getState(this._config.battery_soc, 0);
-    const batteryPower = this._getState(this._config.battery_power, 0);
-    const homeConsumption = this._getState(this._config.home_consumption, 0);
-    const evPower = this._getState(this._config.ev_power, 0);
-    const autarky = this._getState(this._config.autarky, 0);
+    // Get current values - use _getStateInWatts for power sensors to handle kW units (e.g. from evcc)
+    const solarPower = this._getStateInWatts(this._config.solar_power, 0);
+    const gridPower = this._getStateInWatts(this._config.grid_power, 0);
+    const batterySoc = this._getState(this._config.battery_soc, 0); // SOC is percentage, not power
+    const batteryPower = this._getStateInWatts(this._config.battery_power, 0);
+    const homeConsumption = this._getStateInWatts(this._config.home_consumption, 0);
+    const evPower = this._getStateInWatts(this._config.ev_power, 0);
+    const autarky = this._getState(this._config.autarky, 0); // Autarky is percentage
     
     const hasEV = !!this._config.ev_power;
     const hasAutarky = !!this._config.autarky;
@@ -14640,7 +14679,7 @@ class PrismEnergyHorizontalCard extends HTMLElement {
     let html = `<div class="modules-list">`;
 
     modules.forEach(mod => {
-      const power = this._getState(mod.entity, 0);
+      const power = this._getStateInWatts(mod.entity, 0);
       html += `
         <div class="module-item">
           <span class="module-name">${mod.name}</span>
@@ -14667,7 +14706,7 @@ window.customCards.push({
 });
 
 console.info(
-  `%c PRISM-ENERGY-HORIZONTAL %c v1.2.0 %c Configurable Positions `,
+  `%c PRISM-ENERGY-HORIZONTAL %c v1.2.1 %c kW/W Auto-Detection `,
   'background: #F59E0B; color: black; font-weight: bold; padding: 2px 6px; border-radius: 4px 0 0 4px;',
   'background: #1e2024; color: white; font-weight: bold; padding: 2px 6px;',
   'background: #3B82F6; color: white; font-weight: bold; padding: 2px 6px; border-radius: 0 4px 4px 0;'
