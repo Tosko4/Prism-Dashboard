@@ -42,7 +42,7 @@ class PrismHeatSmallLightCard extends HTMLElement {
   }
 
   getCardSize() {
-    return 3;
+    return 2;
   }
 
   connectedCallback() {
@@ -152,6 +152,8 @@ class PrismHeatSmallLightCard extends HTMLElement {
             display: flex;
             align-items: center;
             justify-content: center;
+            --mdc-icon-size: 20px;
+            line-height: 0;
         }
         
         .info { 
@@ -194,6 +196,9 @@ class PrismHeatSmallLightCard extends HTMLElement {
             display: flex;
             align-items: center;
             justify-content: center;
+            --mdc-icon-size: 12px;
+            line-height: 0;
+            color: #fb923c;
         }
         .chip-text { 
             font-size: 10px; 
@@ -227,6 +232,13 @@ class PrismHeatSmallLightCard extends HTMLElement {
             border: 1px solid rgba(0,0,0,0.08);
             transform: scale(0.95);
         }
+        .control-btn ha-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            --mdc-icon-size: 20px;
+            line-height: 0;
+        }
         
         .inlet-display {
             flex: 1; height: 38px; border-radius: 12px;
@@ -247,7 +259,7 @@ class PrismHeatSmallLightCard extends HTMLElement {
         <div class="header">
             <div class="header-left">
                 <div class="icon-box">
-                    <ha-icon icon="mdi:fire" style="width: 20px; height: 20px;"></ha-icon>
+                    <ha-icon icon="mdi:fire"></ha-icon>
                 </div>
                 <div class="info">
                     <div class="title">${name}</div>
@@ -256,14 +268,14 @@ class PrismHeatSmallLightCard extends HTMLElement {
             </div>
             
             <div class="chip">
-                <ha-icon icon="mdi:thermometer" style="width: 12px; height: 12px; color: #fb923c;"></ha-icon>
+                <ha-icon icon="mdi:thermometer"></ha-icon>
                 <div class="chip-text">${hvacMode}</div>
             </div>
         </div>
         
         <div class="controls">
             <div class="control-btn" data-action="minus">
-                <ha-icon icon="mdi:minus" style="width: 20px; height: 20px;"></ha-icon>
+                <ha-icon icon="mdi:minus"></ha-icon>
             </div>
             
             <div class="inlet-display">
@@ -271,7 +283,7 @@ class PrismHeatSmallLightCard extends HTMLElement {
             </div>
             
             <div class="control-btn" data-action="plus">
-                <ha-icon icon="mdi:plus" style="width: 20px; height: 20px;"></ha-icon>
+                <ha-icon icon="mdi:plus"></ha-icon>
             </div>
         </div>
 
