@@ -243,10 +243,18 @@ class PrismVacuumLightCard extends HTMLElement {
       const entityId = this.config.map_camera;
       const domain = entityId.split('.')[0];
       
+      // First try entity_picture attribute - this is a pre-signed URL that works for both camera and image entities
+      if (this._mapEntity.attributes.entity_picture) {
+        const entityPicture = this._mapEntity.attributes.entity_picture;
+        // Add cache-busting timestamp if not already present
+        const separator = entityPicture.includes('?') ? '&' : '?';
+        return `${entityPicture}${separator}_ts=${Date.now()}`;
+      }
+      
+      // Fallback for camera entities
       if (domain === 'camera') {
-        return `/api/camera_proxy/${entityId}?token=${this._mapEntity.attributes.access_token || ''}&t=${Date.now()}`;
-      } else if (domain === 'image') {
-        return `/api/image_proxy/${entityId}?t=${Date.now()}`;
+        const token = this._mapEntity.attributes.access_token || '';
+        return `/api/camera_proxy/${entityId}?token=${token}&t=${Date.now()}`;
       }
       
       return null;
