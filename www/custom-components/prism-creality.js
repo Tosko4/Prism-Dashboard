@@ -372,16 +372,35 @@ class PrismCrealityCard extends HTMLElement {
 
     const deviceEntities = this.getDeviceEntitiesForPrinter(deviceId);
     
-    // Get print status - Creality uses 'state' or 'deviceState'
-    let stateStr = 'unavailable';
-    const stateEntity = this.findEntityByPatternForDevice(deviceId, 'state', 'sensor');
+    // Get print status - Creality uses 'deviceState', 'print_state', or 'state'
+    // Priority order: devicestate > print_state > printer_state > state (most specific first)
+    let stateStr = 'Idle';
+    const stateEntity = this.findEntityByPatternForDevice(deviceId, 'devicestate', 'sensor') ||
+                        this.findEntityByPatternForDevice(deviceId, 'print_state', 'sensor') ||
+                        this.findEntityByPatternForDevice(deviceId, 'printer_state', 'sensor') ||
+                        this.findEntityByPatternForDevice(deviceId, '_state', 'sensor');
+    
     if (stateEntity) {
-      stateStr = this._hass.states[stateEntity]?.state || 'unavailable';
+      const rawState = this._hass.states[stateEntity]?.state || 'unavailable';
+      // If state is purely numeric (like "0", "1"), convert to readable status
+      if (/^\d+$/.test(rawState)) {
+        // Common Creality numeric states: 0 = Idle, 1 = Printing, 2 = Paused, etc.
+        const numericStateMap = {
+          '0': 'Idle',
+          '1': 'Printing',
+          '2': 'Paused',
+          '3': 'Finished',
+          '4': 'Stopped'
+        };
+        stateStr = numericStateMap[rawState] || 'Idle';
+      } else {
+        stateStr = rawState;
+      }
     }
     
     const statusLower = stateStr.toLowerCase();
-    const isPrinting = ['printing', 'prepare', 'running', 'druckt'].includes(statusLower);
-    const isPaused = ['paused', 'pause', 'pausiert'].includes(statusLower);
+    const isPrinting = ['printing', 'prepare', 'running', 'druckt', '1'].includes(statusLower);
+    const isPaused = ['paused', 'pause', 'pausiert', '2'].includes(statusLower);
     const isIdle = !isPrinting && !isPaused;
 
     // Progress
@@ -1583,49 +1602,66 @@ class PrismCrealityCard extends HTMLElement {
     };
     document.addEventListener('keydown', this._cameraPopupEscHandler);
     
-    // Make popup draggable by header
+    // Make popup draggable by header (mouse + touch support)
     const popup = overlay.querySelector('.prism-camera-popup');
     const header = overlay.querySelector('.prism-camera-header');
     let isDragging = false;
     let startX, startY, startLeft, startTop;
     
-    header.onmousedown = (e) => {
+    const getEventCoords = (e) => {
+      if (e.touches && e.touches.length > 0) {
+        return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }
+      return { x: e.clientX, y: e.clientY };
+    };
+    
+    const startDrag = (e) => {
       if (e.target.closest('.prism-camera-close')) return;
       isDragging = true;
       const rect = popup.getBoundingClientRect();
-      startX = e.clientX;
-      startY = e.clientY;
+      const coords = getEventCoords(e);
+      startX = coords.x;
+      startY = coords.y;
       startLeft = rect.left;
       startTop = rect.top;
       popup.style.position = 'fixed';
       popup.style.margin = '0';
       popup.style.left = startLeft + 'px';
       popup.style.top = startTop + 'px';
-      e.preventDefault();
+      if (e.cancelable) e.preventDefault();
     };
     
-    document.addEventListener('mousemove', this._cameraPopupDragHandler = (e) => {
+    header.onmousedown = startDrag;
+    header.ontouchstart = startDrag;
+    
+    this._cameraPopupDragHandler = (e) => {
       if (!isDragging) return;
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
+      const coords = getEventCoords(e);
+      const dx = coords.x - startX;
+      const dy = coords.y - startY;
       popup.style.left = (startLeft + dx) + 'px';
       popup.style.top = (startTop + dy) + 'px';
-    });
+    };
+    document.addEventListener('mousemove', this._cameraPopupDragHandler);
+    document.addEventListener('touchmove', this._cameraPopupDragHandler, { passive: true });
     
-    document.addEventListener('mouseup', this._cameraPopupDragEndHandler = () => {
+    this._cameraPopupDragEndHandler = () => {
       isDragging = false;
-    });
+    };
+    document.addEventListener('mouseup', this._cameraPopupDragEndHandler);
+    document.addEventListener('touchend', this._cameraPopupDragEndHandler);
     
-    // Custom resize handle
+    // Custom resize handle (mouse + touch support)
     const resizeHandle = overlay.querySelector('.prism-camera-resize-handle');
     let isResizing = false;
     let resizeStartX, resizeStartY, resizeStartWidth, resizeStartHeight;
     
-    resizeHandle.onmousedown = (e) => {
+    const startResize = (e) => {
       isResizing = true;
       const rect = popup.getBoundingClientRect();
-      resizeStartX = e.clientX;
-      resizeStartY = e.clientY;
+      const coords = getEventCoords(e);
+      resizeStartX = coords.x;
+      resizeStartY = coords.y;
       resizeStartWidth = rect.width;
       resizeStartHeight = rect.height;
       
@@ -1637,23 +1673,31 @@ class PrismCrealityCard extends HTMLElement {
         popup.style.top = rect.top + 'px';
       }
       
-      e.preventDefault();
+      if (e.cancelable) e.preventDefault();
       e.stopPropagation();
     };
     
-    document.addEventListener('mousemove', this._cameraPopupResizeHandler = (e) => {
+    resizeHandle.onmousedown = startResize;
+    resizeHandle.ontouchstart = startResize;
+    
+    this._cameraPopupResizeHandler = (e) => {
       if (!isResizing) return;
-      const dx = e.clientX - resizeStartX;
-      const dy = e.clientY - resizeStartY;
+      const coords = getEventCoords(e);
+      const dx = coords.x - resizeStartX;
+      const dy = coords.y - resizeStartY;
       const newWidth = Math.max(400, Math.min(resizeStartWidth + dx, window.innerWidth * 0.95));
       const newHeight = Math.max(300, Math.min(resizeStartHeight + dy, window.innerHeight * 0.95));
       popup.style.width = newWidth + 'px';
       popup.style.height = newHeight + 'px';
-    });
+    };
+    document.addEventListener('mousemove', this._cameraPopupResizeHandler);
+    document.addEventListener('touchmove', this._cameraPopupResizeHandler, { passive: true });
     
-    document.addEventListener('mouseup', this._cameraPopupResizeEndHandler = () => {
+    this._cameraPopupResizeEndHandler = () => {
       isResizing = false;
-    });
+    };
+    document.addEventListener('mouseup', this._cameraPopupResizeEndHandler);
+    document.addEventListener('touchend', this._cameraPopupResizeEndHandler);
     
     // Update info panel data periodically
     this._cameraPopupUpdateInterval = setInterval(() => {
@@ -1717,23 +1761,27 @@ class PrismCrealityCard extends HTMLElement {
       this._cameraPopupEscHandler = null;
     }
     
-    // Remove drag listeners
+    // Remove drag listeners (mouse + touch)
     if (this._cameraPopupDragHandler) {
       document.removeEventListener('mousemove', this._cameraPopupDragHandler);
+      document.removeEventListener('touchmove', this._cameraPopupDragHandler);
       this._cameraPopupDragHandler = null;
     }
     if (this._cameraPopupDragEndHandler) {
       document.removeEventListener('mouseup', this._cameraPopupDragEndHandler);
+      document.removeEventListener('touchend', this._cameraPopupDragEndHandler);
       this._cameraPopupDragEndHandler = null;
     }
     
-    // Remove resize listeners
+    // Remove resize listeners (mouse + touch)
     if (this._cameraPopupResizeHandler) {
       document.removeEventListener('mousemove', this._cameraPopupResizeHandler);
+      document.removeEventListener('touchmove', this._cameraPopupResizeHandler);
       this._cameraPopupResizeHandler = null;
     }
     if (this._cameraPopupResizeEndHandler) {
       document.removeEventListener('mouseup', this._cameraPopupResizeEndHandler);
+      document.removeEventListener('touchend', this._cameraPopupResizeEndHandler);
       this._cameraPopupResizeEndHandler = null;
     }
     
@@ -2405,49 +2453,66 @@ class PrismCrealityCard extends HTMLElement {
     };
     document.addEventListener('keydown', this._cameraPopupEscHandler);
     
-    // Make popup draggable by header
+    // Make popup draggable by header (mouse + touch support)
     const popup = overlay.querySelector('.prism-multi-popup');
     const header = overlay.querySelector('.prism-multi-header');
     let isDragging = false;
     let startX, startY, startLeft, startTop;
     
-    header.onmousedown = (e) => {
+    const getEventCoords = (e) => {
+      if (e.touches && e.touches.length > 0) {
+        return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }
+      return { x: e.clientX, y: e.clientY };
+    };
+    
+    const startDrag = (e) => {
       if (e.target.closest('.prism-multi-close')) return;
       isDragging = true;
       const rect = popup.getBoundingClientRect();
-      startX = e.clientX;
-      startY = e.clientY;
+      const coords = getEventCoords(e);
+      startX = coords.x;
+      startY = coords.y;
       startLeft = rect.left;
       startTop = rect.top;
       popup.style.position = 'fixed';
       popup.style.margin = '0';
       popup.style.left = startLeft + 'px';
       popup.style.top = startTop + 'px';
-      e.preventDefault();
+      if (e.cancelable) e.preventDefault();
     };
     
-    document.addEventListener('mousemove', this._cameraPopupDragHandler = (e) => {
+    header.onmousedown = startDrag;
+    header.ontouchstart = startDrag;
+    
+    this._cameraPopupDragHandler = (e) => {
       if (!isDragging) return;
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
+      const coords = getEventCoords(e);
+      const dx = coords.x - startX;
+      const dy = coords.y - startY;
       popup.style.left = (startLeft + dx) + 'px';
       popup.style.top = (startTop + dy) + 'px';
-    });
+    };
+    document.addEventListener('mousemove', this._cameraPopupDragHandler);
+    document.addEventListener('touchmove', this._cameraPopupDragHandler, { passive: true });
     
-    document.addEventListener('mouseup', this._cameraPopupDragEndHandler = () => {
+    this._cameraPopupDragEndHandler = () => {
       isDragging = false;
-    });
+    };
+    document.addEventListener('mouseup', this._cameraPopupDragEndHandler);
+    document.addEventListener('touchend', this._cameraPopupDragEndHandler);
     
-    // Custom resize handle
+    // Custom resize handle (mouse + touch support)
     const resizeHandle = overlay.querySelector('.prism-multi-resize-handle');
     let isResizing = false;
     let resizeStartX, resizeStartY, resizeStartWidth, resizeStartHeight;
     
-    resizeHandle.onmousedown = (e) => {
+    const startResize = (e) => {
       isResizing = true;
       const rect = popup.getBoundingClientRect();
-      resizeStartX = e.clientX;
-      resizeStartY = e.clientY;
+      const coords = getEventCoords(e);
+      resizeStartX = coords.x;
+      resizeStartY = coords.y;
       resizeStartWidth = rect.width;
       resizeStartHeight = rect.height;
       
@@ -2458,23 +2523,31 @@ class PrismCrealityCard extends HTMLElement {
         popup.style.top = rect.top + 'px';
       }
       
-      e.preventDefault();
+      if (e.cancelable) e.preventDefault();
       e.stopPropagation();
     };
     
-    document.addEventListener('mousemove', this._cameraPopupResizeHandler = (e) => {
+    resizeHandle.onmousedown = startResize;
+    resizeHandle.ontouchstart = startResize;
+    
+    this._cameraPopupResizeHandler = (e) => {
       if (!isResizing) return;
-      const dx = e.clientX - resizeStartX;
-      const dy = e.clientY - resizeStartY;
+      const coords = getEventCoords(e);
+      const dx = coords.x - resizeStartX;
+      const dy = coords.y - resizeStartY;
       const newWidth = Math.max(600, Math.min(resizeStartWidth + dx, window.innerWidth * 0.98));
       const newHeight = Math.max(400, Math.min(resizeStartHeight + dy, window.innerHeight * 0.98));
       popup.style.width = newWidth + 'px';
       popup.style.height = newHeight + 'px';
-    });
+    };
+    document.addEventListener('mousemove', this._cameraPopupResizeHandler);
+    document.addEventListener('touchmove', this._cameraPopupResizeHandler, { passive: true });
     
-    document.addEventListener('mouseup', this._cameraPopupResizeEndHandler = () => {
+    this._cameraPopupResizeEndHandler = () => {
       isResizing = false;
-    });
+    };
+    document.addEventListener('mouseup', this._cameraPopupResizeEndHandler);
+    document.addEventListener('touchend', this._cameraPopupResizeEndHandler);
     
     // Update info panel data periodically
     this._cameraPopupUpdateInterval = setInterval(() => {
@@ -2562,15 +2635,25 @@ class PrismCrealityCard extends HTMLElement {
     
     // Read values
     const progress = this.getEntityValueById(progressEntity);
-    const stateStr = this.getEntityStateById(stateEntity) || 'unavailable';
+    let stateStr = this.getEntityStateById(stateEntity) || 'Idle';
     
-    // Debug: Log the current status
-    console.log('Prism Creality: Current status:', stateStr, 'Progress:', progress);
+    // If state is purely numeric (like "0", "1"), convert to readable status
+    if (/^\d+$/.test(stateStr)) {
+      // Common Creality numeric states: 0 = Idle, 1 = Printing, 2 = Paused, etc.
+      const numericStateMap = {
+        '0': 'Idle',
+        '1': 'Printing',
+        '2': 'Paused',
+        '3': 'Finished',
+        '4': 'Stopped'
+      };
+      stateStr = numericStateMap[stateStr] || 'Idle';
+    }
     
     // Determine if printer is actively printing
     const statusLower = stateStr.toLowerCase();
-    const isPrinting = ['printing', 'prepare', 'running', 'druckt', 'vorbereiten', 'busy'].includes(statusLower);
-    const isPaused = ['paused', 'pause', 'pausiert'].includes(statusLower);
+    const isPrinting = ['printing', 'prepare', 'running', 'druckt', 'vorbereiten', 'busy', '1'].includes(statusLower);
+    const isPaused = ['paused', 'pause', 'pausiert', '2'].includes(statusLower);
     const isIdle = !isPrinting && !isPaused;
     
     // Get remaining time - format it nicely
@@ -2880,7 +2963,6 @@ class PrismCrealityCard extends HTMLElement {
             color: #fbbf24;
             border: 1px solid rgba(251, 191, 36, 0.2);
             box-shadow: inset 0 0 10px rgba(251, 191, 36, 0.1);
-        }
         }
         .title {
             font-size: 1.125rem;

@@ -1933,49 +1933,66 @@ class PrismBambuCard extends HTMLElement {
     };
     document.addEventListener('keydown', this._cameraPopupEscHandler);
     
-    // Make popup draggable by header
+    // Make popup draggable by header (mouse + touch support)
     const popup = overlay.querySelector('.prism-camera-popup');
     const header = overlay.querySelector('.prism-camera-header');
     let isDragging = false;
     let startX, startY, startLeft, startTop;
     
-    header.onmousedown = (e) => {
+    const getEventCoords = (e) => {
+      if (e.touches && e.touches.length > 0) {
+        return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }
+      return { x: e.clientX, y: e.clientY };
+    };
+    
+    const startDrag = (e) => {
       if (e.target.closest('.prism-camera-close')) return;
       isDragging = true;
       const rect = popup.getBoundingClientRect();
-      startX = e.clientX;
-      startY = e.clientY;
+      const coords = getEventCoords(e);
+      startX = coords.x;
+      startY = coords.y;
       startLeft = rect.left;
       startTop = rect.top;
       popup.style.position = 'fixed';
       popup.style.margin = '0';
       popup.style.left = startLeft + 'px';
       popup.style.top = startTop + 'px';
-      e.preventDefault();
+      if (e.cancelable) e.preventDefault();
     };
     
-    document.addEventListener('mousemove', this._cameraPopupDragHandler = (e) => {
+    header.onmousedown = startDrag;
+    header.ontouchstart = startDrag;
+    
+    this._cameraPopupDragHandler = (e) => {
       if (!isDragging) return;
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
+      const coords = getEventCoords(e);
+      const dx = coords.x - startX;
+      const dy = coords.y - startY;
       popup.style.left = (startLeft + dx) + 'px';
       popup.style.top = (startTop + dy) + 'px';
-    });
+    };
+    document.addEventListener('mousemove', this._cameraPopupDragHandler);
+    document.addEventListener('touchmove', this._cameraPopupDragHandler, { passive: true });
     
-    document.addEventListener('mouseup', this._cameraPopupDragEndHandler = () => {
+    this._cameraPopupDragEndHandler = () => {
       isDragging = false;
-    });
+    };
+    document.addEventListener('mouseup', this._cameraPopupDragEndHandler);
+    document.addEventListener('touchend', this._cameraPopupDragEndHandler);
     
-    // Custom resize handle
+    // Custom resize handle (mouse + touch support)
     const resizeHandle = overlay.querySelector('.prism-camera-resize-handle');
     let isResizing = false;
     let resizeStartX, resizeStartY, resizeStartWidth, resizeStartHeight;
     
-    resizeHandle.onmousedown = (e) => {
+    const startResize = (e) => {
       isResizing = true;
       const rect = popup.getBoundingClientRect();
-      resizeStartX = e.clientX;
-      resizeStartY = e.clientY;
+      const coords = getEventCoords(e);
+      resizeStartX = coords.x;
+      resizeStartY = coords.y;
       resizeStartWidth = rect.width;
       resizeStartHeight = rect.height;
       
@@ -1987,23 +2004,31 @@ class PrismBambuCard extends HTMLElement {
         popup.style.top = rect.top + 'px';
       }
       
-      e.preventDefault();
+      if (e.cancelable) e.preventDefault();
       e.stopPropagation();
     };
     
-    document.addEventListener('mousemove', this._cameraPopupResizeHandler = (e) => {
+    resizeHandle.onmousedown = startResize;
+    resizeHandle.ontouchstart = startResize;
+    
+    this._cameraPopupResizeHandler = (e) => {
       if (!isResizing) return;
-      const dx = e.clientX - resizeStartX;
-      const dy = e.clientY - resizeStartY;
+      const coords = getEventCoords(e);
+      const dx = coords.x - resizeStartX;
+      const dy = coords.y - resizeStartY;
       const newWidth = Math.max(400, Math.min(resizeStartWidth + dx, window.innerWidth * 0.95));
       const newHeight = Math.max(300, Math.min(resizeStartHeight + dy, window.innerHeight * 0.95));
       popup.style.width = newWidth + 'px';
       popup.style.height = newHeight + 'px';
-    });
+    };
+    document.addEventListener('mousemove', this._cameraPopupResizeHandler);
+    document.addEventListener('touchmove', this._cameraPopupResizeHandler, { passive: true });
     
-    document.addEventListener('mouseup', this._cameraPopupResizeEndHandler = () => {
+    this._cameraPopupResizeEndHandler = () => {
       isResizing = false;
-    });
+    };
+    document.addEventListener('mouseup', this._cameraPopupResizeEndHandler);
+    document.addEventListener('touchend', this._cameraPopupResizeEndHandler);
     
     // Update info panel data periodically
     this._cameraPopupUpdateInterval = setInterval(() => {
@@ -2076,23 +2101,27 @@ class PrismBambuCard extends HTMLElement {
     // Refresh the camera stream in the card (it may have paused while popup was open)
     this._refreshCardCameraStream();
     
-    // Remove drag listeners
+    // Remove drag listeners (mouse + touch)
     if (this._cameraPopupDragHandler) {
       document.removeEventListener('mousemove', this._cameraPopupDragHandler);
+      document.removeEventListener('touchmove', this._cameraPopupDragHandler);
       this._cameraPopupDragHandler = null;
     }
     if (this._cameraPopupDragEndHandler) {
       document.removeEventListener('mouseup', this._cameraPopupDragEndHandler);
+      document.removeEventListener('touchend', this._cameraPopupDragEndHandler);
       this._cameraPopupDragEndHandler = null;
     }
     
-    // Remove resize listeners
+    // Remove resize listeners (mouse + touch)
     if (this._cameraPopupResizeHandler) {
       document.removeEventListener('mousemove', this._cameraPopupResizeHandler);
+      document.removeEventListener('touchmove', this._cameraPopupResizeHandler);
       this._cameraPopupResizeHandler = null;
     }
     if (this._cameraPopupResizeEndHandler) {
       document.removeEventListener('mouseup', this._cameraPopupResizeEndHandler);
+      document.removeEventListener('touchend', this._cameraPopupResizeEndHandler);
       this._cameraPopupResizeEndHandler = null;
     }
     
@@ -2801,49 +2830,66 @@ class PrismBambuCard extends HTMLElement {
     };
     document.addEventListener('keydown', this._cameraPopupEscHandler);
     
-    // Make popup draggable by header
+    // Make popup draggable by header (mouse + touch support)
     const popup = overlay.querySelector('.prism-multi-popup');
     const header = overlay.querySelector('.prism-multi-header');
     let isDragging = false;
     let startX, startY, startLeft, startTop;
     
-    header.onmousedown = (e) => {
+    const getEventCoords = (e) => {
+      if (e.touches && e.touches.length > 0) {
+        return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }
+      return { x: e.clientX, y: e.clientY };
+    };
+    
+    const startDrag = (e) => {
       if (e.target.closest('.prism-multi-close')) return;
       isDragging = true;
       const rect = popup.getBoundingClientRect();
-      startX = e.clientX;
-      startY = e.clientY;
+      const coords = getEventCoords(e);
+      startX = coords.x;
+      startY = coords.y;
       startLeft = rect.left;
       startTop = rect.top;
       popup.style.position = 'fixed';
       popup.style.margin = '0';
       popup.style.left = startLeft + 'px';
       popup.style.top = startTop + 'px';
-      e.preventDefault();
+      if (e.cancelable) e.preventDefault();
     };
     
-    document.addEventListener('mousemove', this._cameraPopupDragHandler = (e) => {
+    header.onmousedown = startDrag;
+    header.ontouchstart = startDrag;
+    
+    this._cameraPopupDragHandler = (e) => {
       if (!isDragging) return;
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
+      const coords = getEventCoords(e);
+      const dx = coords.x - startX;
+      const dy = coords.y - startY;
       popup.style.left = (startLeft + dx) + 'px';
       popup.style.top = (startTop + dy) + 'px';
-    });
+    };
+    document.addEventListener('mousemove', this._cameraPopupDragHandler);
+    document.addEventListener('touchmove', this._cameraPopupDragHandler, { passive: true });
     
-    document.addEventListener('mouseup', this._cameraPopupDragEndHandler = () => {
+    this._cameraPopupDragEndHandler = () => {
       isDragging = false;
-    });
+    };
+    document.addEventListener('mouseup', this._cameraPopupDragEndHandler);
+    document.addEventListener('touchend', this._cameraPopupDragEndHandler);
     
-    // Custom resize handle
+    // Custom resize handle (mouse + touch support)
     const resizeHandle = overlay.querySelector('.prism-multi-resize-handle');
     let isResizing = false;
     let resizeStartX, resizeStartY, resizeStartWidth, resizeStartHeight;
     
-    resizeHandle.onmousedown = (e) => {
+    const startResize = (e) => {
       isResizing = true;
       const rect = popup.getBoundingClientRect();
-      resizeStartX = e.clientX;
-      resizeStartY = e.clientY;
+      const coords = getEventCoords(e);
+      resizeStartX = coords.x;
+      resizeStartY = coords.y;
       resizeStartWidth = rect.width;
       resizeStartHeight = rect.height;
       
@@ -2854,23 +2900,31 @@ class PrismBambuCard extends HTMLElement {
         popup.style.top = rect.top + 'px';
       }
       
-      e.preventDefault();
+      if (e.cancelable) e.preventDefault();
       e.stopPropagation();
     };
     
-    document.addEventListener('mousemove', this._cameraPopupResizeHandler = (e) => {
+    resizeHandle.onmousedown = startResize;
+    resizeHandle.ontouchstart = startResize;
+    
+    this._cameraPopupResizeHandler = (e) => {
       if (!isResizing) return;
-      const dx = e.clientX - resizeStartX;
-      const dy = e.clientY - resizeStartY;
+      const coords = getEventCoords(e);
+      const dx = coords.x - resizeStartX;
+      const dy = coords.y - resizeStartY;
       const newWidth = Math.max(600, Math.min(resizeStartWidth + dx, window.innerWidth * 0.98));
       const newHeight = Math.max(400, Math.min(resizeStartHeight + dy, window.innerHeight * 0.98));
       popup.style.width = newWidth + 'px';
       popup.style.height = newHeight + 'px';
-    });
+    };
+    document.addEventListener('mousemove', this._cameraPopupResizeHandler);
+    document.addEventListener('touchmove', this._cameraPopupResizeHandler, { passive: true });
     
-    document.addEventListener('mouseup', this._cameraPopupResizeEndHandler = () => {
+    this._cameraPopupResizeEndHandler = () => {
       isResizing = false;
-    });
+    };
+    document.addEventListener('mouseup', this._cameraPopupResizeEndHandler);
+    document.addEventListener('touchend', this._cameraPopupResizeEndHandler);
     
     // Update info panel data periodically
     this._cameraPopupUpdateInterval = setInterval(() => {
