@@ -317,9 +317,9 @@ class PrismButtonCard extends HTMLElement {
               ${sliderColorStart} 0%,
               ${sliderColorEnd} 100%);
             border-radius: 16px 0 0 16px;
-            /* Icon links in der Mitte ausschneiden - 40px von links, center vertical */
-            mask-image: radial-gradient(circle 29px at 40px center, transparent 0, transparent 29px, black 30px);
-            -webkit-mask-image: radial-gradient(circle 29px at 40px center, transparent 0, transparent 29px, black 30px);
+            /* Icon links in der Mitte ausschneiden - 36px von links (16px padding + 20px half icon), center vertical */
+            mask-image: radial-gradient(circle 25px at 36px center, transparent 0, transparent 25px, black 26px);
+            -webkit-mask-image: radial-gradient(circle 25px at 36px center, transparent 0, transparent 25px, black 26px);
           `}
           transition: ${layout === 'vertical' ? 'height' : 'width'} 0.15s ease-out;
           pointer-events: none;
@@ -331,8 +331,10 @@ class PrismButtonCard extends HTMLElement {
           justify-content: center;
           flex-shrink: 0;
           position: relative;
-          width: 48px;
-          height: 48px;
+          width: 40px;
+          height: 40px;
+          min-width: 40px;
+          min-height: 40px;
           z-index: 10;
         }
         /* Neumorphic icon circle - Dark Theme with Glassmorphism blend */
@@ -378,7 +380,9 @@ class PrismButtonCard extends HTMLElement {
           justify-content: center;
         }
         ha-icon {
-          --mdc-icon-size: 24px;
+          --mdc-icon-size: 22px;
+          width: 22px;
+          height: 22px;
           ${iconColor 
             ? `color: ${iconColor.color} !important; 
                opacity: ${iconOpacity};
@@ -395,17 +399,19 @@ class PrismButtonCard extends HTMLElement {
           z-index: 10;
         }
         .name {
-          font-size: 16px;
-          font-weight: 500;
-          color: #e0e0e0;
+          font-size: 1.125rem;
+          font-weight: 700;
+          color: rgba(255, 255, 255, 0.9);
+          line-height: 1;
           margin-bottom: 4px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
         }
         .state {
-          font-size: 14px;
-          color: #999;
+          font-size: 0.75rem;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 0.6);
           text-transform: capitalize;
           overflow: hidden;
           text-overflow: ellipsis;

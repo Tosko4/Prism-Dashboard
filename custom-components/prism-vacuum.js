@@ -351,27 +351,36 @@ class PrismVacuumCard extends HTMLElement {
               gap: 12px;
           }
           .header-left { 
-              display: flex; align-items: center; gap: 16px;
+              display: flex; align-items: center; gap: 12px;
               flex: 1;
               min-width: 0;
               overflow: hidden;
           }
           
           .icon-box {
-              width: 48px; height: 48px; border-radius: 50%;
-              background: ${isActive ? 'rgba(59, 130, 246, 0.2)' : hasError ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255,255,255,0.05)'}; 
+              width: 40px; height: 40px; min-width: 40px; min-height: 40px; border-radius: 50%;
+              background: ${isActive || hasError 
+                  ? 'linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1))' 
+                  : 'linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1))'}; 
               color: ${isActive ? '#60a5fa' : hasError ? '#ef4444' : 'rgba(255,255,255,0.4)'};
               display: flex; align-items: center; justify-content: center;
               transition: all 0.5s ease;
               flex-shrink: 0;
-              ${isActive ? 'filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.6));' : ''}
-              ${hasError ? 'filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.6));' : ''}
+              box-shadow: ${isActive || hasError 
+                  ? 'inset 3px 3px 8px rgba(0, 0, 0, 0.7), inset -2px -2px 4px rgba(255, 255, 255, 0.03)' 
+                  : '4px 4px 10px rgba(0, 0, 0, 0.5), -2px -2px 6px rgba(255, 255, 255, 0.03), inset 0 1px 2px rgba(255, 255, 255, 0.05)'};
+              border: 1px solid rgba(255, 255, 255, 0.05);
           }
           .icon-box ha-icon {
+              width: 22px;
+              height: 22px;
+              --mdc-icon-size: 22px;
               display: flex;
               align-items: center;
               justify-content: center;
               line-height: 0;
+              ${isActive ? 'filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.6));' : ''}
+              ${hasError ? 'filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.6));' : ''}
           }
           .icon-spin {
               animation: ${isActive ? 'spin 3s linear infinite' : 'none'};
@@ -384,13 +393,13 @@ class PrismVacuumCard extends HTMLElement {
               overflow: hidden;
           }
           .title { 
-              font-size: 18px; font-weight: 700; color: #e0e0e0; line-height: 1.2;
+              font-size: 1.125rem; font-weight: 700; color: rgba(255, 255, 255, 0.9); line-height: 1;
               white-space: nowrap;
               overflow: hidden;
               text-overflow: ellipsis;
           }
           .subtitle { 
-              font-size: 12px; font-weight: 500; color: #999; margin-top: 2px;
+              font-size: 0.75rem; font-weight: 500; color: rgba(255, 255, 255, 0.6); margin-top: 4px;
               display: flex; align-items: center; gap: 8px;
               flex-wrap: wrap;
               overflow: hidden;
@@ -469,16 +478,28 @@ class PrismVacuumCard extends HTMLElement {
               line-height: 0;
           }
           .play-btn.active {
-              background: #141414;
+              background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
               color: #3b82f6;
-              box-shadow: inset 2px 2px 5px rgba(0,0,0,0.8), inset -1px -1px 2px rgba(255,255,255,0.05);
-              border-top: 1px solid rgba(0,0,0,0.2);
+              box-shadow: inset 3px 3px 8px rgba(0,0,0,0.7), inset -2px -2px 4px rgba(255,255,255,0.03);
+          }
+          .play-btn.active ha-icon {
+              filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.6));
           }
           .play-btn.inactive {
-              background: rgba(255,255,255,0.05);
+              background: linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1));
               color: rgba(255,255,255,0.4);
+              box-shadow: 
+                  4px 4px 10px rgba(0, 0, 0, 0.5),
+                  -2px -2px 6px rgba(255, 255, 255, 0.03),
+                  inset 0 1px 2px rgba(255, 255, 255, 0.05);
           }
-          .play-btn.inactive:hover { background: rgba(255,255,255,0.1); }
+          .play-btn.inactive:hover { 
+              background: linear-gradient(145deg, rgba(40, 43, 50, 1), rgba(32, 34, 40, 1));
+              color: #4ade80;
+          }
+          .play-btn.inactive:hover ha-icon {
+              filter: drop-shadow(0 0 6px rgba(74, 222, 128, 0.5));
+          }
           
           /* Visual Inlet - click to locate robot */
           .vacuum-inlet {

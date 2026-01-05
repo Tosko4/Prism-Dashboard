@@ -1489,13 +1489,37 @@ class PrismEnergyHorizontalCard extends HTMLElement {
         }
         
         .details-title {
-          font-size: clamp(0.65rem, 0.8vw, 0.85rem);
+          /* Neumorphic Raised Chip */
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          align-self: center;
+          padding: 5px 12px;
+          margin-bottom: 8px;
+          
+          background: linear-gradient(145deg, #2d3038, #22252b);
+          border-radius: 20px;
+          box-shadow: 
+            3px 3px 6px rgba(0, 0, 0, 0.4),
+            -2px -2px 4px rgba(255, 255, 255, 0.03),
+            inset 1px 1px 2px rgba(255, 255, 255, 0.05);
+          
+          font-size: clamp(0.55rem, 0.7vw, 0.65rem);
           font-weight: 700;
           text-transform: uppercase;
-          letter-spacing: 0.1em;
-          color: rgba(255, 255, 255, 0.4);
-          text-align: center;
-          width: 100%;
+          letter-spacing: 0.08em;
+          color: rgba(255, 255, 255, 0.6);
+          white-space: nowrap;
+          
+          transition: all 0.2s ease;
+        }
+        
+        .details-title:hover {
+          box-shadow: 
+            4px 4px 8px rgba(0, 0, 0, 0.5),
+            -3px -3px 6px rgba(255, 255, 255, 0.04),
+            inset 1px 1px 2px rgba(255, 255, 255, 0.06);
+          color: rgba(255, 255, 255, 0.8);
         }
 
         /* Inlet Gauge Styles (like prism-heat) - Responsive */

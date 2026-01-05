@@ -229,18 +229,16 @@ class PrismShutterVerticalCard extends HTMLElement {
               width: 100%;
           }
           .icon-box {
-              width: 40px; height: 40px; border-radius: 50%;
-              background: rgba(59, 130, 246, 0.2); color: #60a5fa;
+              width: 36px; height: 36px; border-radius: 50%;
+              background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
+              color: #60a5fa;
               display: flex; align-items: center; justify-content: center;
-              box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
-              position: relative;
+              box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.7), inset -2px -2px 4px rgba(255, 255, 255, 0.03);
+              border: 1px solid rgba(255, 255, 255, 0.05);
           }
           .icon-box ha-icon {
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              width: 100%;
-              height: 100%;
+              width: 18px; height: 18px; --mdc-icon-size: 18px;
+              filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.6));
           }
           .info {
               text-align: center; width: 100%;
@@ -263,29 +261,46 @@ class PrismShutterVerticalCard extends HTMLElement {
           
           .control-btn {
               width: 100%; border-radius: 8px;
-              background: rgba(255,255,255,0.05);
+              background: linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1));
               border: 1px solid rgba(255,255,255,0.05);
               display: flex; align-items: center; justify-content: center;
-              color: rgba(255,255,255,0.7);
+              color: rgba(255,255,255,0.5);
               cursor: pointer;
-              box-shadow: 0 2px 4px -1px rgba(0,0,0,0.3);
+              box-shadow: 
+                  3px 3px 6px rgba(0, 0, 0, 0.4),
+                  -2px -2px 4px rgba(255, 255, 255, 0.02),
+                  inset 0 1px 1px rgba(255, 255, 255, 0.05);
               transition: all 0.2s;
-              position: relative;
           }
           .control-btn ha-icon {
               display: flex;
               align-items: center;
               justify-content: center;
-              width: 100%;
-              height: 100%;
           }
-          .control-btn.btn-up, .control-btn.btn-down { height: 36px; }
-          .control-btn.btn-stop { height: 32px; }
+          .control-btn.btn-up, .control-btn.btn-down { height: 32px; }
+          .control-btn.btn-up ha-icon, .control-btn.btn-down ha-icon { 
+              width: 18px; height: 18px; --mdc-icon-size: 18px; 
+          }
+          .control-btn.btn-stop { height: 28px; }
+          .control-btn.btn-stop ha-icon { 
+              width: 14px; height: 14px; --mdc-icon-size: 14px; 
+          }
           
+          .control-btn:hover {
+              background: linear-gradient(145deg, rgba(40, 43, 50, 1), rgba(32, 34, 40, 1));
+              color: #60a5fa;
+          }
+          .control-btn:hover ha-icon {
+              filter: drop-shadow(0 0 4px rgba(96, 165, 250, 0.5));
+          }
           .control-btn:active {
-              background: rgba(20, 20, 20, 0.8);
-              box-shadow: inset 2px 2px 5px rgba(0,0,0,0.8), inset -1px -1px 2px rgba(255,255,255,0.1);
-              color: white; border-top: 1px solid rgba(0,0,0,0.4);
+              background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
+              box-shadow: inset 3px 3px 6px rgba(0,0,0,0.6), inset -2px -2px 4px rgba(255,255,255,0.02);
+              color: #3b82f6;
+              transform: scale(0.97);
+          }
+          .control-btn:active ha-icon {
+              filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.6));
           }
   
         </style>
@@ -300,7 +315,7 @@ class PrismShutterVerticalCard extends HTMLElement {
           <div class="right-col">
               <div class="header">
                   <div class="icon-box">
-                      <ha-icon icon="mdi:window-shutter" style="width: 16px; height: 16px;"></ha-icon>
+                      <ha-icon icon="mdi:window-shutter"></ha-icon>
                   </div>
                   <div class="info">
                       <div class="title">${name}</div>
@@ -310,13 +325,13 @@ class PrismShutterVerticalCard extends HTMLElement {
               
               <div class="controls">
                   <div class="control-btn btn-up">
-                      <ha-icon icon="mdi:arrow-up" style="width: 20px; height: 20px;"></ha-icon>
+                      <ha-icon icon="mdi:arrow-up"></ha-icon>
                   </div>
                   <div class="control-btn btn-stop">
-                      <ha-icon icon="mdi:pause" style="width: 14px; height: 14px;"></ha-icon>
+                      <ha-icon icon="mdi:pause"></ha-icon>
                   </div>
                   <div class="control-btn btn-down">
-                      <ha-icon icon="mdi:arrow-down" style="width: 20px; height: 20px;"></ha-icon>
+                      <ha-icon icon="mdi:arrow-down"></ha-icon>
                   </div>
               </div>
           </div>

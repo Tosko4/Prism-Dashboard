@@ -170,25 +170,33 @@ class PrismHeatSmallCard extends HTMLElement {
         }
         
         .icon-box {
-            width: 38px; 
-            height: 38px; 
-            min-width: 38px;
+            width: 40px; 
+            height: 40px; 
+            min-width: 40px;
+            min-height: 40px;
             border-radius: 50%;
-            background: ${isHeating ? 'rgba(249, 115, 22, 0.2)' : 'rgba(255,255,255,0.05)'}; 
+            background: ${isHeating 
+                ? 'linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1))' 
+                : 'linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1))'}; 
             color: ${isHeating ? '#fb923c' : 'rgba(255,255,255,0.4)'};
             display: flex; 
             align-items: center; 
             justify-content: center;
-            box-shadow: ${isHeating ? '0 0 15px rgba(249,115,22,0.3)' : 'none'};
+            box-shadow: ${isHeating 
+                ? 'inset 3px 3px 8px rgba(0, 0, 0, 0.7), inset -2px -2px 4px rgba(255, 255, 255, 0.03)' 
+                : '4px 4px 10px rgba(0, 0, 0, 0.5), -2px -2px 6px rgba(255, 255, 255, 0.03), inset 0 1px 2px rgba(255, 255, 255, 0.05)'};
+            border: 1px solid rgba(255, 255, 255, 0.05);
             transition: all 0.5s ease;
-            ${isHeating ? 'filter: drop-shadow(0 0 6px rgba(251, 146, 60, 0.6));' : ''}
         }
         .icon-box ha-icon {
+            width: 22px;
+            height: 22px;
+            --mdc-icon-size: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
-            --mdc-icon-size: 20px;
             line-height: 0;
+            ${isHeating ? 'filter: drop-shadow(0 0 6px rgba(251, 146, 60, 0.6));' : ''}
         }
         
         .info { 
@@ -197,16 +205,16 @@ class PrismHeatSmallCard extends HTMLElement {
             justify-content: center;
         }
         .title { 
-            font-size: 15px; 
+            font-size: 1.125rem; 
             font-weight: 700; 
-            color: #e0e0e0; 
-            line-height: 1.2; 
+            color: rgba(255, 255, 255, 0.9); 
+            line-height: 1; 
         }
         .subtitle { 
-            font-size: 12px; 
+            font-size: 0.75rem; 
             font-weight: 500; 
-            color: #999; 
-            margin-top: 2px; 
+            color: rgba(255, 255, 255, 0.6); 
+            margin-top: 4px; 
             display: flex; 
             gap: 6px;
         }
@@ -249,10 +257,8 @@ class PrismHeatSmallCard extends HTMLElement {
         .control-btn {
             position: relative;
             height: 38px; width: 50px; border-radius: 12px;
-            background: linear-gradient(145deg, #2d3035, #1e2024);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-top: 1px solid rgba(255,255,255,0.12);
-            border-bottom: 1px solid rgba(0,0,0,0.3);
+            background: linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1));
+            border: 1px solid rgba(255,255,255,0.05);
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; transition: all 0.2s; color: rgba(255,255,255,0.7);
             box-shadow: 
@@ -261,29 +267,19 @@ class PrismHeatSmallCard extends HTMLElement {
               inset 0 1px 2px rgba(255,255,255,0.05);
             overflow: hidden;
         }
-        /* Erhabene 3D Linie */
-        .control-btn::before {
-            content: '';
-            position: absolute;
-            inset: 3px;
-            border-radius: 9px;
-            background: transparent;
-            box-shadow: 
-              inset 1px 1px 3px rgba(0, 0, 0, 0.4),
-              inset -1px -1px 2px rgba(255, 255, 255, 0.03);
-            pointer-events: none;
+        .control-btn:hover {
+            background: linear-gradient(145deg, rgba(40, 43, 50, 1), rgba(32, 34, 40, 1));
+            color: #fb923c;
+        }
+        .control-btn:hover ha-icon {
+            filter: drop-shadow(0 0 6px rgba(251, 146, 60, 0.5));
         }
         .control-btn:active {
-            background: linear-gradient(145deg, #1a1c1e, #222528);
+            background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
             box-shadow: 
-              inset 3px 3px 8px rgba(0,0,0,0.8), 
-              inset -1px -1px 3px rgba(255,255,255,0.03);
-            border-top: 1px solid rgba(0,0,0,0.4);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+              inset 3px 3px 8px rgba(0,0,0,0.7), 
+              inset -2px -2px 4px rgba(255,255,255,0.03);
             transform: scale(0.97);
-        }
-        .control-btn:active::before {
-            box-shadow: none;
         }
         .control-btn ha-icon {
             position: relative;

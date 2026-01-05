@@ -251,9 +251,9 @@ class PrismMediaCard extends HTMLElement {
         }
         
         .info { flex: 1; min-width: 0; }
-        .title { font-size: 18px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .title { font-size: 1.125rem; font-weight: 700; color: rgba(255, 255, 255, 0.9); line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .subtitle-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
-        .subtitle { font-size: 14px; color: rgba(255,255,255,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .subtitle { font-size: 0.75rem; font-weight: 500; color: rgba(255,255,255,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .state-dot {
             width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
             background: ${isPlaying ? playingColor : isPaused ? '#f59e0b' : 'rgba(255,255,255,0.3)'};
@@ -298,16 +298,25 @@ class PrismMediaCard extends HTMLElement {
         /* Circle Buttons (Next/Prev) */
         .media-btn.circle {
             width: 42px; height: 42px; border-radius: 50%;
-            background: rgba(255,255,255,0.06); 
+            background: linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1)); 
             border: 1px solid rgba(255,255,255,0.05);
-            color: rgba(255,255,255,0.8);
-            box-shadow: 0 4px 10px -2px rgba(0,0,0,0.2);
+            color: rgba(255,255,255,0.7);
+            box-shadow: 
+                4px 4px 10px rgba(0, 0, 0, 0.5),
+                -2px -2px 6px rgba(255, 255, 255, 0.03),
+                inset 0 1px 2px rgba(255, 255, 255, 0.05);
+        }
+        .media-btn.circle:hover {
+            background: linear-gradient(145deg, rgba(40, 43, 50, 1), rgba(32, 34, 40, 1));
+            color: #60a5fa;
+        }
+        .media-btn.circle:hover ha-icon {
+            filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.5));
         }
         .media-btn.circle:active {
-            background: rgba(20, 20, 20, 0.8);
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.8), inset -1px -1px 2px rgba(255,255,255,0.05);
+            background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
+            box-shadow: inset 3px 3px 8px rgba(0,0,0,0.7), inset -2px -2px 4px rgba(255,255,255,0.03);
             color: white; transform: scale(0.95);
-            border-top: 1px solid rgba(0,0,0,0.4);
         }
         
         /* Play Button (Pill) */
@@ -319,15 +328,25 @@ class PrismMediaCard extends HTMLElement {
         }
         
         .media-btn.play:not(.playing) {
-             background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.8);
-             border: 1px solid rgba(255,255,255,0.05);
-             box-shadow: 0 4px 10px -2px rgba(0,0,0,0.3);
+            background: linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1));
+            color: rgba(255,255,255,0.8);
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 
+                4px 4px 10px rgba(0, 0, 0, 0.5),
+                -2px -2px 6px rgba(255, 255, 255, 0.03),
+                inset 0 1px 2px rgba(255, 255, 255, 0.05);
+        }
+        .media-btn.play:not(.playing):hover {
+            background: linear-gradient(145deg, rgba(40, 43, 50, 1), rgba(32, 34, 40, 1));
         }
         
         .media-btn.play.playing {
-            background: rgba(20, 20, 20, 0.8);
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.8), inset -1px -1px 2px rgba(255,255,255,0.05);
-            border-top: 1px solid rgba(0,0,0,0.4);
+            background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
+            box-shadow: inset 3px 3px 8px rgba(0,0,0,0.7), inset -2px -2px 4px rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .media-btn.play.playing ha-icon {
+            filter: drop-shadow(0 0 6px currentColor);
         }
 
         ha-icon { pointer-events: none; }

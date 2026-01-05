@@ -1028,44 +1028,63 @@ class PrismCrealityCard extends HTMLElement {
           font-size: 14px;
           font-weight: 600;
         }
+        /* Popup Title Icon - Neumorphism */
         .prism-camera-title-icon {
           width: 28px;
           height: 28px;
-          background: rgba(0, 150, 255, 0.15);
-          border: 1px solid rgba(0, 150, 255, 0.3);
+          background: linear-gradient(145deg, #2d3038, #22252b);
+          border: none;
           border-radius: 8px;
           display: flex;
           align-items: center;
           justify-content: center;
           color: #0096FF;
+          box-shadow: 
+            2px 2px 4px rgba(0, 0, 0, 0.4),
+            -1px -1px 3px rgba(255, 255, 255, 0.03),
+            inset 1px 1px 2px rgba(255, 255, 255, 0.05);
         }
         .prism-camera-title-icon ha-icon {
           display: flex;
           align-items: center;
           justify-content: center;
+          filter: drop-shadow(0 0 4px rgba(0, 150, 255, 0.5));
         }
+        /* Popup Close Button - Neumorphism */
         .prism-camera-close {
           width: 28px;
           height: 28px;
           border-radius: 8px;
-          background: rgba(255,255,255,0.08);
-          border: 1px solid rgba(255,255,255,0.1);
+          background: linear-gradient(145deg, #2d3038, #22252b);
+          border: none;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: rgba(255,255,255,0.6);
-          transition: all 0.2s;
+          color: rgba(255,255,255,0.4);
+          transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+          box-shadow: 
+            2px 2px 4px rgba(0, 0, 0, 0.4),
+            -1px -1px 3px rgba(255, 255, 255, 0.03),
+            inset 1px 1px 2px rgba(255, 255, 255, 0.05);
         }
         .prism-camera-close ha-icon {
           display: flex;
           align-items: center;
           justify-content: center;
+          transition: all 0.2s ease;
         }
         .prism-camera-close:hover {
-          background: rgba(255,80,80,0.25);
-          border-color: rgba(255,80,80,0.4);
-          color: #ff6b6b;
+          color: #f87171;
+        }
+        .prism-camera-close:hover ha-icon {
+          filter: drop-shadow(0 0 4px rgba(248, 113, 113, 0.6));
+        }
+        .prism-camera-close:active {
+          background: linear-gradient(145deg, #22252b, #2d3038);
+          box-shadow: 
+            inset 2px 2px 4px rgba(0, 0, 0, 0.5),
+            inset -1px -1px 3px rgba(255, 255, 255, 0.03);
         }
         .prism-camera-body {
           flex: 1;
@@ -1122,20 +1141,26 @@ class PrismCrealityCard extends HTMLElement {
           align-items: center;
           gap: 8px;
         }
+        /* Info Header Icon - Neumorphism */
         .prism-info-header-icon {
           width: 22px;
           height: 22px;
-          background: rgba(0, 150, 255, 0.2);
+          background: linear-gradient(145deg, #2d3038, #22252b);
           border-radius: 6px;
           display: flex;
           align-items: center;
           justify-content: center;
           color: #0096FF;
+          box-shadow: 
+            2px 2px 4px rgba(0, 0, 0, 0.3),
+            -1px -1px 2px rgba(255, 255, 255, 0.02),
+            inset 1px 1px 1px rgba(255, 255, 255, 0.05);
         }
         .prism-info-header-icon ha-icon {
           display: flex;
           align-items: center;
           justify-content: center;
+          filter: drop-shadow(0 0 3px rgba(0, 150, 255, 0.5));
         }
         .prism-info-header-text {
           font-size: 10px;
@@ -1201,6 +1226,7 @@ class PrismCrealityCard extends HTMLElement {
           border-radius: 8px;
           border: 1px solid rgba(255,255,255,0.03);
         }
+        /* Stat Icons - Neumorphism */
         .prism-info-stat-icon {
           width: 26px;
           height: 26px;
@@ -1209,17 +1235,27 @@ class PrismCrealityCard extends HTMLElement {
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
+          background: linear-gradient(145deg, #2a2d33, #1f2226);
+          box-shadow: 
+            inset 2px 2px 4px rgba(0, 0, 0, 0.4),
+            inset -1px -1px 2px rgba(255, 255, 255, 0.03);
         }
         .prism-info-stat-icon ha-icon {
           display: flex;
           align-items: center;
           justify-content: center;
+          transition: all 0.2s ease;
         }
-        .prism-info-stat-icon.time { background: rgba(96, 165, 250, 0.12); color: #60a5fa; }
-        .prism-info-stat-icon.layer { background: rgba(167, 139, 250, 0.12); color: #a78bfa; }
-        .prism-info-stat-icon.nozzle { background: rgba(248, 113, 113, 0.12); color: #f87171; }
-        .prism-info-stat-icon.bed { background: rgba(251, 146, 60, 0.12); color: #fb923c; }
-        .prism-info-stat-icon.chamber { background: rgba(74, 222, 128, 0.12); color: #4ade80; }
+        .prism-info-stat-icon.time { color: #60a5fa; }
+        .prism-info-stat-icon.time ha-icon { filter: drop-shadow(0 0 3px rgba(96, 165, 250, 0.5)); }
+        .prism-info-stat-icon.layer { color: #a78bfa; }
+        .prism-info-stat-icon.layer ha-icon { filter: drop-shadow(0 0 3px rgba(167, 139, 250, 0.5)); }
+        .prism-info-stat-icon.nozzle { color: #f87171; }
+        .prism-info-stat-icon.nozzle ha-icon { filter: drop-shadow(0 0 3px rgba(248, 113, 113, 0.5)); }
+        .prism-info-stat-icon.bed { color: #fb923c; }
+        .prism-info-stat-icon.bed ha-icon { filter: drop-shadow(0 0 3px rgba(251, 146, 60, 0.5)); }
+        .prism-info-stat-icon.chamber { color: #4ade80; }
+        .prism-info-stat-icon.chamber ha-icon { filter: drop-shadow(0 0 3px rgba(74, 222, 128, 0.5)); }
         .prism-info-stat-data {
           flex: 1;
           min-width: 0;
@@ -1333,6 +1369,7 @@ class PrismCrealityCard extends HTMLElement {
           align-items: center;
           justify-content: center;
         }
+        /* Stop Button - Neumorphism */
         .prism-info-stop-btn {
           display: flex;
           align-items: center;
@@ -1341,28 +1378,38 @@ class PrismCrealityCard extends HTMLElement {
           width: 100%;
           padding: 8px 12px;
           margin-top: 8px;
-          background: rgba(239, 68, 68, 0.15);
-          border: 1px solid rgba(239, 68, 68, 0.3);
+          background: linear-gradient(145deg, #2d3038, #22252b);
+          border: none;
           border-radius: 8px;
-          color: #ef4444;
+          color: #f87171;
           font-size: 10px;
           font-weight: 500;
           font-family: inherit;
           cursor: pointer;
-          transition: all 0.2s;
-        }
-        .prism-info-stop-btn:hover {
-          background: rgba(239, 68, 68, 0.25);
-          border-color: rgba(239, 68, 68, 0.5);
-          transform: translateY(-1px);
-        }
-        .prism-info-stop-btn:active {
-          transform: translateY(0);
+          transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+          box-shadow: 
+            3px 3px 6px rgba(0, 0, 0, 0.4),
+            -2px -2px 4px rgba(255, 255, 255, 0.02),
+            inset 1px 1px 2px rgba(255, 255, 255, 0.05);
         }
         .prism-info-stop-btn ha-icon {
           display: flex;
           align-items: center;
           justify-content: center;
+          filter: drop-shadow(0 0 3px rgba(248, 113, 113, 0.4));
+          transition: all 0.2s ease;
+        }
+        .prism-info-stop-btn:hover {
+          color: #fca5a5;
+        }
+        .prism-info-stop-btn:hover ha-icon {
+          filter: drop-shadow(0 0 5px rgba(248, 113, 113, 0.6));
+        }
+        .prism-info-stop-btn:active {
+          background: linear-gradient(145deg, #22252b, #2d3038);
+          box-shadow: 
+            inset 3px 3px 6px rgba(0, 0, 0, 0.5),
+            inset -2px -2px 4px rgba(255, 255, 255, 0.02);
         }
         .prism-camera-info.hidden {
           display: none;
@@ -1946,52 +1993,74 @@ class PrismCrealityCard extends HTMLElement {
           font-size: 15px;
           font-weight: 600;
         }
+        /* Multi-Printer Title Icon - Neumorphism */
         .prism-multi-title-icon {
           width: 32px;
           height: 32px;
-          background: rgba(59, 130, 246, 0.15);
-          border: 1px solid rgba(59, 130, 246, 0.3);
+          background: linear-gradient(145deg, #2d3038, #22252b);
+          border: none;
           border-radius: 8px;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #3B82F6;
+          color: #0096FF;
           --mdc-icon-size: 18px;
+          box-shadow: 
+            3px 3px 6px rgba(0, 0, 0, 0.4),
+            -2px -2px 4px rgba(255, 255, 255, 0.03),
+            inset 1px 1px 2px rgba(255, 255, 255, 0.05);
         }
         .prism-multi-title-icon ha-icon {
           display: flex;
           --mdc-icon-size: 18px;
+          filter: drop-shadow(0 0 4px rgba(0, 150, 255, 0.5));
         }
         .prism-multi-badge {
-          background: rgba(59, 130, 246, 0.2);
+          background: linear-gradient(145deg, #1c1e24, #25282e);
           color: #60a5fa;
           padding: 4px 10px;
           border-radius: 12px;
           font-size: 11px;
           font-weight: 600;
+          box-shadow: 
+            inset 2px 2px 4px rgba(0, 0, 0, 0.3),
+            inset -1px -1px 2px rgba(255, 255, 255, 0.02);
         }
+        /* Multi-Printer Close Button - Neumorphism */
         .prism-multi-close {
           width: 32px;
           height: 32px;
           border-radius: 8px;
-          background: rgba(255,255,255,0.08);
-          border: 1px solid rgba(255,255,255,0.1);
+          background: linear-gradient(145deg, #2d3038, #22252b);
+          border: none;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: rgba(255,255,255,0.6);
-          transition: all 0.2s;
+          color: rgba(255,255,255,0.4);
+          transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
           --mdc-icon-size: 18px;
+          box-shadow: 
+            3px 3px 6px rgba(0, 0, 0, 0.4),
+            -2px -2px 4px rgba(255, 255, 255, 0.03),
+            inset 1px 1px 2px rgba(255, 255, 255, 0.05);
         }
         .prism-multi-close ha-icon {
           display: flex;
           --mdc-icon-size: 18px;
+          transition: all 0.2s ease;
         }
         .prism-multi-close:hover {
-          background: rgba(255,80,80,0.25);
-          border-color: rgba(255,80,80,0.4);
-          color: #ff6b6b;
+          color: #f87171;
+        }
+        .prism-multi-close:hover ha-icon {
+          filter: drop-shadow(0 0 4px rgba(248, 113, 113, 0.6));
+        }
+        .prism-multi-close:active {
+          background: linear-gradient(145deg, #22252b, #2d3038);
+          box-shadow: 
+            inset 2px 2px 4px rgba(0, 0, 0, 0.5),
+            inset -1px -1px 3px rgba(255, 255, 255, 0.03);
         }
         .prism-multi-grid {
           flex: 1;
@@ -2899,70 +2968,76 @@ class PrismCrealityCard extends HTMLElement {
             align-items: center;
             gap: 12px;
         }
+        /* Printer Icon - Neumorphism Style */
         .printer-icon {
             width: 40px;
             height: 40px;
             min-width: 40px;
             min-height: 40px;
             border-radius: 50%;
-            background: linear-gradient(145deg, rgba(0, 150, 255, 0.15), rgba(0, 150, 255, 0.08));
+            background: linear-gradient(145deg, #2d3038, #22252b);
             display: flex;
             align-items: center;
             justify-content: center;
             color: #0096FF;
-            border: 1px solid rgba(0, 150, 255, 0.2);
-            box-shadow: inset 0 0 10px rgba(0, 150, 255, 0.1);
+            border: none;
+            box-shadow: 
+                3px 3px 6px rgba(0, 0, 0, 0.4),
+                -2px -2px 4px rgba(255, 255, 255, 0.03),
+                inset 1px 1px 2px rgba(255, 255, 255, 0.05);
             flex-shrink: 0;
             transition: all 0.3s ease;
         }
         .printer-icon ha-icon {
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
+            filter: drop-shadow(0 0 4px rgba(0, 150, 255, 0.5));
         }
-        /* Offline/Unavailable/Power Off - Grey, inset look like prism-button */
+        /* Offline/Unavailable/Power Off - Inset/pressed look */
         .printer-icon.offline {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            color: rgba(255, 255, 255, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: linear-gradient(145deg, #1c1e24, #25282e);
+            color: rgba(255, 255, 255, 0.25);
             box-shadow: 
-                inset 3px 3px 8px rgba(0, 0, 0, 0.5),
-                inset -2px -2px 6px rgba(255, 255, 255, 0.05),
-                inset 1px 1px 3px rgba(0, 0, 0, 0.3);
+                inset 3px 3px 6px rgba(0, 0, 0, 0.5),
+                inset -2px -2px 4px rgba(255, 255, 255, 0.03);
         }
-        /* Printing - Blue with glow animation */
+        .printer-icon.offline ha-icon {
+            filter: none;
+        }
+        /* Printing - Blue with glow, slightly pressed */
         .printer-icon.printing {
+            background: linear-gradient(145deg, #1c1e24, #25282e);
             box-shadow: 
-                0 0 12px rgba(0, 150, 255, 0.4),
-                0 0 24px rgba(0, 150, 255, 0.2),
-                inset 0 0 10px rgba(0, 150, 255, 0.1);
+                inset 2px 2px 4px rgba(0, 0, 0, 0.4),
+                inset -1px -1px 3px rgba(255, 255, 255, 0.03);
             animation: printerIconGlow 2s ease-in-out infinite;
+        }
+        .printer-icon.printing ha-icon {
+            filter: drop-shadow(0 0 6px rgba(0, 150, 255, 0.7));
         }
         @keyframes printerIconGlow {
             0%, 100% { 
-                box-shadow: 
-                    0 0 12px rgba(0, 150, 255, 0.4),
-                    0 0 24px rgba(0, 150, 255, 0.2),
-                    inset 0 0 10px rgba(0, 150, 255, 0.1);
+                color: #0096FF;
             }
             50% { 
-                box-shadow: 
-                    0 0 18px rgba(0, 150, 255, 0.6),
-                    0 0 36px rgba(0, 150, 255, 0.3),
-                    inset 0 0 15px rgba(0, 150, 255, 0.15);
+                color: #4db8ff;
             }
         }
         /* Paused - Yellow/Orange */
         .printer-icon.paused {
-            background: linear-gradient(145deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.08));
+            background: linear-gradient(145deg, #2d3038, #22252b);
             color: #fbbf24;
-            border: 1px solid rgba(251, 191, 36, 0.2);
-            box-shadow: inset 0 0 10px rgba(251, 191, 36, 0.1);
+            box-shadow: 
+                3px 3px 6px rgba(0, 0, 0, 0.4),
+                -2px -2px 4px rgba(255, 255, 255, 0.03),
+                inset 1px 1px 2px rgba(255, 255, 255, 0.05);
+        }
+        .printer-icon.paused ha-icon {
+            filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.5));
         }
         .title {
             font-size: 1.125rem;
@@ -2996,31 +3071,46 @@ class PrismCrealityCard extends HTMLElement {
             align-items: center;
             gap: 8px;
         }
+        /* Header Icon Buttons - Neumorphism Style */
         .header-icon-btn {
             width: 36px;
             height: 36px;
             min-width: 36px;
             min-height: 36px;
             border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(145deg, #2d3038, #22252b);
+            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.35);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
             flex-shrink: 0;
+            box-shadow: 
+                3px 3px 6px rgba(0, 0, 0, 0.4),
+                -2px -2px 4px rgba(255, 255, 255, 0.03),
+                inset 1px 1px 2px rgba(255, 255, 255, 0.05);
         }
         .header-icon-btn:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.7);
         }
+        .header-icon-btn:active {
+            transform: scale(0.95);
+            box-shadow: 
+                inset 3px 3px 6px rgba(0, 0, 0, 0.5),
+                inset -2px -2px 4px rgba(255, 255, 255, 0.03);
+        }
+        /* Active state - pressed in with colored icon */
         .header-icon-btn.active {
+            background: linear-gradient(145deg, #1c1e24, #25282e);
             color: #fbbf24;
-            background-color: rgba(20, 20, 20, 0.9);
-            border-color: rgba(0, 0, 0, 0.3);
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.8), inset -1px -1px 2px rgba(255,255,255,0.05);
+            box-shadow: 
+                inset 3px 3px 6px rgba(0, 0, 0, 0.5),
+                inset -2px -2px 4px rgba(255, 255, 255, 0.03);
+        }
+        .header-icon-btn.active ha-icon {
+            filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.6));
         }
         .header-icon-btn ha-icon {
             width: 18px;
@@ -3028,6 +3118,7 @@ class PrismCrealityCard extends HTMLElement {
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.2s ease;
         }
         
         /* Main Visual */
@@ -3055,12 +3146,18 @@ class PrismCrealityCard extends HTMLElement {
             justify-content: center;
         }
         
-        /* Power Corner Button */
-        .power-corner-btn {
+        /* Power Button - Neumorphism Style */
+        .power-btn-container {
             position: absolute;
-            top: -14px;
-            right: -14px;
+            top: -16px;
+            right: -16px;
             z-index: 50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .power-corner-btn {
+            position: relative;
             width: 44px;
             height: 44px;
             border-radius: 50%;
@@ -3069,33 +3166,128 @@ class PrismCrealityCard extends HTMLElement {
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+            /* Outer ring - neumorphic inset */
+            background: linear-gradient(145deg, #2a2d35, #1e2027);
+            box-shadow: 
+                /* Outer shadows for depth */
+                5px 5px 10px rgba(0, 0, 0, 0.5),
+                -2px -2px 6px rgba(255, 255, 255, 0.03),
+                /* Inner ring shadow */
+                inset 0 0 0 3px rgba(30, 32, 38, 1),
+                inset 2px 2px 4px rgba(0, 0, 0, 0.3),
+                inset -1px -1px 3px rgba(255, 255, 255, 0.02);
         }
-        .power-corner-btn.on {
-            background: linear-gradient(135deg, rgba(74, 222, 128, 0.9), rgba(34, 197, 94, 0.9));
-            color: white;
-            box-shadow: 0 4px 12px rgba(74, 222, 128, 0.4), 0 0 20px rgba(74, 222, 128, 0.3);
+        /* Inner circle - default (OFF) state: raised/normal */
+        .power-corner-btn::before {
+            content: '';
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #2d3038, #22252b);
+            box-shadow: 
+                2px 2px 4px rgba(0, 0, 0, 0.4),
+                -1px -1px 3px rgba(255, 255, 255, 0.05),
+                inset 1px 1px 2px rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
         }
-        .power-corner-btn.off {
-            background: linear-gradient(135deg, rgba(60, 60, 60, 0.9), rgba(40, 40, 40, 0.9));
-            color: rgba(255, 255, 255, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        /* ON state - inner circle pressed/inset */
+        .power-corner-btn.on::before {
+            background: linear-gradient(145deg, #1c1e24, #25282e);
+            box-shadow: 
+                inset 3px 3px 6px rgba(0, 0, 0, 0.6),
+                inset -2px -2px 4px rgba(255, 255, 255, 0.03);
         }
-        .power-corner-btn:hover {
-            transform: scale(1.1);
+        .power-corner-btn .power-icon {
+            position: relative;
+            z-index: 2;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
         }
-        .power-corner-btn.on:hover {
-            box-shadow: 0 6px 16px rgba(74, 222, 128, 0.5), 0 0 30px rgba(74, 222, 128, 0.4);
+        .power-corner-btn .power-icon ha-icon {
+            --mdc-icon-size: 20px;
+            width: 20px;
+            height: 20px;
         }
-        .power-corner-btn.off:hover {
-            background: linear-gradient(135deg, rgba(248, 113, 113, 0.8), rgba(220, 38, 38, 0.8));
-            color: white;
-            box-shadow: 0 6px 16px rgba(248, 113, 113, 0.4);
+        /* Off state - icon is dim, button raised */
+        .power-corner-btn.off .power-icon {
+            color: rgba(255, 255, 255, 0.25);
         }
-        .power-corner-btn ha-icon {
-            width: 24px;
-            height: 24px;
+        /* On state - green icon with glow, button pressed */
+        .power-corner-btn.on .power-icon {
+            color: #4ade80;
+            filter: drop-shadow(0 0 6px rgba(74, 222, 128, 0.6));
+        }
+        /* Hover states */
+        .power-corner-btn.on:hover .power-icon {
+            color: #f87171;
+            filter: drop-shadow(0 0 8px rgba(248, 113, 113, 0.7));
+        }
+        .power-corner-btn.off:hover .power-icon {
+            color: #4ade80;
+            filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.7));
+        }
+        /* Click/tap feedback - extra press effect */
+        .power-corner-btn:active {
+            transform: scale(0.97);
+        }
+        .power-corner-btn:active::before {
+            box-shadow: 
+                inset 4px 4px 8px rgba(0, 0, 0, 0.7),
+                inset -2px -2px 4px rgba(255, 255, 255, 0.02);
+        }
+        /* Responsive: smaller on tablets */
+        @media (max-width: 768px) {
+            .power-btn-container {
+                top: -14px;
+                right: -14px;
+            }
+            .power-corner-btn {
+                width: 38px;
+                height: 38px;
+            }
+            .power-corner-btn::before {
+                width: 28px;
+                height: 28px;
+            }
+            .power-corner-btn .power-icon {
+                width: 16px;
+                height: 16px;
+            }
+            .power-corner-btn .power-icon ha-icon {
+                --mdc-icon-size: 16px;
+                width: 16px;
+                height: 16px;
+            }
+        }
+        /* Even smaller on phones */
+        @media (max-width: 480px) {
+            .power-btn-container {
+                top: -12px;
+                right: -12px;
+            }
+            .power-corner-btn {
+                width: 34px;
+                height: 34px;
+            }
+            .power-corner-btn::before {
+                width: 24px;
+                height: 24px;
+            }
+            .power-corner-btn .power-icon {
+                width: 14px;
+                height: 14px;
+            }
+            .power-corner-btn .power-icon ha-icon {
+                --mdc-icon-size: 14px;
+                width: 14px;
+                height: 14px;
+            }
         }
         .view-toggle {
             position: absolute;
@@ -3309,6 +3501,7 @@ class PrismCrealityCard extends HTMLElement {
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
         }
+        /* Buttons - Neumorphism Style */
         .btn {
             height: 48px;
             border-radius: 16px;
@@ -3317,9 +3510,15 @@ class PrismCrealityCard extends HTMLElement {
             justify-content: center;
             border: none;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
             font-weight: 700;
             font-size: 14px;
+            background: linear-gradient(145deg, #2d3038, #22252b);
+            color: rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                4px 4px 8px rgba(0, 0, 0, 0.4),
+                -2px -2px 6px rgba(255, 255, 255, 0.03),
+                inset 1px 1px 2px rgba(255, 255, 255, 0.05);
         }
         .btn ha-icon {
             width: 20px;
@@ -3327,27 +3526,63 @@ class PrismCrealityCard extends HTMLElement {
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.2s ease;
         }
+        .btn:hover:not(:disabled) {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .btn:active:not(:disabled) {
+            transform: scale(0.97);
+            background: linear-gradient(145deg, #22252b, #2d3038);
+            box-shadow: 
+                inset 3px 3px 6px rgba(0, 0, 0, 0.5),
+                inset -2px -2px 4px rgba(255, 255, 255, 0.03);
+        }
+        /* Secondary buttons (Home, Stop) */
         .btn-secondary {
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.5);
         }
         .btn-secondary:hover:not(:disabled) {
-            background-color: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
         }
+        /* Stop button - red on hover */
+        .btn-stop:hover:not(:disabled) {
+            color: #f87171;
+        }
+        .btn-stop:hover:not(:disabled) ha-icon {
+            filter: drop-shadow(0 0 4px rgba(248, 113, 113, 0.5));
+        }
+        /* Home button - blue on hover */
+        .btn-home:hover:not(:disabled) {
+            color: #0096FF;
+        }
+        .btn-home:hover:not(:disabled) ha-icon {
+            filter: drop-shadow(0 0 4px rgba(0, 150, 255, 0.5));
+        }
+        /* Primary button (Pause/Resume) - always slightly pressed */
         .btn-primary {
             grid-column: span 2;
-            background-color: rgba(20, 20, 20, 0.8);
+            background: linear-gradient(145deg, #1c1e24, #25282e);
             color: #0096FF;
             gap: 8px;
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.8), inset -1px -1px 2px rgba(255,255,255,0.05);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            border-top: 1px solid rgba(0, 0, 0, 0.2);
+            box-shadow: 
+                inset 3px 3px 6px rgba(0, 0, 0, 0.5),
+                inset -2px -2px 4px rgba(255, 255, 255, 0.03);
+        }
+        .btn-primary ha-icon {
+            filter: drop-shadow(0 0 4px rgba(0, 150, 255, 0.5));
         }
         .btn-primary:hover:not(:disabled) {
-            color: #00b8ff;
-            background-color: rgba(20, 20, 20, 0.9);
+            color: #4db8ff;
+        }
+        .btn-primary:hover:not(:disabled) ha-icon {
+            filter: drop-shadow(0 0 6px rgba(0, 150, 255, 0.7));
+        }
+        .btn-primary:active:not(:disabled) {
+            transform: scale(0.97);
+            box-shadow: 
+                inset 4px 4px 8px rgba(0, 0, 0, 0.6),
+                inset -2px -2px 4px rgba(255, 255, 255, 0.02);
         }
         .btn:disabled {
             opacity: 0.3;
@@ -3392,9 +3627,11 @@ class PrismCrealityCard extends HTMLElement {
 
         <div class="main-visual ${!data.isLightOn ? 'light-off' : ''}">
             ${data.powerSwitch ? `
-            <button class="power-corner-btn btn-power ${data.isPowerOn ? 'on' : 'off'}" title="Power ${data.isPowerOn ? 'Off' : 'On'}">
-                <ha-icon icon="${data.powerSwitchIcon}"></ha-icon>
-            </button>
+            <div class="power-btn-container">
+                <button class="power-corner-btn btn-power ${data.isPowerOn ? 'on' : 'off'}" title="Power ${data.isPowerOn ? 'Off' : 'On'}">
+                    <span class="power-icon"><ha-icon icon="${data.powerSwitchIcon}"></ha-icon></span>
+                </button>
+            </div>
             ` : ''}
             <div class="main-visual-inner">
             ${data.cameraEntity && this.showCamera ? `

@@ -372,30 +372,48 @@ class PrismLedCard extends HTMLElement {
           
           /* Header */
           .header {
-              display: flex; justify-content: space-between; align-items: flex-start;
+              display: flex; justify-content: space-between; align-items: center;
           }
-          .header-left { display: flex; align-items: center; gap: 16px; }
+          .header-left { display: flex; align-items: center; gap: 12px; }
           
           .icon-box {
-              width: 48px; height: 48px; border-radius: 50%;
-              background: rgba(255,255,255,0.05); 
+              width: 40px; height: 40px; min-width: 40px; min-height: 40px; border-radius: 50%;
+              background: linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1)); 
               color: rgba(255,255,255,0.4);
               display: flex; align-items: center; justify-content: center;
               transition: all 0.5s ease;
+              box-shadow: 
+                  4px 4px 10px rgba(0, 0, 0, 0.5),
+                  -2px -2px 6px rgba(255, 255, 255, 0.03),
+                  inset 0 1px 2px rgba(255, 255, 255, 0.05);
+              border: 1px solid rgba(255, 255, 255, 0.05);
+          }
+          .icon-box ha-icon {
+              width: 22px; height: 22px; --mdc-icon-size: 22px;
+          }
+          .icon-box.active {
+              background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
+              box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.7), inset -2px -2px 4px rgba(255, 255, 255, 0.03);
+          }
+          .icon-box.active ha-icon {
+              filter: drop-shadow(0 0 6px currentColor);
           }
           
           .info { display: flex; flex-direction: column; }
-          .title { font-size: 18px; font-weight: 700; color: #e0e0e0; line-height: 1.2; }
-          .subtitle { font-size: 14px; font-weight: 500; color: #999; margin-top: 4px; }
+          .title { font-size: 1.125rem; font-weight: 700; color: rgba(255, 255, 255, 0.9); line-height: 1; }
+          .subtitle { font-size: 0.75rem; font-weight: 500; color: rgba(255, 255, 255, 0.6); margin-top: 4px; }
           
           .power-btn {
               width: 48px; height: 48px; border-radius: 16px;
               display: flex; align-items: center; justify-content: center;
               transition: all 0.2s; cursor: pointer;
-              background: rgba(255,255,255,0.05);
+              background: linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1));
               color: rgba(255,255,255,0.4);
               border: 1px solid rgba(255,255,255,0.05);
-              box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+              box-shadow: 
+                  4px 4px 10px rgba(0, 0, 0, 0.5),
+                  -2px -2px 6px rgba(255, 255, 255, 0.03),
+                  inset 0 1px 2px rgba(255, 255, 255, 0.05);
           }
           .power-btn ha-icon {
               display: flex;
@@ -405,18 +423,22 @@ class PrismLedCard extends HTMLElement {
               height: 100%;
           }
           .power-btn.active {
-              background: #141414;
-              box-shadow: inset 2px 2px 5px rgba(0,0,0,0.8), inset -1px -1px 2px rgba(255,255,255,0.05);
-              border-top: 1px solid rgba(0,0,0,0.2);
+              background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
+              box-shadow: inset 3px 3px 8px rgba(0,0,0,0.7), inset -2px -2px 4px rgba(255,255,255,0.03);
           }
-          .power-btn:hover:not(.active) { background: rgba(255,255,255,0.1); }
+          .power-btn.active ha-icon {
+              filter: drop-shadow(0 0 6px currentColor);
+          }
+          .power-btn:hover:not(.active) { 
+              background: linear-gradient(145deg, rgba(40, 43, 50, 1), rgba(32, 34, 40, 1));
+          }
           
           /* Mode Switcher */
           .mode-switch {
-              display: flex; padding: 4px; background: rgba(20, 20, 20, 0.8);
-              box-shadow: inset 2px 2px 5px rgba(0,0,0,0.8), inset -1px -1px 2px rgba(255,255,255,0.05);
+              display: flex; padding: 4px; 
+              background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
+              box-shadow: inset 3px 3px 8px rgba(0,0,0,0.7), inset -2px -2px 4px rgba(255,255,255,0.03);
               border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);
-              border-top: 1px solid rgba(0,0,0,0.4);
               position: relative;
           }
           .mode-btn {
@@ -425,10 +447,14 @@ class PrismLedCard extends HTMLElement {
               cursor: pointer; transition: all 0.2s; color: rgba(255,255,255,0.4);
               background: transparent;
           }
+          .mode-btn:hover:not(.active) {
+              color: rgba(255,255,255,0.7);
+          }
           .mode-btn.active {
-              background: rgba(20, 20, 20, 0.9);
-              box-shadow: inset 2px 2px 5px rgba(0,0,0,0.9), inset -1px -1px 2px rgba(255,255,255,0.05);
-              border-top: 1px solid rgba(0,0,0,0.5);
+              background: linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1));
+              box-shadow: 
+                  2px 2px 6px rgba(0, 0, 0, 0.4),
+                  -1px -1px 3px rgba(255, 255, 255, 0.02);
               color: white;
           }
           

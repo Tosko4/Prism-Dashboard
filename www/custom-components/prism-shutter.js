@@ -190,16 +190,22 @@ class PrismShutterCard extends HTMLElement {
         }
         
         .header {
-            display: flex; gap: 16px; align-items: center; margin-bottom: 24px;
+            display: flex; gap: 12px; align-items: center; margin-bottom: 24px;
         }
         .icon-box {
-            width: 48px; height: 48px; border-radius: 50%;
-            background: rgba(59, 130, 246, 0.2); color: #60a5fa;
+            width: 40px; height: 40px; min-width: 40px; min-height: 40px; border-radius: 50%;
+            background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
+            color: #60a5fa;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.7), inset -2px -2px 4px rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        .title { font-size: 18px; font-weight: 500; color: #e0e0e0; }
-        .subtitle { font-size: 12px; font-weight: 500; color: #999; text-transform: uppercase; margin-top: 2px; }
+        .icon-box ha-icon {
+            width: 22px; height: 22px; --mdc-icon-size: 22px;
+            filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.6));
+        }
+        .title { font-size: 1.125rem; font-weight: 700; color: rgba(255, 255, 255, 0.9); line-height: 1; }
+        .subtitle { font-size: 0.75rem; font-weight: 500; color: rgba(255, 255, 255, 0.6); text-transform: uppercase; margin-top: 4px; letter-spacing: 0.05em; }
         
         /* Inlet Slider Display (Interactive) */
         .slider-track {
@@ -222,18 +228,33 @@ class PrismShutterCard extends HTMLElement {
             display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;
         }
         .control-btn {
-            height: 48px; border-radius: 12px; background: rgba(255,255,255,0.05);
+            height: 40px; border-radius: 12px;
+            background: linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1));
             border: 1px solid rgba(255,255,255,0.05);
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; transition: all 0.2s; color: rgba(255,255,255,0.6);
+            box-shadow: 
+                4px 4px 10px rgba(0, 0, 0, 0.5),
+                -2px -2px 6px rgba(255, 255, 255, 0.03),
+                inset 0 1px 2px rgba(255, 255, 255, 0.05);
+        }
+        .control-btn:hover:not(.active) {
+            background: linear-gradient(145deg, rgba(40, 43, 50, 1), rgba(32, 34, 40, 1));
+            color: #60a5fa;
+        }
+        .control-btn:hover:not(.active) ha-icon {
+            filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.5));
         }
         /* Active/Pressed State (Inlet) */
         .control-btn:active, .control-btn.active {
-            background: rgba(20, 20, 20, 0.8);
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.8), inset -1px -1px 2px rgba(255,255,255,0.05);
+            background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
+            box-shadow: inset 3px 3px 8px rgba(0,0,0,0.7), inset -2px -2px 4px rgba(255,255,255,0.03);
             border-top: 1px solid rgba(0,0,0,0.4);
             transform: scale(0.98);
             color: #3b82f6;
+        }
+        .control-btn.active ha-icon {
+            filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.6));
         }
 
       </style>

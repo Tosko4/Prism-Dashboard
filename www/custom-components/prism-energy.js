@@ -1574,24 +1574,32 @@ class PrismEnergyCard extends HTMLElement {
         }
         
         .icon-circle {
-          width: 44px;
-          height: 44px;
+          width: 40px;
+          height: 40px;
+          min-width: 40px;
+          min-height: 40px;
           border-radius: 50%;
-          background: rgba(245, 158, 11, 0.15);
+          background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
           display: flex;
           align-items: center;
           justify-content: center;
           color: ${colors.solar};
-          border: 1px solid rgba(245, 158, 11, 0.25);
-          box-shadow: 0 0 20px rgba(245, 158, 11, 0.2), inset 0 0 10px rgba(245, 158, 11, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.7), inset -2px -2px 4px rgba(255, 255, 255, 0.03);
+        }
+        .icon-circle ha-icon {
+          width: 22px;
+          height: 22px;
+          --mdc-icon-size: 22px;
+          filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6));
         }
         
         .title-group h2 {
-          font-size: 1.1rem;
-          font-weight: 600;
-          line-height: 1.2;
+          font-size: 1.125rem;
+          font-weight: 700;
+          line-height: 1;
           margin: 0;
-          color: rgba(255, 255, 255, 0.95);
+          color: rgba(255, 255, 255, 0.9);
         }
         
         .live-indicator {
@@ -1882,6 +1890,7 @@ class PrismEnergyCard extends HTMLElement {
         .detail-col {
           display: flex;
           flex-direction: column;
+          align-items: center;
           min-height: 90px;
         }
         
@@ -1890,15 +1899,40 @@ class PrismEnergyCard extends HTMLElement {
           display: flex;
           flex-direction: column;
           gap: 6px;
+          width: 100%;
         }
         
         .detail-header {
-          font-size: 0.65rem;
+          /* Neumorphic Raised Chip */
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 5px 12px;
+          margin-bottom: 10px;
+          
+          background: linear-gradient(145deg, #2d3038, #22252b);
+          border-radius: 20px;
+          box-shadow: 
+            3px 3px 6px rgba(0, 0, 0, 0.4),
+            -2px -2px 4px rgba(255, 255, 255, 0.03),
+            inset 1px 1px 2px rgba(255, 255, 255, 0.05);
+          
+          font-size: 0.6rem;
           font-weight: 700;
           text-transform: uppercase;
-          color: rgba(255, 255, 255, 0.4);
+          color: rgba(255, 255, 255, 0.6);
           letter-spacing: 0.08em;
-          margin-bottom: 4px;
+          white-space: nowrap;
+          
+          transition: all 0.2s ease;
+        }
+        
+        .detail-header:hover {
+          box-shadow: 
+            4px 4px 8px rgba(0, 0, 0, 0.5),
+            -3px -3px 6px rgba(255, 255, 255, 0.04),
+            inset 1px 1px 2px rgba(255, 255, 255, 0.06);
+          color: rgba(255, 255, 255, 0.8);
         }
         
         .detail-row {
@@ -1906,16 +1940,24 @@ class PrismEnergyCard extends HTMLElement {
           justify-content: space-between;
           align-items: center;
           font-size: 0.75rem;
+          gap: 8px;
+          white-space: nowrap;
         }
         
         .detail-label {
           color: rgba(255, 255, 255, 0.6);
+          flex-shrink: 1;
+          min-width: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
         
         .detail-val {
           font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
           font-weight: 700;
           color: rgba(255, 255, 255, 0.9);
+          flex-shrink: 0;
+          white-space: nowrap;
         }
         
         /* Inlet-style progress bar - aligned at bottom */

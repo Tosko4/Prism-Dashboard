@@ -463,36 +463,62 @@ class PrismHeatCard extends HTMLElement {
           box-sizing: border-box;
         }
         .header {
-            display: flex; align-items: center; gap: 16px; margin-bottom: 24px;
+            display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
         }
         .icon-box {
-            width: 42px; height: 42px; border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.4);
+            width: 40px; height: 40px; min-width: 40px; min-height: 40px; border-radius: 50%;
+            background: linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1));
+            color: rgba(255, 255, 255, 0.4);
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 
+                4px 4px 10px rgba(0, 0, 0, 0.5),
+                -2px -2px 6px rgba(255, 255, 255, 0.03),
+                inset 0 1px 2px rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             flex-shrink: 0;
             transition: all 0.3s ease;
         }
+        .icon-box ha-icon {
+            width: 22px;
+            height: 22px;
+            --mdc-icon-size: 22px;
+        }
         .icon-box.active.heat {
-            background: rgba(251, 146, 60, 0.2); color: #fb923c;
+            background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
+            box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.7), inset -2px -2px 4px rgba(255, 255, 255, 0.03);
+            color: #fb923c;
+        }
+        .icon-box.active.heat ha-icon {
             filter: drop-shadow(0 0 6px rgba(251, 146, 60, 0.6));
         }
         .icon-box.active.auto {
-            background: rgba(74, 222, 128, 0.2); color: #4ade80;
+            background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
+            box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.7), inset -2px -2px 4px rgba(255, 255, 255, 0.03);
+            color: #4ade80;
+        }
+        .icon-box.active.auto ha-icon {
             filter: drop-shadow(0 0 6px rgba(74, 222, 128, 0.6));
         }
         .icon-box.active.cool {
-            background: rgba(96, 165, 250, 0.2); color: #60a5fa;
+            background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
+            box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.7), inset -2px -2px 4px rgba(255, 255, 255, 0.03);
+            color: #60a5fa;
+        }
+        .icon-box.active.cool ha-icon {
             filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.6));
         }
         .icon-box.active.off {
-            background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.4);
-            filter: none;
+            background: linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1));
+            box-shadow: 
+                4px 4px 10px rgba(0, 0, 0, 0.5),
+                -2px -2px 6px rgba(255, 255, 255, 0.03),
+                inset 0 1px 2px rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.4);
         }
 
         .title-area { flex: 1; min-width: 0; overflow: hidden; }
-        .title { font-size: 18px; font-weight: 500; color: #e0e0e0; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .subtitle { font-size: 13px; color: #9ca3af; line-height: 1.2; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .title { font-size: 1.125rem; font-weight: 700; color: rgba(255, 255, 255, 0.9); line-height: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .subtitle { font-size: 0.75rem; font-weight: 500; color: rgba(255, 255, 255, 0.6); line-height: 1.2; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         .status-badge {
             padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; text-transform: uppercase;
@@ -571,21 +597,32 @@ class PrismHeatCard extends HTMLElement {
             display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;
         }
         .mode-btn {
-            height: 48px; border-radius: 12px; background: rgba(255,255,255,0.05);
+            height: 48px; border-radius: 12px;
+            background: linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1));
             border: 1px solid rgba(255,255,255,0.05);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             cursor: pointer; transition: all 0.2s; color: rgba(255,255,255,0.6);
             overflow: hidden; min-width: 0;
+            box-shadow: 
+                4px 4px 10px rgba(0, 0, 0, 0.5),
+                -2px -2px 6px rgba(255, 255, 255, 0.03),
+                inset 0 1px 2px rgba(255, 255, 255, 0.05);
+        }
+        .mode-btn:hover:not(.active) {
+            background: linear-gradient(145deg, rgba(40, 43, 50, 1), rgba(32, 34, 40, 1));
         }
         .mode-btn:active, .mode-btn.active {
-            background: rgba(20, 20, 20, 0.8);
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.8), inset -1px -1px 2px rgba(255,255,255,0.05);
+            background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
+            box-shadow: inset 3px 3px 8px rgba(0,0,0,0.7), inset -2px -2px 4px rgba(255,255,255,0.03);
             border-top: 1px solid rgba(0,0,0,0.4);
             transform: scale(0.98);
         }
         .mode-btn.active.heat { color: #fb923c; }
+        .mode-btn.active.heat ha-icon { filter: drop-shadow(0 0 6px rgba(251, 146, 60, 0.6)); }
         .mode-btn.active.auto { color: #4ade80; }
+        .mode-btn.active.auto ha-icon { filter: drop-shadow(0 0 6px rgba(74, 222, 128, 0.6)); }
         .mode-btn.active.off { color: #ef5350; }
+        .mode-btn.active.off ha-icon { filter: drop-shadow(0 0 6px rgba(239, 83, 80, 0.6)); }
         
         ha-icon { --mdc-icon-size: 20px; }
         .btn-label { font-size: 9px; font-weight: 700; text-transform: uppercase; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
