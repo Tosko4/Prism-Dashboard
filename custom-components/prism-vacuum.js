@@ -227,17 +227,41 @@ class PrismVacuumCard extends HTMLElement {
       return '#ef4444'; // Red
     }
     
+    // Translation helper - English default, German if HA is set to German
+    _t(key) {
+      const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+      const isGerman = lang.startsWith('de');
+      
+      const translations = {
+        // Status texts
+        'cleaning': isGerman ? 'Reinigt' : 'Cleaning',
+        'docked': isGerman ? 'Angedockt' : 'Docked',
+        'idle': isGerman ? 'Bereit' : 'Idle',
+        'paused': isGerman ? 'Pausiert' : 'Paused',
+        'returning': isGerman ? 'Fährt zurück' : 'Returning',
+        'error': isGerman ? 'Fehler' : 'Error',
+        'off': isGerman ? 'Aus' : 'Off',
+        'unavailable': isGerman ? 'Nicht verfügbar' : 'Unavailable',
+        // UI labels
+        'vacuum': isGerman ? 'Staubsauger' : 'Vacuum',
+        'fan_speed': isGerman ? 'Saugstärke' : 'Fan Speed',
+        'home': isGerman ? 'Basis' : 'Home'
+      };
+      
+      return translations[key] || key;
+    }
+    
     // Get status text
     getStatusText(state) {
       const statusMap = {
-        'cleaning': 'Reinigt',
-        'docked': 'Angedockt',
-        'idle': 'Bereit',
-        'paused': 'Pausiert',
-        'returning': 'Fährt zurück',
-        'error': 'Fehler',
-        'off': 'Aus',
-        'unavailable': 'Nicht verfügbar'
+        'cleaning': this._t('cleaning'),
+        'docked': this._t('docked'),
+        'idle': this._t('idle'),
+        'paused': this._t('paused'),
+        'returning': this._t('returning'),
+        'error': this._t('error'),
+        'off': this._t('off'),
+        'unavailable': this._t('unavailable')
       };
       return statusMap[state] || state;
     }
@@ -740,12 +764,12 @@ class PrismVacuumCard extends HTMLElement {
              <div class="controls-header">
                  <div class="controls-label">
                      <ha-icon icon="mdi:fan" style="width: 14px; height: 14px; color: rgba(255,255,255,0.4);"></ha-icon>
-                     <span>Fan Speed</span>
+                     <span>${this._t('fan_speed')}</span>
                  </div>
                  
                  <div id="home-btn" class="home-btn ${isReturning || isDocked ? 'active' : 'inactive'}">
                      <ha-icon icon="mdi:home" style="width: 14px; height: 14px;"></ha-icon>
-                     <span class="home-text">Home</span>
+                     <span class="home-text">${this._t('home')}</span>
                  </div>
              </div>
              

@@ -877,19 +877,10 @@ class PrismEnergyCard extends HTMLElement {
     if (!weatherData.enabled) return '';
     
     // Check Home Assistant language
-    const lang = this._hass?.language || this._hass?.locale?.language || 'de';
-    const isEnglish = lang.startsWith('en');
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
     
-    const labels = isEnglish ? {
-      'sunny': 'Sunny',
-      'clear': 'Clear',
-      'cloudy': 'Cloudy',
-      'rainy': 'Rain',
-      'snowy': 'Snow',
-      'foggy': 'Fog',
-      'stormy': 'Storm',
-      'windy': 'Windy'
-    } : {
+    const labels = isGerman ? {
       'sunny': 'Sonnig',
       'clear': 'Klar',
       'cloudy': 'Bewölkt',
@@ -898,6 +889,15 @@ class PrismEnergyCard extends HTMLElement {
       'foggy': 'Nebel',
       'stormy': 'Gewitter',
       'windy': 'Windig'
+    } : {
+      'sunny': 'Sunny',
+      'clear': 'Clear',
+      'cloudy': 'Cloudy',
+      'rainy': 'Rain',
+      'snowy': 'Snow',
+      'foggy': 'Fog',
+      'stormy': 'Storm',
+      'windy': 'Windy'
     };
     
     return labels[weatherData.weatherType] || weatherData.weatherType;
@@ -905,43 +905,43 @@ class PrismEnergyCard extends HTMLElement {
 
   // Get day/night label based on HA language
   _getDayNightLabel(isNight) {
-    const lang = this._hass?.language || this._hass?.locale?.language || 'de';
-    const isEnglish = lang.startsWith('en');
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
     
-    if (isEnglish) {
-      return isNight ? 'Night' : 'Day';
+    if (isGerman) {
+      return isNight ? 'Nacht' : 'Tag';
     }
-    return isNight ? 'Nacht' : 'Tag';
+    return isNight ? 'Night' : 'Day';
   }
 
   // Translate UI labels based on HA language (card display only, not editor)
   _t(key) {
-    const lang = this._hass?.language || this._hass?.locale?.language || 'de';
-    const isEnglish = lang.startsWith('en');
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
     
     const translations = {
       // Pill labels
-      'production': isEnglish ? 'Production' : 'Erzeugung',
-      'inactive': isEnglish ? 'Inactive' : 'Inaktiv',
-      'export': isEnglish ? 'Export' : 'Einspeisung',
-      'import': isEnglish ? 'Import' : 'Bezug',
-      'neutral': isEnglish ? 'Neutral' : 'Neutral',
-      'consumption': isEnglish ? 'Consumption' : 'Verbrauch',
-      'charging': isEnglish ? 'Charging' : 'Ladung',
-      'discharging': isEnglish ? 'Discharging' : 'Entladung',
-      'standby': isEnglish ? 'Standby' : 'Standby',
-      'idle': isEnglish ? 'Idle' : 'Inaktiv',
+      'production': isGerman ? 'Erzeugung' : 'Production',
+      'inactive': isGerman ? 'Inaktiv' : 'Inactive',
+      'export': isGerman ? 'Einspeisung' : 'Export',
+      'import': isGerman ? 'Bezug' : 'Import',
+      'neutral': isGerman ? 'Neutral' : 'Neutral',
+      'consumption': isGerman ? 'Verbrauch' : 'Consumption',
+      'charging': isGerman ? 'Ladung' : 'Charging',
+      'discharging': isGerman ? 'Entladung' : 'Discharging',
+      'standby': isGerman ? 'Standby' : 'Standby',
+      'idle': isGerman ? 'Inaktiv' : 'Idle',
       // Detail headers
-      'grid': isEnglish ? 'Grid' : 'Netz',
-      'storage': isEnglish ? 'Storage' : 'Speicher',
-      'current': isEnglish ? 'Current' : 'Aktuell',
+      'grid': isGerman ? 'Netz' : 'Grid',
+      'storage': isGerman ? 'Speicher' : 'Storage',
+      'current': isGerman ? 'Aktuell' : 'Current',
       // Detail labels
-      'power': isEnglish ? 'Power' : 'Leistung',
-      'autarky': isEnglish ? 'Autarky' : 'Autarkie',
+      'power': isGerman ? 'Leistung' : 'Power',
+      'autarky': isGerman ? 'Autarkie' : 'Autarky',
       // Module defaults
-      'module': isEnglish ? 'Module' : 'Modul',
+      'module': isGerman ? 'Modul' : 'Module',
       // Live indicator
-      'live': isEnglish ? 'LIVE' : 'LIVE'
+      'live': 'LIVE'
     };
     
     return translations[key] || key;

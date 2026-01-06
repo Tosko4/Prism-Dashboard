@@ -21,3 +21,6 @@ package-lock.json
 # Temporary files
 *.tmp
 *.log
+
+# Personal dashboard files (not for GitHub)
+own-dashboard/

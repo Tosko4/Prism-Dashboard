@@ -101,6 +101,20 @@ class PrismLedLightCard extends HTMLElement {
     getCardSize() {
       return 3;
     }
+
+    // Translation helper - English default, German if HA is set to German
+    _t(key) {
+      const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+      const isGerman = lang.startsWith('de');
+      
+      const translations = {
+        'color': isGerman ? 'Farbe' : 'Color',
+        'white': isGerman ? 'Weiß' : 'White',
+        'off': isGerman ? 'Ausgeschaltet' : 'Off'
+      };
+      
+      return translations[key] || key;
+    }
   
     connectedCallback() {
       // Always render if config exists, even without hass (for preview)
@@ -304,7 +318,7 @@ class PrismLedLightCard extends HTMLElement {
         
         if(fill) fill.style.width = `${this.localBrightness}%`;
         if(tip) tip.style.left = `${this.localBrightness}%`;
-        if(headerSub) headerSub.textContent = `${this.localBrightness}% • ${this.mode === 'color' ? 'Farbe' : 'Weiß'}`;
+        if(headerSub) headerSub.textContent = `${this.localBrightness}% • ${this.mode === 'color' ? this._t('color') : this._t('white')}`;
         
         // Opacity updates
         const color = this.getDisplayColor();
@@ -516,7 +530,7 @@ class PrismLedLightCard extends HTMLElement {
                   </div>
                   <div class="info">
                       <div class="title">${name}</div>
-                      <div class="subtitle" id="header-subtitle">${isOn ? `${this.localBrightness}% • ${this.mode === 'color' ? 'Farbe' : 'Weiß'}` : "Ausgeschaltet"}</div>
+                      <div class="subtitle" id="header-subtitle">${isOn ? `${this.localBrightness}% • ${this.mode === 'color' ? this._t('color') : this._t('white')}` : this._t('off')}</div>
                   </div>
               </div>
               
@@ -526,8 +540,8 @@ class PrismLedLightCard extends HTMLElement {
           </div>
           
           <div class="mode-switch">
-              <div class="mode-btn ${this.mode === 'color' ? 'active' : ''}" data-mode="color">Farbe</div>
-              <div class="mode-btn ${this.mode === 'white' ? 'active' : ''}" data-mode="white">Weiß</div>
+              <div class="mode-btn ${this.mode === 'color' ? 'active' : ''}" data-mode="color">${this._t('color')}</div>
+              <div class="mode-btn ${this.mode === 'white' ? 'active' : ''}" data-mode="white">${this._t('white')}</div>
           </div>
           
           <div class="wheel-container" id="color-wheel">

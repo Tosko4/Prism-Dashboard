@@ -50,7 +50,7 @@ class PrismSidebarCard extends HTMLElement {
                 {
                     name: "rotation_interval",
                     label: "Rotation interval",
-                    selector: { number: { min: 3, max: 60, step: 1, unit_of_measurement: "Sekunden" } },
+                    selector: { number: { min: 3, max: 60, step: 1, unit_of_measurement: "s" } },
                     default: 10
                 },
                 {
@@ -66,7 +66,7 @@ class PrismSidebarCard extends HTMLElement {
                 {
                     name: "forecast_days",
                     label: "Forecast days",
-                    selector: { number: { min: 1, max: 7, step: 1, unit_of_measurement: "Tage" } },
+                    selector: { number: { min: 1, max: 7, step: 1, unit_of_measurement: "days" } },
                     default: 3
                 },
                 {
@@ -341,7 +341,7 @@ class PrismSidebarCard extends HTMLElement {
             if (calSubEl) {
                 let subText = '';
                 if (attr.all_day) {
-                    subText = 'Ganztägig';
+                    subText = this._t('all_day');
                 } else if (attr.start_time) {
                     const date = new Date(attr.start_time);
                     subText = date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
@@ -563,8 +563,8 @@ class PrismSidebarCard extends HTMLElement {
         const cameraImage = cameraState?.attributes?.entity_picture || 'https://images.unsplash.com/photo-1558435186-d31d1eb6fa3c?q=80&w=600&auto=format&fit=crop';
         const cameraName = cameraState?.attributes?.friendly_name || cameraEntity.split('.')[1] || 'Camera';
         const currentTemp = temperatureState?.state || '0';
-        const calendarTitle = calendarState?.attributes?.message || 'Keine Termine';
-        const calendarSub = calendarState?.attributes?.all_day ? 'Ganztägig' : 
+        const calendarTitle = calendarState?.attributes?.message || this._t('no_events');
+        const calendarSub = calendarState?.attributes?.all_day ? this._t('all_day') : 
                            (calendarState?.attributes?.start_time ? 
                             new Date(calendarState.attributes.start_time).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : 
                             '');
@@ -1260,6 +1260,19 @@ class PrismSidebarCard extends HTMLElement {
         fillPath += ` L ${lastX},${height} L ${firstX},${height} Z`; // Close at bottom
         
         return { line: linePath.trim(), fill: fillPath.trim() };
+    }
+
+    // Translation helper - English default, German if HA is set to German
+    _t(key) {
+        const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+        const isGerman = lang.startsWith('de');
+        
+        const translations = {
+            'all_day': isGerman ? 'Ganztägig' : 'All day',
+            'no_events': isGerman ? 'Keine Termine' : 'No events'
+        };
+        
+        return translations[key] || key;
     }
 
     getCardSize() {

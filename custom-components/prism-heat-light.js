@@ -282,6 +282,22 @@ class PrismHeatLightCard extends HTMLElement {
     }
   }
 
+  // Translation helper - English default, German if HA is set to German
+  _t(key) {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
+    
+    const translations = {
+      'off': isGerman ? 'Aus' : 'Off',
+      'manual': isGerman ? 'Manuell' : 'Manual',
+      'auto': isGerman ? 'Auto' : 'Auto',
+      'cool': isGerman ? 'Kühlen' : 'Cool',
+      'heating': isGerman ? 'Heizung' : 'Thermostat'
+    };
+    
+    return translations[key] || key;
+  }
+
   render() {
     console.log('PrismHeatCard render v2');
     const isHeating = this._state === 'heat';
@@ -299,19 +315,19 @@ class PrismHeatLightCard extends HTMLElement {
     const strokeDashArray = `${arcLength} ${c}`;
     const dashOffset = arcLength * (1 - percentage);
 
-    let currentModeText = 'Aus';
+    let currentModeText = this._t('off');
     let iconClass = '';
     
     if(this._state === 'heat') {
-        currentModeText = 'Manuell';
+        currentModeText = this._t('manual');
         iconClass = 'active heat';
     }
     if(this._state === 'auto') {
-        currentModeText = 'Auto';
+        currentModeText = this._t('auto');
         iconClass = 'active auto';
     }
     if(this._state === 'cool') {
-        currentModeText = 'Cool';
+        currentModeText = this._t('cool');
         iconClass = 'active cool';
     }
     if(this._state === 'off') {
@@ -596,7 +612,7 @@ class PrismHeatLightCard extends HTMLElement {
                 <ha-icon icon="${this.config.icon}"></ha-icon>
             </div>
             <div class="title-area">
-                <div class="title">${this.config.name || 'Heizung'}</div>
+                <div class="title">${this.config.name || this._t('heating')}</div>
                 <div class="subtitle">${this._currentTemp.toFixed(1)} °C${this._humidity !== null ? ` · ${this._humidity.toFixed(0)}%` : ''}</div>
             </div>
         </div>
@@ -641,15 +657,15 @@ class PrismHeatLightCard extends HTMLElement {
         <div class="controls">
             <div class="mode-btn ${this._state === 'off' ? 'active off' : ''}" data-mode="off">
                 <ha-icon icon="mdi:power"></ha-icon>
-                <span class="btn-label">Off</span>
+                <span class="btn-label">${this._t('off')}</span>
             </div>
             <div class="mode-btn ${this._state === 'heat' ? 'active heat' : ''}" data-mode="heat">
                 <ha-icon icon="mdi:fire"></ha-icon>
-                <span class="btn-label">Manuell</span>
+                <span class="btn-label">${this._t('manual')}</span>
             </div>
             <div class="mode-btn ${this._state === 'auto' ? 'active auto' : ''}" data-mode="auto">
                 <ha-icon icon="mdi:calendar-sync"></ha-icon>
-                <span class="btn-label">Auto</span>
+                <span class="btn-label">${this._t('auto')}</span>
             </div>
         </div>
       </div>

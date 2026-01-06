@@ -65,6 +65,28 @@ class PrismMediaCard extends HTMLElement {
     return 2;
   }
 
+  // Translation helper - English default, German if HA is set to German
+  _t(key) {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
+    
+    const translations = {
+      'playing': isGerman ? 'Wiedergabe' : 'Playing',
+      'paused': isGerman ? 'Pausiert' : 'Paused',
+      'idle': isGerman ? 'Bereit' : 'Idle',
+      'off': isGerman ? 'Aus' : 'Off',
+      'standby': isGerman ? 'Standby' : 'Standby',
+      'buffering': isGerman ? 'Puffern...' : 'Buffering...',
+      'on': isGerman ? 'An' : 'On',
+      'unavailable': isGerman ? 'Nicht verfügbar' : 'Unavailable',
+      'play': isGerman ? 'Play' : 'Play',
+      'pause': isGerman ? 'Pause' : 'Pause',
+      'no_media': isGerman ? 'Keine Medien' : 'No Media'
+    };
+    
+    return translations[key] || key;
+  }
+
   connectedCallback() {
     if (this.config) {
       this.render();
@@ -165,7 +187,7 @@ class PrismMediaCard extends HTMLElement {
     const state = this._entity ? this._entity.state : 'idle';
     
     // Title: try various attributes
-    const title = attr.media_title || attr.media_album_name || 'No Media';
+    const title = attr.media_title || attr.media_album_name || this._t('no_media');
     
     // Subtitle: try artist, series, app name, channel, or show state
     let subtitle = '';
@@ -186,17 +208,7 @@ class PrismMediaCard extends HTMLElement {
       subtitle = attr.source;
     } else {
       // Fallback to translated state
-      const stateMap = {
-        'playing': 'Wiedergabe',
-        'paused': 'Pausiert', 
-        'idle': 'Bereit',
-        'off': 'Aus',
-        'standby': 'Standby',
-        'buffering': 'Puffern...',
-        'on': 'An',
-        'unavailable': 'Nicht verfügbar'
-      };
-      subtitle = stateMap[state] || state;
+      subtitle = this._t(state);
     }
     
     const art = attr.entity_picture; // This usually returns e.g. /api/media_player_proxy/...
@@ -379,7 +391,7 @@ class PrismMediaCard extends HTMLElement {
              
              <div class="media-btn play ${isPlaying ? 'playing' : ''}" data-action="play_pause" style="${isPlaying ? `color: ${playingColor};` : ''}">
                 <ha-icon icon="${isPlaying ? 'mdi:pause' : 'mdi:play'}"></ha-icon>
-                <span>${isPlaying ? 'Pause' : 'Play'}</span>
+                <span>${isPlaying ? this._t('pause') : this._t('play')}</span>
              </div>
              
              <div class="media-btn circle" data-action="next"><ha-icon icon="mdi:skip-next"></ha-icon></div>

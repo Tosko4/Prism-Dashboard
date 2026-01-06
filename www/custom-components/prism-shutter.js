@@ -47,6 +47,21 @@ class PrismShutterCard extends HTMLElement {
     return 2;
   }
 
+  // Translation helper - English default, German if HA is set to German
+  _t(key) {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
+    
+    const translations = {
+      'closed': isGerman ? 'Geschlossen' : 'Closed',
+      'open': isGerman ? 'Offen' : 'Open',
+      'open_percent': isGerman ? '% Offen' : '% Open',
+      'shutter': isGerman ? 'Rollladen' : 'Shutter'
+    };
+    
+    return translations[key] || key;
+  }
+
   connectedCallback() {
     if (this.config) {
       this.render();
@@ -161,9 +176,9 @@ class PrismShutterCard extends HTMLElement {
     const isOpen = pos > 0;
     
     // Status Text
-    let statusText = 'Closed';
-    if (pos === 100) statusText = 'Open';
-    else if (pos > 0) statusText = `${pos}% Open`;
+    let statusText = this._t('closed');
+    if (pos === 100) statusText = this._t('open');
+    else if (pos > 0) statusText = `${pos}${this._t('open_percent')}`;
     
     // Determine active buttons
     const isOpening = state === 'opening';

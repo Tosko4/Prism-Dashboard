@@ -117,7 +117,7 @@ class PrismCalendarLightCard extends HTMLElement {
         this._events = eventsArray
           .map(event => {
             // REST API returns: { start: { dateTime: "..." } or { date: "..." }, end: {...}, summary: "...", ... }
-            const title = event.summary || event.title || event.message || 'Unbenannt';
+            const title = event.summary || event.title || event.message || this._t('untitled');
             // Handle both dateTime (timed) and date (all-day) formats
             const start = event.start?.dateTime || event.start?.date || event.start;
             const end = event.end?.dateTime || event.end?.date || event.end;
@@ -182,12 +182,41 @@ class PrismCalendarLightCard extends HTMLElement {
     }
   }
 
+  // Translation helper - English default, German if HA is set to German
+  _t(key) {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
+    
+    const translations = {
+      'loading': isGerman ? 'Lade Termine...' : 'Loading events...',
+      'no_events': isGerman ? 'Keine kommenden Termine' : 'No upcoming events',
+      'no_more_events': isGerman ? 'Keine weiteren Termine' : 'No more events',
+      'all_day': isGerman ? 'Ganztägig' : 'All day',
+      'today': isGerman ? 'Heute' : 'Today',
+      'tomorrow': isGerman ? 'Morgen' : 'Tomorrow',
+      'all_day_suffix': isGerman ? '(ganztägig)' : '(all day)',
+      'calendar': isGerman ? 'Kalender' : 'Calendar',
+      'events': isGerman ? 'Termine' : 'Events',
+      'next_event': isGerman ? 'Nächstes Event' : 'Next Event',
+      'untitled': isGerman ? 'Unbenannt' : 'Untitled'
+    };
+    
+    return translations[key] || key;
+  }
+
+  // Get locale for date/time formatting
+  _getLocale() {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    return lang.startsWith('de') ? 'de-DE' : 'en-US';
+  }
+
   render() {
     if (!this.config || !this.config.entity) return;
     
     const maxEvents = this.config.max_events || 3;
     const iconColor = this._normalizeColor(this.config.icon_color || "#f87171");
     const dotColor = this._normalizeColor(this.config.dot_color || "#f87171");
+    const locale = this._getLocale();
     
     // Use fetched events
     const events = this._events.slice(0, maxEvents);
@@ -202,7 +231,7 @@ class PrismCalendarLightCard extends HTMLElement {
             <div class="dot"></div>
           </div>
           <div class="event-info">
-            <div class="event-title">${this._loading ? 'Lade Termine...' : 'Keine kommenden Termine'}</div>
+            <div class="event-title">${this._loading ? this._t('loading') : this._t('no_events')}</div>
             <div class="event-time">
               <ha-icon icon="mdi:clock-outline" style="--mdc-icon-size: 12px;"></ha-icon>
               -
@@ -213,7 +242,7 @@ class PrismCalendarLightCard extends HTMLElement {
     } else {
       events.forEach((event, i) => {
         const isActive = i === 0;
-        let timeStr = 'Ganztägig';
+        let timeStr = this._t('all_day');
         
         if (event.start) {
           try {
@@ -228,25 +257,25 @@ class PrismCalendarLightCard extends HTMLElement {
               
               if (eventDate.getTime() === today.getTime()) {
                 // Today
-                timeStr = isAllDay ? 'Heute (ganztägig)' : `Heute, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+                timeStr = isAllDay ? `${this._t('today')} ${this._t('all_day_suffix')}` : `${this._t('today')}, ${date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}`;
               } else {
                 // Future date
                 const daysDiff = Math.floor((eventDate - today) / (1000 * 60 * 60 * 24));
                 if (daysDiff === 1) {
-                  timeStr = isAllDay ? 'Morgen (ganztägig)' : `Morgen, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+                  timeStr = isAllDay ? `${this._t('tomorrow')} ${this._t('all_day_suffix')}` : `${this._t('tomorrow')}, ${date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}`;
                 } else if (daysDiff > 1 && daysDiff <= 7) {
                   timeStr = isAllDay 
-                    ? date.toLocaleDateString('de-DE', { weekday: 'long' }) + ' (ganztägig)'
-                    : date.toLocaleDateString('de-DE', { weekday: 'short' }) + ', ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    ? date.toLocaleDateString(locale, { weekday: 'long' }) + ' ' + this._t('all_day_suffix')
+                    : date.toLocaleDateString(locale, { weekday: 'short' }) + ', ' + date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
                 } else {
                   timeStr = isAllDay
-                    ? date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }) + ' (ganztägig)'
-                    : date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }) + ', ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    ? date.toLocaleDateString(locale, { day: '2-digit', month: '2-digit' }) + ' ' + this._t('all_day_suffix')
+                    : date.toLocaleDateString(locale, { day: '2-digit', month: '2-digit' }) + ', ' + date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
                 }
               }
             }
           } catch (e) {
-            // If date parsing fails, keep default "Ganztägig"
+            // If date parsing fails, keep default "All day"
           }
         }
         
@@ -274,7 +303,7 @@ class PrismCalendarLightCard extends HTMLElement {
               <div class="dot"></div>
             </div>
             <div class="event-info">
-              <div class="event-title">Keine weiteren Termine</div>
+              <div class="event-title">${this._t('no_more_events')}</div>
               <div class="event-time">
                 <ha-icon icon="mdi:clock-outline" style="--mdc-icon-size: 12px;"></ha-icon>
                 -
@@ -359,8 +388,8 @@ class PrismCalendarLightCard extends HTMLElement {
                 <ha-icon icon="mdi:calendar"></ha-icon>
             </div>
             <div>
-                <div class="title">Kalender</div>
-                <div class="subtitle">${events.length > 0 ? `${events.length} Termine` : 'Nächstes Event'}</div>
+                <div class="title">${this._t('calendar')}</div>
+                <div class="subtitle">${events.length > 0 ? `${events.length} ${this._t('events')}` : this._t('next_event')}</div>
             </div>
         </div>
         

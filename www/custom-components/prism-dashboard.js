@@ -3,7 +3,7 @@
  * https://github.com/BangerTech/Prism-Dashboard
  * 
  * Version: 1.0.0
- * Build Date: 2026-01-05T13:05:40.247Z
+ * Build Date: 2026-01-06T07:51:55.149Z
  * 
  * This file contains all Prism custom cards bundled together.
  * Just add this single file as a resource in Lovelace:
@@ -1656,6 +1656,22 @@ class PrismHeatCard extends HTMLElement {
     }
   }
 
+  // Translation helper - English default, German if HA is set to German
+  _t(key) {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
+    
+    const translations = {
+      'off': isGerman ? 'Aus' : 'Off',
+      'manual': isGerman ? 'Manuell' : 'Manual',
+      'auto': isGerman ? 'Auto' : 'Auto',
+      'cool': isGerman ? 'Kühlen' : 'Cool',
+      'heating': isGerman ? 'Heizung' : 'Thermostat'
+    };
+    
+    return translations[key] || key;
+  }
+
   render() {
     console.log('PrismHeatCard render v2');
     const isHeating = this._state === 'heat';
@@ -1673,19 +1689,19 @@ class PrismHeatCard extends HTMLElement {
     const strokeDashArray = `${arcLength} ${c}`;
     const dashOffset = arcLength * (1 - percentage);
 
-    let currentModeText = 'Aus';
+    let currentModeText = this._t('off');
     let iconClass = '';
     
     if(this._state === 'heat') {
-        currentModeText = 'Manuell';
+        currentModeText = this._t('manual');
         iconClass = 'active heat';
     }
     if(this._state === 'auto') {
-        currentModeText = 'Auto';
+        currentModeText = this._t('auto');
         iconClass = 'active auto';
     }
     if(this._state === 'cool') {
-        currentModeText = 'Cool';
+        currentModeText = this._t('cool');
         iconClass = 'active cool';
     }
     if(this._state === 'off') {
@@ -2008,7 +2024,7 @@ class PrismHeatCard extends HTMLElement {
                 <ha-icon icon="${this.config.icon}"></ha-icon>
             </div>
             <div class="title-area">
-                <div class="title">${this.config.name || 'Heizung'}</div>
+                <div class="title">${this.config.name || this._t('heating')}</div>
                 <div class="subtitle">${this._currentTemp.toFixed(1)} °C${this._humidity !== null ? ` · ${this._humidity.toFixed(0)}%` : ''}</div>
             </div>
         </div>
@@ -2053,15 +2069,15 @@ class PrismHeatCard extends HTMLElement {
         <div class="controls">
             <div class="mode-btn ${this._state === 'off' ? 'active off' : ''}" data-mode="off">
                 <ha-icon icon="mdi:power"></ha-icon>
-                <span class="btn-label">Off</span>
+                <span class="btn-label">${this._t('off')}</span>
             </div>
             <div class="mode-btn ${this._state === 'heat' ? 'active heat' : ''}" data-mode="heat">
                 <ha-icon icon="mdi:fire"></ha-icon>
-                <span class="btn-label">Manuell</span>
+                <span class="btn-label">${this._t('manual')}</span>
             </div>
             <div class="mode-btn ${this._state === 'auto' ? 'active auto' : ''}" data-mode="auto">
                 <ha-icon icon="mdi:calendar-sync"></ha-icon>
-                <span class="btn-label">Auto</span>
+                <span class="btn-label">${this._t('auto')}</span>
             </div>
         </div>
       </div>
@@ -2602,6 +2618,22 @@ class PrismHeatLightCard extends HTMLElement {
     }
   }
 
+  // Translation helper - English default, German if HA is set to German
+  _t(key) {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
+    
+    const translations = {
+      'off': isGerman ? 'Aus' : 'Off',
+      'manual': isGerman ? 'Manuell' : 'Manual',
+      'auto': isGerman ? 'Auto' : 'Auto',
+      'cool': isGerman ? 'Kühlen' : 'Cool',
+      'heating': isGerman ? 'Heizung' : 'Thermostat'
+    };
+    
+    return translations[key] || key;
+  }
+
   render() {
     console.log('PrismHeatCard render v2');
     const isHeating = this._state === 'heat';
@@ -2619,19 +2651,19 @@ class PrismHeatLightCard extends HTMLElement {
     const strokeDashArray = `${arcLength} ${c}`;
     const dashOffset = arcLength * (1 - percentage);
 
-    let currentModeText = 'Aus';
+    let currentModeText = this._t('off');
     let iconClass = '';
     
     if(this._state === 'heat') {
-        currentModeText = 'Manuell';
+        currentModeText = this._t('manual');
         iconClass = 'active heat';
     }
     if(this._state === 'auto') {
-        currentModeText = 'Auto';
+        currentModeText = this._t('auto');
         iconClass = 'active auto';
     }
     if(this._state === 'cool') {
-        currentModeText = 'Cool';
+        currentModeText = this._t('cool');
         iconClass = 'active cool';
     }
     if(this._state === 'off') {
@@ -2916,7 +2948,7 @@ class PrismHeatLightCard extends HTMLElement {
                 <ha-icon icon="${this.config.icon}"></ha-icon>
             </div>
             <div class="title-area">
-                <div class="title">${this.config.name || 'Heizung'}</div>
+                <div class="title">${this.config.name || this._t('heating')}</div>
                 <div class="subtitle">${this._currentTemp.toFixed(1)} °C${this._humidity !== null ? ` · ${this._humidity.toFixed(0)}%` : ''}</div>
             </div>
         </div>
@@ -2961,15 +2993,15 @@ class PrismHeatLightCard extends HTMLElement {
         <div class="controls">
             <div class="mode-btn ${this._state === 'off' ? 'active off' : ''}" data-mode="off">
                 <ha-icon icon="mdi:power"></ha-icon>
-                <span class="btn-label">Off</span>
+                <span class="btn-label">${this._t('off')}</span>
             </div>
             <div class="mode-btn ${this._state === 'heat' ? 'active heat' : ''}" data-mode="heat">
                 <ha-icon icon="mdi:fire"></ha-icon>
-                <span class="btn-label">Manuell</span>
+                <span class="btn-label">${this._t('manual')}</span>
             </div>
             <div class="mode-btn ${this._state === 'auto' ? 'active auto' : ''}" data-mode="auto">
                 <ha-icon icon="mdi:calendar-sync"></ha-icon>
-                <span class="btn-label">Auto</span>
+                <span class="btn-label">${this._t('auto')}</span>
             </div>
         </div>
       </div>
@@ -3310,6 +3342,21 @@ class PrismHeatSmallCard extends HTMLElement {
     return 2;
   }
 
+  // Translation helper - English default, German if HA is set to German
+  _t(key) {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
+    
+    const translations = {
+      'off': isGerman ? 'Aus' : 'Off',
+      'auto': isGerman ? 'Auto' : 'Auto',
+      'heating': isGerman ? 'Heizen' : 'Heating',
+      'thermostat': isGerman ? 'Heizung' : 'Thermostat'
+    };
+    
+    return translations[key] || key;
+  }
+
   connectedCallback() {
     if (this.config) {
       this.render();
@@ -3354,10 +3401,10 @@ class PrismHeatSmallCard extends HTMLElement {
     const state = this._entity ? this._entity.state : 'off';
     const targetTemp = attr.temperature !== undefined ? attr.temperature : 20;
     const currentTemp = this._currentTemp !== undefined ? this._currentTemp : (attr.current_temperature !== undefined ? attr.current_temperature : 20);
-    const name = this.config.name || (this._entity ? attr.friendly_name : null) || 'Heizung';
+    const name = this.config.name || (this._entity ? attr.friendly_name : null) || this._t('thermostat');
     
     const isHeating = state === 'heat' || state === 'heating';
-    const hvacMode = state === 'off' ? 'Aus' : (state === 'auto' ? 'Auto' : 'Heizen');
+    const hvacMode = state === 'off' ? this._t('off') : (state === 'auto' ? this._t('auto') : this._t('heating'));
     
     // Status Text with optional humidity
     const humidityText = (this._humidity !== null && this._humidity !== undefined) ? ` · ${this._humidity.toFixed(0)}%` : '';
@@ -3672,6 +3719,21 @@ class PrismHeatSmallLightCard extends HTMLElement {
     return 2;
   }
 
+  // Translation helper - English default, German if HA is set to German
+  _t(key) {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
+    
+    const translations = {
+      'off': isGerman ? 'Aus' : 'Off',
+      'auto': isGerman ? 'Auto' : 'Auto',
+      'heating': isGerman ? 'Heizen' : 'Heating',
+      'thermostat': isGerman ? 'Heizung' : 'Thermostat'
+    };
+    
+    return translations[key] || key;
+  }
+
   connectedCallback() {
     if (this.config) {
       this.render();
@@ -3716,10 +3778,10 @@ class PrismHeatSmallLightCard extends HTMLElement {
     const state = this._entity ? this._entity.state : 'off';
     const targetTemp = attr.temperature !== undefined ? attr.temperature : 20;
     const currentTemp = this._currentTemp !== undefined ? this._currentTemp : (attr.current_temperature !== undefined ? attr.current_temperature : 20);
-    const name = this.config.name || (this._entity ? attr.friendly_name : null) || 'Heizung';
+    const name = this.config.name || (this._entity ? attr.friendly_name : null) || this._t('thermostat');
     
     const isHeating = state === 'heat' || state === 'heating';
-    const hvacMode = state === 'off' ? 'Aus' : (state === 'auto' ? 'Auto' : 'Heizen');
+    const hvacMode = state === 'off' ? this._t('off') : (state === 'auto' ? this._t('auto') : this._t('heating'));
     
     // Status Text with optional humidity
     const humidityText = (this._humidity !== null && this._humidity !== undefined) ? ` · ${this._humidity.toFixed(0)}%` : '';
@@ -4030,6 +4092,28 @@ class PrismMediaCard extends HTMLElement {
     return 2;
   }
 
+  // Translation helper - English default, German if HA is set to German
+  _t(key) {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
+    
+    const translations = {
+      'playing': isGerman ? 'Wiedergabe' : 'Playing',
+      'paused': isGerman ? 'Pausiert' : 'Paused',
+      'idle': isGerman ? 'Bereit' : 'Idle',
+      'off': isGerman ? 'Aus' : 'Off',
+      'standby': isGerman ? 'Standby' : 'Standby',
+      'buffering': isGerman ? 'Puffern...' : 'Buffering...',
+      'on': isGerman ? 'An' : 'On',
+      'unavailable': isGerman ? 'Nicht verfügbar' : 'Unavailable',
+      'play': isGerman ? 'Play' : 'Play',
+      'pause': isGerman ? 'Pause' : 'Pause',
+      'no_media': isGerman ? 'Keine Medien' : 'No Media'
+    };
+    
+    return translations[key] || key;
+  }
+
   connectedCallback() {
     if (this.config) {
       this.render();
@@ -4130,7 +4214,7 @@ class PrismMediaCard extends HTMLElement {
     const state = this._entity ? this._entity.state : 'idle';
     
     // Title: try various attributes
-    const title = attr.media_title || attr.media_album_name || 'No Media';
+    const title = attr.media_title || attr.media_album_name || this._t('no_media');
     
     // Subtitle: try artist, series, app name, channel, or show state
     let subtitle = '';
@@ -4151,17 +4235,7 @@ class PrismMediaCard extends HTMLElement {
       subtitle = attr.source;
     } else {
       // Fallback to translated state
-      const stateMap = {
-        'playing': 'Wiedergabe',
-        'paused': 'Pausiert', 
-        'idle': 'Bereit',
-        'off': 'Aus',
-        'standby': 'Standby',
-        'buffering': 'Puffern...',
-        'on': 'An',
-        'unavailable': 'Nicht verfügbar'
-      };
-      subtitle = stateMap[state] || state;
+      subtitle = this._t(state);
     }
     
     const art = attr.entity_picture; // This usually returns e.g. /api/media_player_proxy/...
@@ -4344,7 +4418,7 @@ class PrismMediaCard extends HTMLElement {
              
              <div class="media-btn play ${isPlaying ? 'playing' : ''}" data-action="play_pause" style="${isPlaying ? `color: ${playingColor};` : ''}">
                 <ha-icon icon="${isPlaying ? 'mdi:pause' : 'mdi:play'}"></ha-icon>
-                <span>${isPlaying ? 'Pause' : 'Play'}</span>
+                <span>${isPlaying ? this._t('pause') : this._t('play')}</span>
              </div>
              
              <div class="media-btn circle" data-action="next"><ha-icon icon="mdi:skip-next"></ha-icon></div>
@@ -4436,6 +4510,28 @@ class PrismMediaLightCard extends HTMLElement {
 
   getCardSize() {
     return 2;
+  }
+
+  // Translation helper - English default, German if HA is set to German
+  _t(key) {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
+    
+    const translations = {
+      'playing': isGerman ? 'Wiedergabe' : 'Playing',
+      'paused': isGerman ? 'Pausiert' : 'Paused',
+      'idle': isGerman ? 'Bereit' : 'Idle',
+      'off': isGerman ? 'Aus' : 'Off',
+      'standby': isGerman ? 'Standby' : 'Standby',
+      'buffering': isGerman ? 'Puffern...' : 'Buffering...',
+      'on': isGerman ? 'An' : 'On',
+      'unavailable': isGerman ? 'Nicht verfügbar' : 'Unavailable',
+      'play': isGerman ? 'Play' : 'Play',
+      'pause': isGerman ? 'Pause' : 'Pause',
+      'no_media': isGerman ? 'Keine Medien' : 'No Media'
+    };
+    
+    return translations[key] || key;
   }
 
   connectedCallback() {
@@ -4538,7 +4634,7 @@ class PrismMediaLightCard extends HTMLElement {
     const state = this._entity ? this._entity.state : 'idle';
     
     // Title: try various attributes
-    const title = attr.media_title || attr.media_album_name || 'No Media';
+    const title = attr.media_title || attr.media_album_name || this._t('no_media');
     
     // Subtitle: try artist, series, app name, channel, or show state
     let subtitle = '';
@@ -4559,17 +4655,7 @@ class PrismMediaLightCard extends HTMLElement {
       subtitle = attr.source;
     } else {
       // Fallback to translated state
-      const stateMap = {
-        'playing': 'Wiedergabe',
-        'paused': 'Pausiert', 
-        'idle': 'Bereit',
-        'off': 'Aus',
-        'standby': 'Standby',
-        'buffering': 'Puffern...',
-        'on': 'An',
-        'unavailable': 'Nicht verfügbar'
-      };
-      subtitle = stateMap[state] || state;
+      subtitle = this._t(state);
     }
     
     const art = attr.entity_picture; // This usually returns e.g. /api/media_player_proxy/...
@@ -4740,7 +4826,7 @@ class PrismMediaLightCard extends HTMLElement {
              
              <div class="media-btn play ${isPlaying ? 'playing' : ''}" data-action="play_pause" style="${isPlaying ? `color: ${playingColor};` : ''}">
                 <ha-icon icon="${isPlaying ? 'mdi:pause' : 'mdi:play'}"></ha-icon>
-                <span>${isPlaying ? 'Pause' : 'Play'}</span>
+                <span>${isPlaying ? this._t('pause') : this._t('play')}</span>
              </div>
              
              <div class="media-btn circle" data-action="next"><ha-icon icon="mdi:skip-next"></ha-icon></div>
@@ -4886,7 +4972,7 @@ class PrismCalendarCard extends HTMLElement {
         this._events = eventsArray
           .map(event => {
             // REST API returns: { start: { dateTime: "..." } or { date: "..." }, end: {...}, summary: "...", ... }
-            const title = event.summary || event.title || event.message || 'Unbenannt';
+            const title = event.summary || event.title || event.message || this._t('untitled');
             // Handle both dateTime (timed) and date (all-day) formats
             const start = event.start?.dateTime || event.start?.date || event.start;
             const end = event.end?.dateTime || event.end?.date || event.end;
@@ -4951,12 +5037,41 @@ class PrismCalendarCard extends HTMLElement {
     }
   }
 
+  // Translation helper - English default, German if HA is set to German
+  _t(key) {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
+    
+    const translations = {
+      'loading': isGerman ? 'Lade Termine...' : 'Loading events...',
+      'no_events': isGerman ? 'Keine kommenden Termine' : 'No upcoming events',
+      'no_more_events': isGerman ? 'Keine weiteren Termine' : 'No more events',
+      'all_day': isGerman ? 'Ganztägig' : 'All day',
+      'today': isGerman ? 'Heute' : 'Today',
+      'tomorrow': isGerman ? 'Morgen' : 'Tomorrow',
+      'all_day_suffix': isGerman ? '(ganztägig)' : '(all day)',
+      'calendar': isGerman ? 'Kalender' : 'Calendar',
+      'events': isGerman ? 'Termine' : 'Events',
+      'next_event': isGerman ? 'Nächstes Event' : 'Next Event',
+      'untitled': isGerman ? 'Unbenannt' : 'Untitled'
+    };
+    
+    return translations[key] || key;
+  }
+
+  // Get locale for date/time formatting
+  _getLocale() {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    return lang.startsWith('de') ? 'de-DE' : 'en-US';
+  }
+
   render() {
     if (!this.config || !this.config.entity) return;
     
     const maxEvents = this.config.max_events || 3;
     const iconColor = this._normalizeColor(this.config.icon_color || "#f87171");
     const dotColor = this._normalizeColor(this.config.dot_color || "#f87171");
+    const locale = this._getLocale();
     
     // Use fetched events
     const events = this._events.slice(0, maxEvents);
@@ -4971,7 +5086,7 @@ class PrismCalendarCard extends HTMLElement {
             <div class="dot"></div>
           </div>
           <div class="event-info">
-            <div class="event-title">${this._loading ? 'Lade Termine...' : 'Keine kommenden Termine'}</div>
+            <div class="event-title">${this._loading ? this._t('loading') : this._t('no_events')}</div>
             <div class="event-time">
               <ha-icon icon="mdi:clock-outline" style="--mdc-icon-size: 12px;"></ha-icon>
               -
@@ -4982,7 +5097,7 @@ class PrismCalendarCard extends HTMLElement {
     } else {
       events.forEach((event, i) => {
         const isActive = i === 0;
-        let timeStr = 'Ganztägig';
+        let timeStr = this._t('all_day');
         
         if (event.start) {
           try {
@@ -4997,25 +5112,25 @@ class PrismCalendarCard extends HTMLElement {
               
               if (eventDate.getTime() === today.getTime()) {
                 // Today
-                timeStr = isAllDay ? 'Heute (ganztägig)' : `Heute, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+                timeStr = isAllDay ? `${this._t('today')} ${this._t('all_day_suffix')}` : `${this._t('today')}, ${date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}`;
               } else {
                 // Future date
                 const daysDiff = Math.floor((eventDate - today) / (1000 * 60 * 60 * 24));
                 if (daysDiff === 1) {
-                  timeStr = isAllDay ? 'Morgen (ganztägig)' : `Morgen, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+                  timeStr = isAllDay ? `${this._t('tomorrow')} ${this._t('all_day_suffix')}` : `${this._t('tomorrow')}, ${date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}`;
                 } else if (daysDiff > 1 && daysDiff <= 7) {
                   timeStr = isAllDay 
-                    ? date.toLocaleDateString('de-DE', { weekday: 'long' }) + ' (ganztägig)'
-                    : date.toLocaleDateString('de-DE', { weekday: 'short' }) + ', ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    ? date.toLocaleDateString(locale, { weekday: 'long' }) + ' ' + this._t('all_day_suffix')
+                    : date.toLocaleDateString(locale, { weekday: 'short' }) + ', ' + date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
                 } else {
                   timeStr = isAllDay
-                    ? date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }) + ' (ganztägig)'
-                    : date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }) + ', ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    ? date.toLocaleDateString(locale, { day: '2-digit', month: '2-digit' }) + ' ' + this._t('all_day_suffix')
+                    : date.toLocaleDateString(locale, { day: '2-digit', month: '2-digit' }) + ', ' + date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
                 }
               }
             }
           } catch (e) {
-            // If date parsing fails, keep default "Ganztägig"
+            // If date parsing fails, keep default "All day"
           }
         }
         
@@ -5043,7 +5158,7 @@ class PrismCalendarCard extends HTMLElement {
               <div class="dot"></div>
             </div>
             <div class="event-info">
-              <div class="event-title">Keine weiteren Termine</div>
+              <div class="event-title">${this._t('no_more_events')}</div>
               <div class="event-time">
                 <ha-icon icon="mdi:clock-outline" style="--mdc-icon-size: 12px;"></ha-icon>
                 -
@@ -5128,8 +5243,8 @@ class PrismCalendarCard extends HTMLElement {
                 <ha-icon icon="mdi:calendar"></ha-icon>
             </div>
             <div>
-                <div class="title">Kalender</div>
-                <div class="subtitle">${events.length > 0 ? `${events.length} Termine` : 'Nächstes Event'}</div>
+                <div class="title">${this._t('calendar')}</div>
+                <div class="subtitle">${events.length > 0 ? `${events.length} ${this._t('events')}` : this._t('next_event')}</div>
             </div>
         </div>
         
@@ -5295,7 +5410,7 @@ class PrismCalendarLightCard extends HTMLElement {
         this._events = eventsArray
           .map(event => {
             // REST API returns: { start: { dateTime: "..." } or { date: "..." }, end: {...}, summary: "...", ... }
-            const title = event.summary || event.title || event.message || 'Unbenannt';
+            const title = event.summary || event.title || event.message || this._t('untitled');
             // Handle both dateTime (timed) and date (all-day) formats
             const start = event.start?.dateTime || event.start?.date || event.start;
             const end = event.end?.dateTime || event.end?.date || event.end;
@@ -5360,12 +5475,41 @@ class PrismCalendarLightCard extends HTMLElement {
     }
   }
 
+  // Translation helper - English default, German if HA is set to German
+  _t(key) {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
+    
+    const translations = {
+      'loading': isGerman ? 'Lade Termine...' : 'Loading events...',
+      'no_events': isGerman ? 'Keine kommenden Termine' : 'No upcoming events',
+      'no_more_events': isGerman ? 'Keine weiteren Termine' : 'No more events',
+      'all_day': isGerman ? 'Ganztägig' : 'All day',
+      'today': isGerman ? 'Heute' : 'Today',
+      'tomorrow': isGerman ? 'Morgen' : 'Tomorrow',
+      'all_day_suffix': isGerman ? '(ganztägig)' : '(all day)',
+      'calendar': isGerman ? 'Kalender' : 'Calendar',
+      'events': isGerman ? 'Termine' : 'Events',
+      'next_event': isGerman ? 'Nächstes Event' : 'Next Event',
+      'untitled': isGerman ? 'Unbenannt' : 'Untitled'
+    };
+    
+    return translations[key] || key;
+  }
+
+  // Get locale for date/time formatting
+  _getLocale() {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    return lang.startsWith('de') ? 'de-DE' : 'en-US';
+  }
+
   render() {
     if (!this.config || !this.config.entity) return;
     
     const maxEvents = this.config.max_events || 3;
     const iconColor = this._normalizeColor(this.config.icon_color || "#f87171");
     const dotColor = this._normalizeColor(this.config.dot_color || "#f87171");
+    const locale = this._getLocale();
     
     // Use fetched events
     const events = this._events.slice(0, maxEvents);
@@ -5380,7 +5524,7 @@ class PrismCalendarLightCard extends HTMLElement {
             <div class="dot"></div>
           </div>
           <div class="event-info">
-            <div class="event-title">${this._loading ? 'Lade Termine...' : 'Keine kommenden Termine'}</div>
+            <div class="event-title">${this._loading ? this._t('loading') : this._t('no_events')}</div>
             <div class="event-time">
               <ha-icon icon="mdi:clock-outline" style="--mdc-icon-size: 12px;"></ha-icon>
               -
@@ -5391,7 +5535,7 @@ class PrismCalendarLightCard extends HTMLElement {
     } else {
       events.forEach((event, i) => {
         const isActive = i === 0;
-        let timeStr = 'Ganztägig';
+        let timeStr = this._t('all_day');
         
         if (event.start) {
           try {
@@ -5406,25 +5550,25 @@ class PrismCalendarLightCard extends HTMLElement {
               
               if (eventDate.getTime() === today.getTime()) {
                 // Today
-                timeStr = isAllDay ? 'Heute (ganztägig)' : `Heute, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+                timeStr = isAllDay ? `${this._t('today')} ${this._t('all_day_suffix')}` : `${this._t('today')}, ${date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}`;
               } else {
                 // Future date
                 const daysDiff = Math.floor((eventDate - today) / (1000 * 60 * 60 * 24));
                 if (daysDiff === 1) {
-                  timeStr = isAllDay ? 'Morgen (ganztägig)' : `Morgen, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+                  timeStr = isAllDay ? `${this._t('tomorrow')} ${this._t('all_day_suffix')}` : `${this._t('tomorrow')}, ${date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}`;
                 } else if (daysDiff > 1 && daysDiff <= 7) {
                   timeStr = isAllDay 
-                    ? date.toLocaleDateString('de-DE', { weekday: 'long' }) + ' (ganztägig)'
-                    : date.toLocaleDateString('de-DE', { weekday: 'short' }) + ', ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    ? date.toLocaleDateString(locale, { weekday: 'long' }) + ' ' + this._t('all_day_suffix')
+                    : date.toLocaleDateString(locale, { weekday: 'short' }) + ', ' + date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
                 } else {
                   timeStr = isAllDay
-                    ? date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }) + ' (ganztägig)'
-                    : date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }) + ', ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    ? date.toLocaleDateString(locale, { day: '2-digit', month: '2-digit' }) + ' ' + this._t('all_day_suffix')
+                    : date.toLocaleDateString(locale, { day: '2-digit', month: '2-digit' }) + ', ' + date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
                 }
               }
             }
           } catch (e) {
-            // If date parsing fails, keep default "Ganztägig"
+            // If date parsing fails, keep default "All day"
           }
         }
         
@@ -5452,7 +5596,7 @@ class PrismCalendarLightCard extends HTMLElement {
               <div class="dot"></div>
             </div>
             <div class="event-info">
-              <div class="event-title">Keine weiteren Termine</div>
+              <div class="event-title">${this._t('no_more_events')}</div>
               <div class="event-time">
                 <ha-icon icon="mdi:clock-outline" style="--mdc-icon-size: 12px;"></ha-icon>
                 -
@@ -5537,8 +5681,8 @@ class PrismCalendarLightCard extends HTMLElement {
                 <ha-icon icon="mdi:calendar"></ha-icon>
             </div>
             <div>
-                <div class="title">Kalender</div>
-                <div class="subtitle">${events.length > 0 ? `${events.length} Termine` : 'Nächstes Event'}</div>
+                <div class="title">${this._t('calendar')}</div>
+                <div class="subtitle">${events.length > 0 ? `${events.length} ${this._t('events')}` : this._t('next_event')}</div>
             </div>
         </div>
         
@@ -5632,6 +5776,21 @@ class PrismShutterCard extends HTMLElement {
 
   getCardSize() {
     return 2;
+  }
+
+  // Translation helper - English default, German if HA is set to German
+  _t(key) {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
+    
+    const translations = {
+      'closed': isGerman ? 'Geschlossen' : 'Closed',
+      'open': isGerman ? 'Offen' : 'Open',
+      'open_percent': isGerman ? '% Offen' : '% Open',
+      'shutter': isGerman ? 'Rollladen' : 'Shutter'
+    };
+    
+    return translations[key] || key;
   }
 
   connectedCallback() {
@@ -5748,9 +5907,9 @@ class PrismShutterCard extends HTMLElement {
     const isOpen = pos > 0;
     
     // Status Text
-    let statusText = 'Closed';
-    if (pos === 100) statusText = 'Open';
-    else if (pos > 0) statusText = `${pos}% Open`;
+    let statusText = this._t('closed');
+    if (pos === 100) statusText = this._t('open');
+    else if (pos > 0) statusText = `${pos}${this._t('open_percent')}`;
     
     // Determine active buttons
     const isOpening = state === 'opening';
@@ -5943,6 +6102,21 @@ class PrismShutterLightCard extends HTMLElement {
     return 2;
   }
 
+  // Translation helper - English default, German if HA is set to German
+  _t(key) {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
+    
+    const translations = {
+      'closed': isGerman ? 'Geschlossen' : 'Closed',
+      'open': isGerman ? 'Offen' : 'Open',
+      'open_percent': isGerman ? '% Offen' : '% Open',
+      'shutter': isGerman ? 'Rollladen' : 'Shutter'
+    };
+    
+    return translations[key] || key;
+  }
+
   connectedCallback() {
     if (this.config) {
       this.render();
@@ -6057,9 +6231,9 @@ class PrismShutterLightCard extends HTMLElement {
     const isOpen = pos > 0;
     
     // Status Text
-    let statusText = 'Closed';
-    if (pos === 100) statusText = 'Open';
-    else if (pos > 0) statusText = `${pos}% Open`;
+    let statusText = this._t('closed');
+    if (pos === 100) statusText = this._t('open');
+    else if (pos > 0) statusText = `${pos}${this._t('open_percent')}`;
     
     // Determine active buttons
     const isOpening = state === 'opening';
@@ -7139,17 +7313,41 @@ class PrismVacuumCard extends HTMLElement {
       return '#ef4444'; // Red
     }
     
+    // Translation helper - English default, German if HA is set to German
+    _t(key) {
+      const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+      const isGerman = lang.startsWith('de');
+      
+      const translations = {
+        // Status texts
+        'cleaning': isGerman ? 'Reinigt' : 'Cleaning',
+        'docked': isGerman ? 'Angedockt' : 'Docked',
+        'idle': isGerman ? 'Bereit' : 'Idle',
+        'paused': isGerman ? 'Pausiert' : 'Paused',
+        'returning': isGerman ? 'Fährt zurück' : 'Returning',
+        'error': isGerman ? 'Fehler' : 'Error',
+        'off': isGerman ? 'Aus' : 'Off',
+        'unavailable': isGerman ? 'Nicht verfügbar' : 'Unavailable',
+        // UI labels
+        'vacuum': isGerman ? 'Staubsauger' : 'Vacuum',
+        'fan_speed': isGerman ? 'Saugstärke' : 'Fan Speed',
+        'home': isGerman ? 'Basis' : 'Home'
+      };
+      
+      return translations[key] || key;
+    }
+    
     // Get status text
     getStatusText(state) {
       const statusMap = {
-        'cleaning': 'Reinigt',
-        'docked': 'Angedockt',
-        'idle': 'Bereit',
-        'paused': 'Pausiert',
-        'returning': 'Fährt zurück',
-        'error': 'Fehler',
-        'off': 'Aus',
-        'unavailable': 'Nicht verfügbar'
+        'cleaning': this._t('cleaning'),
+        'docked': this._t('docked'),
+        'idle': this._t('idle'),
+        'paused': this._t('paused'),
+        'returning': this._t('returning'),
+        'error': this._t('error'),
+        'off': this._t('off'),
+        'unavailable': this._t('unavailable')
       };
       return statusMap[state] || state;
     }
@@ -7652,12 +7850,12 @@ class PrismVacuumCard extends HTMLElement {
              <div class="controls-header">
                  <div class="controls-label">
                      <ha-icon icon="mdi:fan" style="width: 14px; height: 14px; color: rgba(255,255,255,0.4);"></ha-icon>
-                     <span>Fan Speed</span>
+                     <span>${this._t('fan_speed')}</span>
                  </div>
                  
                  <div id="home-btn" class="home-btn ${isReturning || isDocked ? 'active' : 'inactive'}">
                      <ha-icon icon="mdi:home" style="width: 14px; height: 14px;"></ha-icon>
-                     <span class="home-text">Home</span>
+                     <span class="home-text">${this._t('home')}</span>
                  </div>
              </div>
              
@@ -7919,17 +8117,41 @@ class PrismVacuumLightCard extends HTMLElement {
       return '#dc2626'; // Red
     }
     
+    // Translation helper - English default, German if HA is set to German
+    _t(key) {
+      const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+      const isGerman = lang.startsWith('de');
+      
+      const translations = {
+        // Status texts
+        'cleaning': isGerman ? 'Reinigt' : 'Cleaning',
+        'docked': isGerman ? 'Angedockt' : 'Docked',
+        'idle': isGerman ? 'Bereit' : 'Idle',
+        'paused': isGerman ? 'Pausiert' : 'Paused',
+        'returning': isGerman ? 'Fährt zurück' : 'Returning',
+        'error': isGerman ? 'Fehler' : 'Error',
+        'off': isGerman ? 'Aus' : 'Off',
+        'unavailable': isGerman ? 'Nicht verfügbar' : 'Unavailable',
+        // UI labels
+        'vacuum': isGerman ? 'Staubsauger' : 'Vacuum',
+        'fan_speed': isGerman ? 'Saugstärke' : 'Fan Speed',
+        'home': isGerman ? 'Basis' : 'Home'
+      };
+      
+      return translations[key] || key;
+    }
+    
     // Get status text
     getStatusText(state) {
       const statusMap = {
-        'cleaning': 'Reinigt',
-        'docked': 'Angedockt',
-        'idle': 'Bereit',
-        'paused': 'Pausiert',
-        'returning': 'Fährt zurück',
-        'error': 'Fehler',
-        'off': 'Aus',
-        'unavailable': 'Nicht verfügbar'
+        'cleaning': this._t('cleaning'),
+        'docked': this._t('docked'),
+        'idle': this._t('idle'),
+        'paused': this._t('paused'),
+        'returning': this._t('returning'),
+        'error': this._t('error'),
+        'off': this._t('off'),
+        'unavailable': this._t('unavailable')
       };
       return statusMap[state] || state;
     }
@@ -8418,12 +8640,12 @@ class PrismVacuumLightCard extends HTMLElement {
              <div class="controls-header">
                  <div class="controls-label">
                      <ha-icon icon="mdi:fan" style="width: 14px; height: 14px; color: rgba(0,0,0,0.4);"></ha-icon>
-                     <span>Fan Speed</span>
+                     <span>${this._t('fan_speed')}</span>
                  </div>
                  
                  <div id="home-btn" class="home-btn ${isReturning || isDocked ? 'active' : 'inactive'}">
                      <ha-icon icon="mdi:home" style="width: 14px; height: 14px;"></ha-icon>
-                     <span class="home-text">Home</span>
+                     <span class="home-text">${this._t('home')}</span>
                  </div>
              </div>
              
@@ -8454,6 +8676,1045 @@ class PrismVacuumLightCard extends HTMLElement {
     name: "Prism Vacuum Light",
     preview: true,
     description: "A robot vacuum card with inlet styling and animation (light theme)"
+  });
+
+})();
+
+// ============================================
+// prism-vacuum-switchbot.js
+// ============================================
+(function() {
+class PrismVacuumSwitchbotCard extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+        this._mapRefreshInterval = null;
+        this._activeTab = 'fan'; // 'fan' or 'water'
+        this._activeScene = 1; // 1 or 2 - which scene is selected
+    }
+
+    static getStubConfig() {
+      return { 
+        device_id: "b0e9fe012c6d",
+        name: "SwitchBot S10"
+      }
+    }
+
+    static getConfigForm() {
+      return {
+        schema: [
+          {
+            name: "device_id",
+            required: true,
+            selector: { text: {} },
+            description: "SwitchBot Device MAC Address (e.g. b0e9fe012c6d)"
+          },
+          {
+            name: "name",
+            selector: { text: {} }
+          },
+          {
+            name: "map_camera",
+            selector: { entity: { domain: ["camera", "image"] } }
+          },
+          {
+            name: "show_status",
+            selector: { boolean: {} }
+          },
+          {
+            name: "",
+            type: "expandable",
+            title: "Szenen-Modus",
+            schema: [
+              {
+                name: "use_scenes",
+                selector: { boolean: {} },
+                description: "Aktiviert die Szenen-Auswahl. Der Play-Button startet dann die ausgewählte Szene statt dem normalen Start-Befehl."
+              },
+              {
+                name: "scene_1",
+                selector: { entity: { domain: "scene" } },
+                description: "Erste Szene (z.B. 'Alle Räume reinigen')"
+              },
+              {
+                name: "scene_1_name",
+                selector: { text: {} },
+                description: "Anzeigename für Szene 1 (optional, z.B. 'Alles')"
+              },
+              {
+                name: "scene_2",
+                selector: { entity: { domain: "scene" } },
+                description: "Zweite Szene (z.B. 'Nur Küche reinigen')"
+              },
+              {
+                name: "scene_2_name",
+                selector: { text: {} },
+                description: "Anzeigename für Szene 2 (optional, z.B. 'Küche')"
+              }
+            ]
+          }
+        ]
+      };
+    }
+  
+    setConfig(config) {
+      if (!config.device_id) {
+        throw new Error('Please define a device_id (SwitchBot MAC Address)');
+      }
+      this.config = {
+        show_status: true,
+        ...config
+      };
+      // Normalize device_id to lowercase
+      this.config.device_id = this.config.device_id.toLowerCase();
+    }
+  
+    set hass(hass) {
+      this._hass = hass;
+      if (this.config && this.config.device_id) {
+        // Get all SwitchBot MQTT entities for this device
+        this._loadEntities();
+        this.render();
+      }
+    }
+    
+    // Load entities based on device_id
+    _loadEntities() {
+      const deviceId = this.config.device_id;
+      
+      // Sensors
+      this._batteryEntity = this._hass.states[`sensor.both_battery_${deviceId}`];
+      this._waterBaseBatteryEntity = this._hass.states[`sensor.both_waterbasebattery_${deviceId}`];
+      this._workingStatusEntity = this._hass.states[`sensor.both_workingstatus_${deviceId}`];
+      this._taskTypeEntity = this._hass.states[`sensor.both_tasktype_${deviceId}`];
+      this._onlineStatusEntity = this._hass.states[`binary_sensor.both_onlinestatus_${deviceId}`];
+      
+      // Command Buttons (indices from actual SwitchBot MQTT integration)
+      this._startCleanButton = this._hass.states[`button.btn_1_cmd_${deviceId}`];
+      this._pauseButton = this._hass.states[`button.btn_3_cmd_${deviceId}`];
+      this._dockButton = this._hass.states[`button.btn_4_cmd_${deviceId}`];
+      
+      // Number controls (index 7 = changeParam command)
+      this._fanLevelEntity = this._hass.states[`number.fanlevel_7_cmd_${deviceId}`];
+      this._waterLevelEntity = this._hass.states[`number.waterlevel_7_cmd_${deviceId}`];
+      
+      // Select controls
+      this._actionEntity = this._hass.states[`select.action_0_cmd_${deviceId}`];
+      this._selfCleanModeEntity = this._hass.states[`select.mode_5_cmd_${deviceId}`];
+      
+      // Get map camera entity if configured
+      if (this.config.map_camera) {
+        this._mapEntity = this._hass.states[this.config.map_camera] || null;
+      }
+    }
+  
+    getCardSize() {
+      return 3;
+    }
+  
+    connectedCallback() {
+      this.render();
+      this.setupListeners();
+    }
+    
+    disconnectedCallback() {
+      if (this._mapRefreshInterval) {
+        clearInterval(this._mapRefreshInterval);
+      }
+    }
+  
+    setupListeners() {
+        const root = this.shadowRoot;
+        
+        // Play/Pause Button
+        const playBtn = root.querySelector('#play-btn');
+        if(playBtn) {
+            playBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.handleAction('toggle');
+            });
+        }
+
+        // Dock/Home Button
+        const homeBtn = root.querySelector('#home-btn');
+        if(homeBtn) {
+            homeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.handleAction('dock');
+            });
+        }
+        
+        // Click on vacuum inlet - no action (just visual)
+        // Could be used for locate or other features in the future
+
+        // Tab Buttons
+        root.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const tab = e.currentTarget.dataset.tab;
+                this._activeTab = tab;
+                this.render();
+            });
+        });
+        
+        // Scene Buttons
+        root.querySelectorAll('.scene-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const scene = parseInt(e.currentTarget.dataset.scene);
+                this._activeScene = scene;
+                this.render();
+            });
+        });
+
+        // Fan Speed Buttons
+        root.querySelectorAll('.fan-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const level = parseInt(e.currentTarget.dataset.level);
+                this.handleAction('set_fan_level', level);
+            });
+        });
+        
+        // Water Level Buttons
+        root.querySelectorAll('.water-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const level = parseInt(e.currentTarget.dataset.level);
+                this.handleAction('set_water_level', level);
+            });
+        });
+    }
+  
+    handleAction(action, value) {
+      if (!this._hass || !this.config.device_id) return;
+      
+      const deviceId = this.config.device_id;
+
+      if (action === 'toggle') {
+        // Use taskType to determine if actually cleaning (more accurate than workingStatus)
+        const taskType = this._taskTypeEntity?.state || 'standBy';
+        const cleaningTasks = ['cleanAll', 'cleanArea', 'cleanRoom', 'explore', 'cleanWithExplorer'];
+        const isCleaning = cleaningTasks.includes(taskType);
+        
+        if (isCleaning) {
+          // Pause - btn_3
+          this._hass.callService('button', 'press', { 
+            entity_id: `button.btn_3_cmd_${deviceId}` 
+          });
+        } else {
+          // Check if scene mode is enabled
+          if (this.config.use_scenes) {
+            const sceneEntity = this._activeScene === 1 ? this.config.scene_1 : this.config.scene_2;
+            if (sceneEntity) {
+              this._hass.callService('scene', 'turn_on', { 
+                entity_id: sceneEntity 
+              });
+              return;
+            }
+          }
+          // Default: Start clean - btn_1
+          this._hass.callService('button', 'press', { 
+            entity_id: `button.btn_1_cmd_${deviceId}` 
+          });
+        }
+      } else if (action === 'dock') {
+        // Dock - btn_4
+        this._hass.callService('button', 'press', { 
+          entity_id: `button.btn_4_cmd_${deviceId}` 
+        });
+      } else if (action === 'set_fan_level' && value) {
+        // Set the fan level parameter
+        this._hass.callService('number', 'set_value', { 
+          entity_id: `number.fanlevel_7_cmd_${deviceId}`,
+          value: value
+        });
+        // Press the changeParam button to apply (btn_7)
+        setTimeout(() => {
+          this._hass.callService('button', 'press', { 
+            entity_id: `button.btn_7_cmd_${deviceId}` 
+          });
+        }, 100);
+      } else if (action === 'set_water_level' && value) {
+        // Set the water level parameter
+        this._hass.callService('number', 'set_value', { 
+          entity_id: `number.waterlevel_7_cmd_${deviceId}`,
+          value: value
+        });
+        // Press the changeParam button to apply (btn_7)
+        setTimeout(() => {
+          this._hass.callService('button', 'press', { 
+            entity_id: `button.btn_7_cmd_${deviceId}` 
+          });
+        }, 100);
+      }
+    }
+    
+    // Get fan level from entity or default
+    getFanLevel() {
+      if (this._fanLevelEntity) {
+        return parseInt(this._fanLevelEntity.state) || 1;
+      }
+      return 1;
+    }
+    
+    // Get water level from entity or default
+    getWaterLevel() {
+      if (this._waterLevelEntity) {
+        return parseInt(this._waterLevelEntity.state) || 1;
+      }
+      return 1;
+    }
+    
+    // Get battery icon based on level
+    getBatteryIcon(level) {
+      if (level >= 95) return 'mdi:battery';
+      if (level >= 85) return 'mdi:battery-90';
+      if (level >= 75) return 'mdi:battery-80';
+      if (level >= 65) return 'mdi:battery-70';
+      if (level >= 55) return 'mdi:battery-60';
+      if (level >= 45) return 'mdi:battery-50';
+      if (level >= 35) return 'mdi:battery-40';
+      if (level >= 25) return 'mdi:battery-30';
+      if (level >= 15) return 'mdi:battery-20';
+      if (level >= 5) return 'mdi:battery-10';
+      return 'mdi:battery-outline';
+    }
+    
+    // Get battery color based on level
+    getBatteryColor(level, isCharging) {
+      if (isCharging) return '#facc15'; // Yellow when charging
+      if (level >= 50) return '#4ade80'; // Green
+      if (level >= 20) return '#fb923c'; // Orange
+      return '#ef4444'; // Red
+    }
+    
+    // Translation helper - English default, German if HA is set to German
+    _t(key) {
+      const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+      const isGerman = lang.startsWith('de');
+      
+      const translations = {
+        // SwitchBot taskType statuses
+        'standBy': isGerman ? 'Bereit' : 'Standby',
+        'explore': isGerman ? 'Erkundet' : 'Exploring',
+        'cleanAll': isGerman ? 'Reinigt Alles' : 'Cleaning All',
+        'cleanArea': isGerman ? 'Reinigt Bereich' : 'Cleaning Area',
+        'cleanRoom': isGerman ? 'Reinigt Raum' : 'Cleaning Room',
+        'fillWater': isGerman ? 'Füllt Wasser' : 'Filling Water',
+        'deepWashing': isGerman ? 'Tiefenreinigung' : 'Deep Washing',
+        'backToCharge': isGerman ? 'Fährt zur Station' : 'Returning',
+        'markingWaterBase': isGerman ? 'Markiert Station' : 'Marking Base',
+        'drying': isGerman ? 'Trocknet' : 'Drying',
+        'collectDust': isGerman ? 'Staubsammlung' : 'Collecting Dust',
+        'remoteControl': isGerman ? 'Fernsteuerung' : 'Remote Control',
+        'cleanWithExplorer': isGerman ? 'Reinigt & Erkundet' : 'Clean & Explore',
+        'fillWaterForHumi': isGerman ? 'Füllt Befeuchter' : 'Fill Humidifier',
+        'markingHumi': isGerman ? 'Markiert Befeuchter' : 'Marking Humidifier',
+        // workingStatus
+        'Charging': isGerman ? 'Lädt' : 'Charging',
+        'ChargeDone': isGerman ? 'Geladen' : 'Charged',
+        'Dormant': isGerman ? 'Ruhemodus' : 'Dormant',
+        'InTrouble': isGerman ? 'Fehler' : 'Error',
+        'Paused': isGerman ? 'Pausiert' : 'Paused',
+        // Fallback
+        'unknown': isGerman ? 'Unbekannt' : 'Unknown',
+        // UI labels
+        'vacuum': isGerman ? 'Staubsauger' : 'Vacuum'
+      };
+      
+      return translations[key] || key;
+    }
+    
+    // Get status text from SwitchBot taskType (more accurate than workingStatus)
+    getStatusText(taskType, workingStatus) {
+      // taskType values: standBy, explore, cleanAll, cleanArea, cleanRoom, fillWater, 
+      // deepWashing, backToCharge, markingWaterBase, drying, collectDust, remoteControl
+      
+      // Use taskType as primary indicator
+      if (taskType && this._t(taskType) !== taskType) {
+        return this._t(taskType);
+      }
+      
+      // Fallback to workingStatus for charging states
+      if (workingStatus && this._t(workingStatus) !== workingStatus) {
+        return this._t(workingStatus);
+      }
+      
+      return taskType || workingStatus || this._t('unknown');
+    }
+    
+    // Get map image URL
+    getMapUrl() {
+      if (!this._mapEntity || !this._hass) return null;
+      
+      const entityId = this.config.map_camera;
+      const domain = entityId.split('.')[0];
+      
+      if (this._mapEntity.attributes.entity_picture) {
+        const entityPicture = this._mapEntity.attributes.entity_picture;
+        const separator = entityPicture.includes('?') ? '&' : '?';
+        return `${entityPicture}${separator}_ts=${Date.now()}`;
+      }
+      
+      if (domain === 'camera') {
+        const token = this._mapEntity.attributes.access_token || '';
+        return `/api/camera_proxy/${entityId}?token=${token}&t=${Date.now()}`;
+      }
+      
+      return null;
+    }
+  
+    render() {
+      if (!this.config || !this.config.device_id) return;
+      
+      // Get values from entities
+      const workingStatus = this._workingStatusEntity?.state || 'StandBy';
+      const taskType = this._taskTypeEntity?.state || 'standBy';
+      const battery = this._batteryEntity ? parseInt(this._batteryEntity.state) : 85;
+      const waterBaseBattery = this._waterBaseBatteryEntity ? parseInt(this._waterBaseBatteryEntity.state) : null;
+      const isOnline = this._onlineStatusEntity?.state === 'on' || this._onlineStatusEntity?.state === 'Verbunden';
+      const fanLevel = this.getFanLevel();
+      
+      const name = this.config.name || 'SwitchBot Vacuum';
+      
+      // Determine states based on taskType (more accurate than workingStatus)
+      // taskType cleaning states
+      const cleaningTasks = ['cleanAll', 'cleanArea', 'cleanRoom', 'explore', 'cleanWithExplorer'];
+      const returningTasks = ['backToCharge'];
+      const dockedTasks = ['standBy'];
+      const selfCleanTasks = ['fillWater', 'deepWashing', 'drying', 'collectDust', 'markingWaterBase'];
+      
+      // workingStatus for additional states
+      const pausedStates = ['Paused'];
+      const errorStates = ['InTrouble'];
+      const chargingStates = ['Charging'];
+      
+      const isCleaning = cleaningTasks.includes(taskType);
+      const isReturning = returningTasks.includes(taskType);
+      const isDocked = dockedTasks.includes(taskType) && !chargingStates.includes(workingStatus);
+      const isPaused = pausedStates.includes(workingStatus);
+      const hasError = errorStates.includes(workingStatus) || (!isOnline && this._onlineStatusEntity);
+      const isSelfCleaning = selfCleanTasks.includes(taskType);
+      const isCharging = chargingStates.includes(workingStatus) || workingStatus === 'ChargeDone';
+      const isActive = isCleaning || isReturning || isSelfCleaning;
+
+      // Map URL if configured
+      const mapUrl = this.getMapUrl();
+      const showMap = this.config.map_camera && mapUrl;
+  
+      // Battery icon and color
+      const batteryIcon = isCharging ? 'mdi:battery-charging' : this.getBatteryIcon(battery);
+      const batteryColor = this.getBatteryColor(battery, isCharging);
+      
+      // Status color
+      const getStatusColor = () => {
+        if (hasError) return '#ef4444';
+        if (isCleaning) return '#3b82f6';
+        if (isReturning) return '#f59e0b';
+        if (isPaused) return '#f59e0b';
+        if (isSelfCleaning) return '#a855f7';
+        if (isDocked) return '#4ade80';
+        return 'rgba(255,255,255,0.4)';
+      };
+
+      // Fan speed levels for S10 (1-4)
+      const fanLevels = [
+        { level: 1, label: 'Leise' },
+        { level: 2, label: 'Normal' },
+        { level: 3, label: 'Stark' },
+        { level: 4, label: 'Max' }
+      ];
+      
+      // Water levels for S10 (1-2)
+      const waterLevel = this.getWaterLevel();
+      const waterLevels = [
+        { level: 1, label: 'Wenig' },
+        { level: 2, label: 'Viel' }
+      ];
+
+      this.shadowRoot.innerHTML = `
+        <style>
+          :host {
+            display: block;
+            font-family: system-ui, -apple-system, sans-serif;
+          }
+          .card {
+            background: rgba(30, 32, 36, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0,0,0,0.3);
+            padding: 20px;
+            color: white;
+            user-select: none;
+            box-sizing: border-box;
+            display: flex; flex-direction: column; gap: 20px;
+            overflow: hidden;
+            position: relative;
+          }
+
+          /* Noise texture */
+          .noise {
+            position: absolute; inset: 0; opacity: 0.03; pointer-events: none;
+            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+            mix-blend-mode: overlay;
+          }
+          
+          /* Header */
+          .header {
+              display: flex; justify-content: space-between; align-items: center; z-index: 2;
+              gap: 12px;
+          }
+          .header-left { 
+              display: flex; align-items: center; gap: 12px;
+              flex: 1;
+              min-width: 0;
+              overflow: hidden;
+          }
+          
+          .icon-box {
+              width: 40px; height: 40px; min-width: 40px; min-height: 40px; border-radius: 50%;
+              background: ${isActive || hasError 
+                  ? 'linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1))' 
+                  : 'linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1))'}; 
+              color: ${isActive ? '#60a5fa' : hasError ? '#ef4444' : 'rgba(255,255,255,0.4)'};
+              display: flex; align-items: center; justify-content: center;
+              transition: all 0.5s ease;
+              flex-shrink: 0;
+              box-shadow: ${isActive || hasError 
+                  ? 'inset 3px 3px 8px rgba(0, 0, 0, 0.7), inset -2px -2px 4px rgba(255, 255, 255, 0.03)' 
+                  : '4px 4px 10px rgba(0, 0, 0, 0.5), -2px -2px 6px rgba(255, 255, 255, 0.03), inset 0 1px 2px rgba(255, 255, 255, 0.05)'};
+              border: 1px solid rgba(255, 255, 255, 0.05);
+          }
+          .icon-box ha-icon {
+              width: 22px;
+              height: 22px;
+              --mdc-icon-size: 22px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              line-height: 0;
+              ${isActive ? 'filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.6));' : ''}
+              ${hasError ? 'filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.6));' : ''}
+          }
+          .icon-spin {
+              animation: ${isActive ? 'spin 3s linear infinite' : 'none'};
+          }
+          @keyframes spin { 100% { transform: rotate(360deg); } }
+          
+          .info { 
+              display: flex; flex-direction: column;
+              min-width: 0;
+              overflow: hidden;
+          }
+          .title { 
+              font-size: 1.125rem; font-weight: 700; color: rgba(255, 255, 255, 0.9); line-height: 1;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+          }
+          .subtitle { 
+              font-size: 0.75rem; font-weight: 500; color: rgba(255, 255, 255, 0.6); margin-top: 4px;
+              display: flex; align-items: center; gap: 8px;
+              flex-wrap: wrap;
+              overflow: hidden;
+          }
+          .subtitle ha-icon {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              line-height: 0;
+              flex-shrink: 0;
+          }
+          .subtitle span {
+              line-height: 1;
+          }
+          .battery-info {
+              display: flex;
+              align-items: center;
+              gap: 4px;
+          }
+          .water-base-battery {
+              display: flex;
+              align-items: center;
+              gap: 4px;
+              color: #60a5fa;
+          }
+          .status-badge {
+              display: flex;
+              align-items: center;
+              gap: 4px;
+              padding: 2px 6px;
+              border-radius: 8px;
+              background: rgba(255,255,255,0.05);
+              font-size: 10px;
+              text-transform: uppercase;
+              letter-spacing: 0.3px;
+          }
+          .status-dot {
+              width: 6px;
+              height: 6px;
+              border-radius: 50%;
+              background: ${getStatusColor()};
+              ${isActive ? 'animation: pulse 2s infinite;' : ''}
+          }
+          @keyframes pulse {
+              0%, 100% { opacity: 1; }
+              50% { opacity: 0.5; }
+          }
+          
+          .header-right {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              flex-shrink: 0;
+          }
+          
+          .play-btn {
+              width: 40px; height: 40px; border-radius: 50%;
+              display: flex; align-items: center; justify-content: center;
+              transition: all 0.2s; cursor: pointer;
+              border: 1px solid rgba(255,255,255,0.05);
+          }
+          .play-btn ha-icon {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              line-height: 0;
+          }
+          .play-btn.active {
+              background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
+              color: #3b82f6;
+              box-shadow: inset 3px 3px 8px rgba(0,0,0,0.7), inset -2px -2px 4px rgba(255,255,255,0.03);
+          }
+          .play-btn.active ha-icon {
+              filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.6));
+          }
+          .play-btn.inactive {
+              background: linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1));
+              color: rgba(255,255,255,0.4);
+              box-shadow: 
+                  4px 4px 10px rgba(0, 0, 0, 0.5),
+                  -2px -2px 6px rgba(255, 255, 255, 0.03),
+                  inset 0 1px 2px rgba(255, 255, 255, 0.05);
+          }
+          .play-btn.inactive:hover { 
+              background: linear-gradient(145deg, rgba(40, 43, 50, 1), rgba(32, 34, 40, 1));
+              color: #4ade80;
+          }
+          .play-btn.inactive:hover ha-icon {
+              filter: drop-shadow(0 0 6px rgba(74, 222, 128, 0.5));
+          }
+          
+          /* Visual Inlet - click for self-clean */
+          .vacuum-inlet {
+              width: 100%; height: 160px; border-radius: 16px;
+              background: rgba(20, 20, 20, 0.8);
+              box-shadow: inset 2px 2px 5px rgba(0,0,0,0.8), inset -1px -1px 2px rgba(255,255,255,0.05);
+              border-bottom: 1px solid rgba(255,255,255,0.05);
+              border-top: 1px solid rgba(0,0,0,0.4);
+              position: relative; overflow: hidden;
+              cursor: pointer;
+              transition: all 0.2s ease;
+          }
+          .vacuum-inlet:hover {
+              background: rgba(25, 25, 25, 0.9);
+          }
+          .vacuum-inlet:active {
+              transform: scale(0.995);
+          }
+          
+          /* Map display */
+          .map-container {
+              position: absolute;
+              inset: 0;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+          }
+          .map-image {
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+              opacity: 0.9;
+          }
+          .map-overlay {
+              position: absolute;
+              inset: 0;
+              background: linear-gradient(to bottom, rgba(20,20,20,0.3), transparent, rgba(20,20,20,0.5));
+              pointer-events: none;
+          }
+          
+          .floor-grid {
+              position: absolute; inset: 0; opacity: 0.03;
+              background-image: linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px);
+              background-size: 30px 30px;
+          }
+          
+          .vacuum-body {
+             position: absolute; width: 96px; height: 96px;
+             left: 50%; top: 50%;
+             transform: translate(-50%, -50%);
+             z-index: 10;
+          }
+          
+          .vacuum-visual {
+              width: 100%; height: 100%; border-radius: 50%;
+              background: linear-gradient(135deg, #353842, #2a2d35, #1a1c21);
+              box-shadow: 0 10px 20px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+              border: 1px solid rgba(255,255,255,0.1);
+              position: relative;
+          }
+          
+          .lidar {
+              position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+              width: 36px; height: 36px; border-radius: 50%;
+              background: linear-gradient(#25282e, #15171a);
+              border: 1px solid rgba(255,255,255,0.05);
+              display: flex; align-items: center; justify-content: center;
+              box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+          }
+          .lidar-dot {
+              width: 8px; height: 8px; border-radius: 50%;
+              background: ${hasError ? 'rgba(239, 68, 68, 0.8)' : isSelfCleaning ? 'rgba(168, 85, 247, 0.8)' : 'rgba(59, 130, 246, 0.5)'};
+              box-shadow: 0 0 5px ${hasError ? 'rgba(239, 68, 68, 0.8)' : isSelfCleaning ? 'rgba(168, 85, 247, 0.8)' : 'rgba(59, 130, 246, 0.5)'};
+          }
+          
+          .led {
+              position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+              width: 20px; height: 6px; border-radius: 10px;
+              background: ${isCleaning ? '#3b82f6' : hasError ? '#ef4444' : isSelfCleaning ? '#a855f7' : 'rgba(255,255,255,0.1)'};
+              box-shadow: ${isCleaning ? '0 0 8px #3b82f6' : hasError ? '0 0 8px #ef4444' : isSelfCleaning ? '0 0 8px #a855f7' : 'none'};
+              transition: all 0.3s;
+          }
+          
+          /* Animation */
+          .vacuum-body.animating {
+             animation: movePath 12s linear infinite;
+          }
+          
+          @keyframes movePath {
+              0% { transform: translate(-50%, -50%) translate(0, 0) rotate(0deg); }
+              15% { transform: translate(-50%, -50%) translate(100px, 25px) rotate(15deg); }
+              35% { transform: translate(-50%, -50%) translate(100px, -25px) rotate(-15deg); }
+              50% { transform: translate(-50%, -50%) translate(-100px, -25px) rotate(10deg); }
+              65% { transform: translate(-50%, -50%) translate(-100px, 25px) rotate(-10deg); }
+              100% { transform: translate(-50%, -50%) translate(0, 0) rotate(0deg); }
+          }
+          
+          /* Controls Row */
+          .controls-row {
+              display: flex; flex-direction: column; gap: 12px; z-index: 2;
+          }
+          
+          .controls-header {
+              display: flex; justify-content: space-between; align-items: center; padding: 0 4px;
+          }
+          
+          /* Tab Buttons */
+          .tab-container {
+              display: flex; align-items: center; gap: 4px;
+              background: rgba(20,20,20,0.4);
+              border-radius: 20px;
+              padding: 3px;
+          }
+          .tab-btn {
+              display: flex; align-items: center; justify-content: center;
+              width: 32px; height: 26px; border-radius: 16px;
+              cursor: pointer; transition: all 0.2s;
+              color: rgba(255,255,255,0.3);
+              background: transparent;
+          }
+          .tab-btn:hover {
+              color: rgba(255,255,255,0.6);
+          }
+          .tab-btn.active {
+              background: rgba(255,255,255,0.1);
+              color: #3b82f6;
+          }
+          .tab-btn.active.water {
+              color: #60a5fa;
+          }
+          .tab-btn ha-icon {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+          }
+          
+          /* Scene Selector */
+          .scene-selector {
+              display: flex; 
+              align-items: center; 
+              gap: 6px;
+              flex: 1;
+              justify-content: center;
+          }
+          .scene-btn {
+              display: flex; 
+              align-items: center; 
+              justify-content: center;
+              padding: 6px 10px; 
+              border-radius: 10px;
+              cursor: pointer; 
+              transition: all 0.2s;
+              font-size: 9px; 
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 0.3px;
+              white-space: nowrap;
+              border: 1px solid rgba(255,255,255,0.05);
+              height: 26px;
+              box-sizing: border-box;
+          }
+          /* Inactive = raised/erhaben */
+          .scene-btn.inactive {
+              background: linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1));
+              color: rgba(255,255,255,0.4);
+              box-shadow: 
+                  4px 4px 10px rgba(0, 0, 0, 0.5),
+                  -2px -2px 6px rgba(255, 255, 255, 0.03),
+                  inset 0 1px 2px rgba(255, 255, 255, 0.05);
+          }
+          .scene-btn.inactive:hover {
+              background: linear-gradient(145deg, rgba(40, 43, 50, 1), rgba(32, 34, 40, 1));
+              color: rgba(255,255,255,0.6);
+          }
+          /* Active = pressed/eingedrückt */
+          .scene-btn.active {
+              background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
+              color: #4ade80;
+              box-shadow: inset 3px 3px 8px rgba(0,0,0,0.7), inset -2px -2px 4px rgba(255,255,255,0.03);
+          }
+          .scene-btn ha-icon {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: all 0.2s;
+          }
+          .scene-btn.active ha-icon {
+              filter: drop-shadow(0 0 4px rgba(74, 222, 128, 0.5));
+          }
+          
+          .home-btn {
+              width: 36px; height: 36px; border-radius: 50%;
+              display: flex; align-items: center; justify-content: center;
+              cursor: pointer; transition: all 0.2s;
+              border: 1px solid rgba(255,255,255,0.05);
+              flex-shrink: 0;
+          }
+          .home-btn ha-icon {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+          }
+          .home-btn.active {
+              background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
+              color: #3b82f6;
+              box-shadow: inset 3px 3px 8px rgba(0,0,0,0.7), inset -2px -2px 4px rgba(255,255,255,0.03);
+          }
+          .home-btn.active ha-icon {
+              filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.6));
+          }
+          .home-btn.inactive {
+              background: linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1));
+              color: rgba(255,255,255,0.4);
+              box-shadow: 
+                  4px 4px 10px rgba(0, 0, 0, 0.5),
+                  -2px -2px 6px rgba(255, 255, 255, 0.03),
+                  inset 0 1px 2px rgba(255, 255, 255, 0.05);
+          }
+          .home-btn.inactive:hover { 
+              background: linear-gradient(145deg, rgba(40, 43, 50, 1), rgba(32, 34, 40, 1));
+              color: rgba(255,255,255,0.7); 
+          }
+
+          /* Speed/Level Bars */
+          .speed-controls {
+              display: flex; gap: 8px; width: 100%;
+          }
+          .level-btn {
+              flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;
+              min-width: 0;
+          }
+          .level-bar {
+              width: 100%; height: 40px; border-radius: 12px; position: relative; overflow: hidden;
+              background: rgba(20,20,20,0.4);
+              border: 1px solid rgba(255,255,255,0.05);
+              transition: all 0.3s;
+          }
+          .level-bar.active {
+              background: #141414;
+              box-shadow: inset 1px 1px 2px rgba(0,0,0,0.8), 0 0 10px rgba(59,130,246,0.15);
+          }
+          .level-bar.active.water {
+              box-shadow: inset 1px 1px 2px rgba(0,0,0,0.8), 0 0 10px rgba(96,165,250,0.15);
+          }
+          .level-fill {
+              position: absolute; bottom: 0; left: 0; right: 0;
+              transition: height 0.3s ease-out;
+              background: rgba(59, 130, 246, 0.2);
+              height: 0;
+          }
+          .level-fill.water {
+              background: rgba(96, 165, 250, 0.2);
+          }
+          .level-line {
+              position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
+              transition: all 0.3s;
+              background: transparent;
+          }
+          .level-text {
+              font-size: 8px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.3px;
+              color: rgba(255,255,255,0.2); transition: color 0.3s;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              max-width: 100%;
+          }
+          
+          /* Active states for bars */
+          .level-btn.active .level-fill { height: 100%; }
+          .level-btn.active .level-line { background: #3b82f6; box-shadow: 0 0 8px #3b82f6; }
+          .level-btn.active .level-line.water { background: #60a5fa; box-shadow: 0 0 8px #60a5fa; }
+          .level-btn.active .level-text { color: rgba(255,255,255,0.8); }
+
+        </style>
+        
+        <div class="card">
+          <div class="noise"></div>
+          
+          <div class="header">
+              <div class="header-left">
+                  <div class="icon-box">
+                      <ha-icon icon="${hasError ? 'mdi:alert-circle' : 'mdi:robot-vacuum'}" class="${isActive ? 'icon-spin' : ''}" style="width: 24px; height: 24px;"></ha-icon>
+                  </div>
+                  <div class="info">
+                      <div class="title">${name}</div>
+                      <div class="subtitle">
+                          <div class="battery-info">
+                              <ha-icon icon="${batteryIcon}" style="width: 14px; height: 14px; color: ${batteryColor};"></ha-icon>
+                              <span>${battery}%</span>
+                          </div>
+                          ${waterBaseBattery !== null ? `
+                          <div class="water-base-battery">
+                              <ha-icon icon="mdi:water" style="width: 12px; height: 12px;"></ha-icon>
+                              <span>${waterBaseBattery}%</span>
+                          </div>
+                          ` : ''}
+                          ${this.config.show_status ? `
+                          <div class="status-badge">
+                              <div class="status-dot"></div>
+                              <span>${this.getStatusText(taskType, workingStatus)}</span>
+                          </div>
+                          ` : ''}
+                      </div>
+                  </div>
+              </div>
+              
+              <div class="header-right">
+                  <div id="play-btn" class="play-btn ${isCleaning ? 'active' : 'inactive'}">
+                      <ha-icon icon="${isCleaning ? 'mdi:pause' : 'mdi:play'}" style="width: 20px; height: 20px;"></ha-icon>
+                  </div>
+              </div>
+          </div>
+          
+          <div class="vacuum-inlet">
+              ${showMap ? `
+              <div class="map-container">
+                  <img class="map-image" src="${mapUrl}" alt="Vacuum Map" />
+                  <div class="map-overlay"></div>
+              </div>
+              ` : `
+              <div class="floor-grid"></div>
+              <div class="vacuum-body ${isCleaning ? 'animating' : ''}">
+                  <div class="vacuum-visual">
+                      <div class="lidar">
+                          <div class="lidar-dot"></div>
+                      </div>
+                      <div class="led"></div>
+                  </div>
+              </div>
+              `}
+          </div>
+          
+          <div class="controls-row">
+             <div class="controls-header">
+                 <div class="tab-container">
+                     <div class="tab-btn ${this._activeTab === 'fan' ? 'active' : ''}" data-tab="fan">
+                         <ha-icon icon="mdi:fan" style="width: 16px; height: 16px;"></ha-icon>
+                     </div>
+                     <div class="tab-btn ${this._activeTab === 'water' ? 'active water' : ''}" data-tab="water">
+                         <ha-icon icon="mdi:water" style="width: 16px; height: 16px;"></ha-icon>
+                     </div>
+                 </div>
+                 
+                 ${this.config.use_scenes && (this.config.scene_1 || this.config.scene_2) ? `
+                 <div class="scene-selector">
+                     ${this.config.scene_1 ? `
+                     <div class="scene-btn ${this._activeScene === 1 ? 'active' : 'inactive'}" data-scene="1">
+                         <ha-icon icon="mdi:play-circle-outline" style="width: 12px; height: 12px; margin-right: 4px;"></ha-icon>
+                         ${this.config.scene_1_name || 'Szene 1'}
+                     </div>
+                     ` : ''}
+                     ${this.config.scene_2 ? `
+                     <div class="scene-btn ${this._activeScene === 2 ? 'active' : 'inactive'}" data-scene="2">
+                         <ha-icon icon="mdi:play-circle-outline" style="width: 12px; height: 12px; margin-right: 4px;"></ha-icon>
+                         ${this.config.scene_2_name || 'Szene 2'}
+                     </div>
+                     ` : ''}
+                 </div>
+                 ` : '<div style="flex: 1;"></div>'}
+                 
+                 <div id="home-btn" class="home-btn ${isReturning || isDocked ? 'active' : 'inactive'}">
+                     <ha-icon icon="mdi:home" style="width: 18px; height: 18px;"></ha-icon>
+                 </div>
+             </div>
+             
+             ${this._activeTab === 'fan' ? `
+             <div class="speed-controls">
+                 ${fanLevels.map((f) => `
+                    <div class="level-btn fan-btn ${f.level <= fanLevel ? 'active' : ''}" data-level="${f.level}">
+                        <div class="level-bar ${f.level <= fanLevel ? 'active' : ''}">
+                            <div class="level-fill"></div>
+                            <div class="level-line"></div>
+                        </div>
+                        <span class="level-text">${f.label}</span>
+                    </div>
+                 `).join('')}
+             </div>
+             ` : `
+             <div class="speed-controls">
+                 ${waterLevels.map((w) => `
+                    <div class="level-btn water-btn ${w.level <= waterLevel ? 'active' : ''}" data-level="${w.level}">
+                        <div class="level-bar ${w.level <= waterLevel ? 'active water' : ''}">
+                            <div class="level-fill water"></div>
+                            <div class="level-line water"></div>
+                        </div>
+                        <span class="level-text">${w.label}</span>
+                    </div>
+                 `).join('')}
+             </div>
+             `}
+          </div>
+  
+        </div>
+      `;
+      
+      this.setupListeners();
+    }
+  }
+  
+  customElements.define('prism-vacuum-switchbot', PrismVacuumSwitchbotCard);
+  window.customCards = window.customCards || [];
+  window.customCards.push({
+    type: "prism-vacuum-switchbot",
+    name: "Prism Vacuum SwitchBot",
+    preview: true,
+    description: "A robot vacuum card for SwitchBot MQTT integration with inlet styling and animation"
   });
 
 })();
@@ -8564,6 +9825,20 @@ class PrismLedCard extends HTMLElement {
   
     getCardSize() {
       return 3;
+    }
+
+    // Translation helper - English default, German if HA is set to German
+    _t(key) {
+      const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+      const isGerman = lang.startsWith('de');
+      
+      const translations = {
+        'color': isGerman ? 'Farbe' : 'Color',
+        'white': isGerman ? 'Weiß' : 'White',
+        'off': isGerman ? 'Ausgeschaltet' : 'Off'
+      };
+      
+      return translations[key] || key;
     }
   
     connectedCallback() {
@@ -8768,7 +10043,7 @@ class PrismLedCard extends HTMLElement {
         
         if(fill) fill.style.width = `${this.localBrightness}%`;
         if(tip) tip.style.left = `${this.localBrightness}%`;
-        if(headerSub) headerSub.textContent = `${this.localBrightness}% • ${this.mode === 'color' ? 'Farbe' : 'Weiß'}`;
+        if(headerSub) headerSub.textContent = `${this.localBrightness}% • ${this.mode === 'color' ? this._t('color') : this._t('white')}`;
         
         // Opacity updates
         const color = this.getDisplayColor();
@@ -9077,7 +10352,7 @@ class PrismLedCard extends HTMLElement {
                   </div>
                   <div class="info">
                       <div class="title">${name}</div>
-                      <div class="subtitle" id="header-subtitle">${isOn ? `${this.localBrightness}% • ${this.mode === 'color' ? 'Farbe' : 'Weiß'}` : "Ausgeschaltet"}</div>
+                      <div class="subtitle" id="header-subtitle">${isOn ? `${this.localBrightness}% • ${this.mode === 'color' ? this._t('color') : this._t('white')}` : this._t('off')}</div>
                   </div>
               </div>
               
@@ -9087,8 +10362,8 @@ class PrismLedCard extends HTMLElement {
           </div>
           
           <div class="mode-switch">
-              <div class="mode-btn ${this.mode === 'color' ? 'active' : ''}" data-mode="color">Farbe</div>
-              <div class="mode-btn ${this.mode === 'white' ? 'active' : ''}" data-mode="white">Weiß</div>
+              <div class="mode-btn ${this.mode === 'color' ? 'active' : ''}" data-mode="color">${this._t('color')}</div>
+              <div class="mode-btn ${this.mode === 'white' ? 'active' : ''}" data-mode="white">${this._t('white')}</div>
           </div>
           
           <div class="wheel-container" id="color-wheel">
@@ -9238,6 +10513,20 @@ class PrismLedLightCard extends HTMLElement {
   
     getCardSize() {
       return 3;
+    }
+
+    // Translation helper - English default, German if HA is set to German
+    _t(key) {
+      const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+      const isGerman = lang.startsWith('de');
+      
+      const translations = {
+        'color': isGerman ? 'Farbe' : 'Color',
+        'white': isGerman ? 'Weiß' : 'White',
+        'off': isGerman ? 'Ausgeschaltet' : 'Off'
+      };
+      
+      return translations[key] || key;
     }
   
     connectedCallback() {
@@ -9442,7 +10731,7 @@ class PrismLedLightCard extends HTMLElement {
         
         if(fill) fill.style.width = `${this.localBrightness}%`;
         if(tip) tip.style.left = `${this.localBrightness}%`;
-        if(headerSub) headerSub.textContent = `${this.localBrightness}% • ${this.mode === 'color' ? 'Farbe' : 'Weiß'}`;
+        if(headerSub) headerSub.textContent = `${this.localBrightness}% • ${this.mode === 'color' ? this._t('color') : this._t('white')}`;
         
         // Opacity updates
         const color = this.getDisplayColor();
@@ -9654,7 +10943,7 @@ class PrismLedLightCard extends HTMLElement {
                   </div>
                   <div class="info">
                       <div class="title">${name}</div>
-                      <div class="subtitle" id="header-subtitle">${isOn ? `${this.localBrightness}% • ${this.mode === 'color' ? 'Farbe' : 'Weiß'}` : "Ausgeschaltet"}</div>
+                      <div class="subtitle" id="header-subtitle">${isOn ? `${this.localBrightness}% • ${this.mode === 'color' ? this._t('color') : this._t('white')}` : this._t('off')}</div>
                   </div>
               </div>
               
@@ -9664,8 +10953,8 @@ class PrismLedLightCard extends HTMLElement {
           </div>
           
           <div class="mode-switch">
-              <div class="mode-btn ${this.mode === 'color' ? 'active' : ''}" data-mode="color">Farbe</div>
-              <div class="mode-btn ${this.mode === 'white' ? 'active' : ''}" data-mode="white">Weiß</div>
+              <div class="mode-btn ${this.mode === 'color' ? 'active' : ''}" data-mode="color">${this._t('color')}</div>
+              <div class="mode-btn ${this.mode === 'white' ? 'active' : ''}" data-mode="white">${this._t('white')}</div>
           </div>
           
           <div class="wheel-container" id="color-wheel">
@@ -9765,7 +11054,7 @@ class PrismSidebarCard extends HTMLElement {
                 {
                     name: "rotation_interval",
                     label: "Rotation interval",
-                    selector: { number: { min: 3, max: 60, step: 1, unit_of_measurement: "Sekunden" } },
+                    selector: { number: { min: 3, max: 60, step: 1, unit_of_measurement: "s" } },
                     default: 10
                 },
                 {
@@ -9781,7 +11070,7 @@ class PrismSidebarCard extends HTMLElement {
                 {
                     name: "forecast_days",
                     label: "Forecast days",
-                    selector: { number: { min: 1, max: 7, step: 1, unit_of_measurement: "Tage" } },
+                    selector: { number: { min: 1, max: 7, step: 1, unit_of_measurement: "days" } },
                     default: 3
                 },
                 {
@@ -10056,7 +11345,7 @@ class PrismSidebarCard extends HTMLElement {
             if (calSubEl) {
                 let subText = '';
                 if (attr.all_day) {
-                    subText = 'Ganztägig';
+                    subText = this._t('all_day');
                 } else if (attr.start_time) {
                     const date = new Date(attr.start_time);
                     subText = date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
@@ -10278,8 +11567,8 @@ class PrismSidebarCard extends HTMLElement {
         const cameraImage = cameraState?.attributes?.entity_picture || 'https://images.unsplash.com/photo-1558435186-d31d1eb6fa3c?q=80&w=600&auto=format&fit=crop';
         const cameraName = cameraState?.attributes?.friendly_name || cameraEntity.split('.')[1] || 'Camera';
         const currentTemp = temperatureState?.state || '0';
-        const calendarTitle = calendarState?.attributes?.message || 'Keine Termine';
-        const calendarSub = calendarState?.attributes?.all_day ? 'Ganztägig' : 
+        const calendarTitle = calendarState?.attributes?.message || this._t('no_events');
+        const calendarSub = calendarState?.attributes?.all_day ? this._t('all_day') : 
                            (calendarState?.attributes?.start_time ? 
                             new Date(calendarState.attributes.start_time).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : 
                             '');
@@ -10977,6 +12266,19 @@ class PrismSidebarCard extends HTMLElement {
         return { line: linePath.trim(), fill: fillPath.trim() };
     }
 
+    // Translation helper - English default, German if HA is set to German
+    _t(key) {
+        const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+        const isGerman = lang.startsWith('de');
+        
+        const translations = {
+            'all_day': isGerman ? 'Ganztägig' : 'All day',
+            'no_events': isGerman ? 'Keine Termine' : 'No events'
+        };
+        
+        return translations[key] || key;
+    }
+
     getCardSize() {
         return 10; // Tall card
     }
@@ -11051,7 +12353,7 @@ class PrismSidebarLightCard extends HTMLElement {
                 {
                     name: "rotation_interval",
                     label: "Rotation interval",
-                    selector: { number: { min: 3, max: 60, step: 1, unit_of_measurement: "Sekunden" } },
+                    selector: { number: { min: 3, max: 60, step: 1, unit_of_measurement: "s" } },
                     default: 10
                 },
                 {
@@ -11067,7 +12369,7 @@ class PrismSidebarLightCard extends HTMLElement {
                 {
                     name: "forecast_days",
                     label: "Forecast days",
-                    selector: { number: { min: 1, max: 7, step: 1, unit_of_measurement: "Tage" } },
+                    selector: { number: { min: 1, max: 7, step: 1, unit_of_measurement: "days" } },
                     default: 3
                 },
                 {
@@ -11342,7 +12644,7 @@ class PrismSidebarLightCard extends HTMLElement {
             if (calSubEl) {
                 let subText = '';
                 if (attr.all_day) {
-                    subText = 'Ganztägig';
+                    subText = this._t('all_day');
                 } else if (attr.start_time) {
                     const date = new Date(attr.start_time);
                     subText = date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
@@ -11564,8 +12866,8 @@ class PrismSidebarLightCard extends HTMLElement {
         const cameraImage = cameraState?.attributes?.entity_picture || 'https://images.unsplash.com/photo-1558435186-d31d1eb6fa3c?q=80&w=600&auto=format&fit=crop';
         const cameraName = cameraState?.attributes?.friendly_name || cameraEntity.split('.')[1] || 'Camera';
         const currentTemp = temperatureState?.state || '0';
-        const calendarTitle = calendarState?.attributes?.message || 'Keine Termine';
-        const calendarSub = calendarState?.attributes?.all_day ? 'Ganztägig' : 
+        const calendarTitle = calendarState?.attributes?.message || this._t('no_events');
+        const calendarSub = calendarState?.attributes?.all_day ? this._t('all_day') : 
                            (calendarState?.attributes?.start_time ? 
                             new Date(calendarState.attributes.start_time).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : 
                             '');
@@ -12265,6 +13567,19 @@ class PrismSidebarLightCard extends HTMLElement {
         fillPath += ` L ${lastX},${height} L ${firstX},${height} Z`; // Close at bottom
         
         return { line: linePath.trim(), fill: fillPath.trim() };
+    }
+
+    // Translation helper - English default, German if HA is set to German
+    _t(key) {
+        const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+        const isGerman = lang.startsWith('de');
+        
+        const translations = {
+            'all_day': isGerman ? 'Ganztägig' : 'All day',
+            'no_events': isGerman ? 'Keine Termine' : 'No events'
+        };
+        
+        return translations[key] || key;
     }
 
     getCardSize() {
@@ -13168,19 +14483,10 @@ class PrismEnergyCard extends HTMLElement {
     if (!weatherData.enabled) return '';
     
     // Check Home Assistant language
-    const lang = this._hass?.language || this._hass?.locale?.language || 'de';
-    const isEnglish = lang.startsWith('en');
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
     
-    const labels = isEnglish ? {
-      'sunny': 'Sunny',
-      'clear': 'Clear',
-      'cloudy': 'Cloudy',
-      'rainy': 'Rain',
-      'snowy': 'Snow',
-      'foggy': 'Fog',
-      'stormy': 'Storm',
-      'windy': 'Windy'
-    } : {
+    const labels = isGerman ? {
       'sunny': 'Sonnig',
       'clear': 'Klar',
       'cloudy': 'Bewölkt',
@@ -13189,6 +14495,15 @@ class PrismEnergyCard extends HTMLElement {
       'foggy': 'Nebel',
       'stormy': 'Gewitter',
       'windy': 'Windig'
+    } : {
+      'sunny': 'Sunny',
+      'clear': 'Clear',
+      'cloudy': 'Cloudy',
+      'rainy': 'Rain',
+      'snowy': 'Snow',
+      'foggy': 'Fog',
+      'stormy': 'Storm',
+      'windy': 'Windy'
     };
     
     return labels[weatherData.weatherType] || weatherData.weatherType;
@@ -13196,43 +14511,43 @@ class PrismEnergyCard extends HTMLElement {
 
   // Get day/night label based on HA language
   _getDayNightLabel(isNight) {
-    const lang = this._hass?.language || this._hass?.locale?.language || 'de';
-    const isEnglish = lang.startsWith('en');
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
     
-    if (isEnglish) {
-      return isNight ? 'Night' : 'Day';
+    if (isGerman) {
+      return isNight ? 'Nacht' : 'Tag';
     }
-    return isNight ? 'Nacht' : 'Tag';
+    return isNight ? 'Night' : 'Day';
   }
 
   // Translate UI labels based on HA language (card display only, not editor)
   _t(key) {
-    const lang = this._hass?.language || this._hass?.locale?.language || 'de';
-    const isEnglish = lang.startsWith('en');
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
     
     const translations = {
       // Pill labels
-      'production': isEnglish ? 'Production' : 'Erzeugung',
-      'inactive': isEnglish ? 'Inactive' : 'Inaktiv',
-      'export': isEnglish ? 'Export' : 'Einspeisung',
-      'import': isEnglish ? 'Import' : 'Bezug',
-      'neutral': isEnglish ? 'Neutral' : 'Neutral',
-      'consumption': isEnglish ? 'Consumption' : 'Verbrauch',
-      'charging': isEnglish ? 'Charging' : 'Ladung',
-      'discharging': isEnglish ? 'Discharging' : 'Entladung',
-      'standby': isEnglish ? 'Standby' : 'Standby',
-      'idle': isEnglish ? 'Idle' : 'Inaktiv',
+      'production': isGerman ? 'Erzeugung' : 'Production',
+      'inactive': isGerman ? 'Inaktiv' : 'Inactive',
+      'export': isGerman ? 'Einspeisung' : 'Export',
+      'import': isGerman ? 'Bezug' : 'Import',
+      'neutral': isGerman ? 'Neutral' : 'Neutral',
+      'consumption': isGerman ? 'Verbrauch' : 'Consumption',
+      'charging': isGerman ? 'Ladung' : 'Charging',
+      'discharging': isGerman ? 'Entladung' : 'Discharging',
+      'standby': isGerman ? 'Standby' : 'Standby',
+      'idle': isGerman ? 'Inaktiv' : 'Idle',
       // Detail headers
-      'grid': isEnglish ? 'Grid' : 'Netz',
-      'storage': isEnglish ? 'Storage' : 'Speicher',
-      'current': isEnglish ? 'Current' : 'Aktuell',
+      'grid': isGerman ? 'Netz' : 'Grid',
+      'storage': isGerman ? 'Speicher' : 'Storage',
+      'current': isGerman ? 'Aktuell' : 'Current',
       // Detail labels
-      'power': isEnglish ? 'Power' : 'Leistung',
-      'autarky': isEnglish ? 'Autarky' : 'Autarkie',
+      'power': isGerman ? 'Leistung' : 'Power',
+      'autarky': isGerman ? 'Autarkie' : 'Autarky',
       // Module defaults
-      'module': isEnglish ? 'Module' : 'Modul',
+      'module': isGerman ? 'Modul' : 'Module',
       // Live indicator
-      'live': isEnglish ? 'LIVE' : 'LIVE'
+      'live': 'LIVE'
     };
     
     return translations[key] || key;
@@ -15317,53 +16632,53 @@ class PrismEnergyHorizontalCard extends HTMLElement {
   // Get weather label for display (supports EN/DE)
   _getWeatherLabel(weatherData) {
     if (!weatherData.enabled) return '';
-    const lang = this._hass?.language || this._hass?.locale?.language || 'de';
-    const isEnglish = lang.startsWith('en');
-    const labels = isEnglish ? {
-      'sunny': 'Sunny', 'clear': 'Clear', 'cloudy': 'Cloudy', 'rainy': 'Rain',
-      'snowy': 'Snow', 'foggy': 'Fog', 'stormy': 'Storm', 'windy': 'Windy'
-    } : {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
+    const labels = isGerman ? {
       'sunny': 'Sonnig', 'clear': 'Klar', 'cloudy': 'Bewölkt', 'rainy': 'Regen',
       'snowy': 'Schnee', 'foggy': 'Nebel', 'stormy': 'Gewitter', 'windy': 'Windig'
+    } : {
+      'sunny': 'Sunny', 'clear': 'Clear', 'cloudy': 'Cloudy', 'rainy': 'Rain',
+      'snowy': 'Snow', 'foggy': 'Fog', 'stormy': 'Storm', 'windy': 'Windy'
     };
     return labels[weatherData.weatherType] || weatherData.weatherType;
   }
 
   // Get day/night label based on HA language
   _getDayNightLabel(isNight) {
-    const lang = this._hass?.language || this._hass?.locale?.language || 'de';
-    const isEnglish = lang.startsWith('en');
-    return isEnglish ? (isNight ? 'Night' : 'Day') : (isNight ? 'Nacht' : 'Tag');
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
+    return isGerman ? (isNight ? 'Nacht' : 'Tag') : (isNight ? 'Night' : 'Day');
   }
 
   // Translate UI labels based on HA language (card display only, not editor)
   _t(key) {
-    const lang = this._hass?.language || this._hass?.locale?.language || 'de';
-    const isEnglish = lang.startsWith('en');
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
     
     const translations = {
       // Pill labels
-      'production': isEnglish ? 'Production' : 'Erzeugung',
-      'inactive': isEnglish ? 'Inactive' : 'Inaktiv',
-      'export': isEnglish ? 'Export' : 'Einspeisung',
-      'import': isEnglish ? 'Import' : 'Bezug',
-      'neutral': isEnglish ? 'Neutral' : 'Neutral',
-      'consumption': isEnglish ? 'Consumption' : 'Verbrauch',
-      'charging': isEnglish ? 'Charging' : 'Ladung',
-      'discharging': isEnglish ? 'Discharging' : 'Entladung',
-      'standby': isEnglish ? 'Standby' : 'Standby',
-      'idle': isEnglish ? 'Idle' : 'Inaktiv',
+      'production': isGerman ? 'Erzeugung' : 'Production',
+      'inactive': isGerman ? 'Inaktiv' : 'Inactive',
+      'export': isGerman ? 'Einspeisung' : 'Export',
+      'import': isGerman ? 'Bezug' : 'Import',
+      'neutral': isGerman ? 'Neutral' : 'Neutral',
+      'consumption': isGerman ? 'Verbrauch' : 'Consumption',
+      'charging': isGerman ? 'Ladung' : 'Charging',
+      'discharging': isGerman ? 'Entladung' : 'Discharging',
+      'standby': isGerman ? 'Standby' : 'Standby',
+      'idle': isGerman ? 'Inaktiv' : 'Idle',
       // Detail headers
-      'grid': isEnglish ? 'Grid' : 'Netz',
-      'storage': isEnglish ? 'Storage' : 'Speicher',
-      'current': isEnglish ? 'Current' : 'Aktuell',
+      'grid': isGerman ? 'Netz' : 'Grid',
+      'storage': isGerman ? 'Speicher' : 'Storage',
+      'current': isGerman ? 'Aktuell' : 'Current',
       // Detail labels
-      'power': isEnglish ? 'Power' : 'Leistung',
-      'autarky': isEnglish ? 'Autarky' : 'Autarkie',
+      'power': isGerman ? 'Leistung' : 'Power',
+      'autarky': isGerman ? 'Autarkie' : 'Autarky',
       // Module defaults
-      'module': isEnglish ? 'Module' : 'Modul',
+      'module': isGerman ? 'Modul' : 'Module',
       // Live indicator
-      'live': isEnglish ? 'LIVE' : 'LIVE'
+      'live': 'LIVE'
     };
     
     return translations[key] || key;
@@ -26433,5 +27748,1214 @@ window.customCards.push({
   description: 'Creality 3D Printer card for K1, K1C, K1 Max, K1 SE and more'
 });
 
+
+})();
+
+// ============================================
+// prism-room.js
+// ============================================
+(function() {
+
+class PrismRoomCard extends HTMLElement {
+  constructor() {
+    super();
+    this._hass = null;
+    this._config = null;
+    this._popupElement = null;
+    this._cardRendered = false;
+  }
+
+  static getStubConfig() {
+    return {
+      name: "Wohnzimmer",
+      icon: "mdi:sofa",
+      show_icon: true,
+      icon_size: 42,
+      name_size: 1.125,
+      temperature_entity: "",
+      humidity_entity: "",
+      light_entity: "",
+      entities: []
+    };
+  }
+
+  static getConfigForm() {
+    return {
+      schema: [
+        {
+          name: "name",
+          required: true,
+          selector: { text: {} }
+        },
+        {
+          name: "icon",
+          selector: { icon: {} }
+        },
+        {
+          name: "show_icon",
+          selector: { boolean: {} }
+        },
+        {
+          name: "icon_size",
+          selector: { number: { min: 24, max: 80, step: 2 } }
+        },
+        {
+          name: "name_size",
+          selector: { number: { min: 0.75, max: 2, step: 0.125 } }
+        },
+        {
+          name: "temperature_entity",
+          selector: { entity: { domain: "sensor" } }
+        },
+        {
+          name: "humidity_entity",
+          selector: { entity: { domain: "sensor" } }
+        },
+        {
+          name: "light_entity",
+          selector: { entity: { domain: "light" } }
+        },
+        {
+          name: "climate_entity",
+          selector: { entity: { domain: "climate" } }
+        },
+        {
+          name: "motion_entity",
+          selector: { entity: { domain: "binary_sensor" } }
+        },
+        {
+          name: "media_entity",
+          selector: { entity: { domain: "media_player" } }
+        },
+        {
+          name: "active_color",
+          selector: { color_rgb: {} }
+        },
+        {
+          name: "entities",
+          selector: { entity: { multiple: true } }
+        }
+      ]
+    };
+  }
+
+  setConfig(config) {
+    if (!config.name) {
+      throw new Error('Please define a name');
+    }
+    this._config = { 
+      ...config,
+      icon: config.icon || 'mdi:home',
+      show_icon: config.show_icon !== false,
+      icon_size: config.icon_size || 42,
+      name_size: config.name_size || 1.125
+    };
+    
+    if (this._config.active_color) {
+      this._config.active_color = this._normalizeColor(this._config.active_color);
+    }
+    
+    this._cardRendered = false;
+    this._renderCard();
+  }
+
+  _normalizeColor(color) {
+    if (Array.isArray(color) && color.length >= 3) {
+      const r = color[0].toString(16).padStart(2, '0');
+      const g = color[1].toString(16).padStart(2, '0');
+      const b = color[2].toString(16).padStart(2, '0');
+      return `#${r}${g}${b}`;
+    }
+    return color;
+  }
+
+  set hass(hass) {
+    this._hass = hass;
+    if (this._config) {
+      this._updateCardContent();
+    }
+  }
+
+  getCardSize() {
+    return 2;
+  }
+
+  connectedCallback() {
+    if (this._config && !this._cardRendered) {
+      this._renderCard();
+    }
+  }
+
+  // Get temperature value
+  _getTemperature() {
+    if (!this._hass || !this._config.temperature_entity) return null;
+    const entity = this._hass.states[this._config.temperature_entity];
+    if (!entity || isNaN(parseFloat(entity.state))) return null;
+    return parseFloat(entity.state);
+  }
+
+  // Get humidity value
+  _getHumidity() {
+    if (!this._hass || !this._config.humidity_entity) return null;
+    const entity = this._hass.states[this._config.humidity_entity];
+    if (!entity || isNaN(parseFloat(entity.state))) return null;
+    return parseFloat(entity.state);
+  }
+
+  // Get light entity status (for groups)
+  _getLightStatus() {
+    if (!this._hass || !this._config.light_entity) return { active: false, brightness: 0 };
+    const entity = this._hass.states[this._config.light_entity];
+    if (!entity) return { active: false, brightness: 0 };
+    const isOn = entity.state === 'on';
+    const brightness = entity.attributes?.brightness ? Math.round((entity.attributes.brightness / 255) * 100) : 0;
+    return { active: isOn, brightness: brightness };
+  }
+
+  // Get climate/heating status
+  _getClimateStatus() {
+    if (!this._hass || !this._config.climate_entity) return { active: false, mode: null };
+    const entity = this._hass.states[this._config.climate_entity];
+    if (!entity) return { active: false, mode: null };
+    const state = entity.state;
+    const isActive = state === 'heat' || state === 'auto' || state === 'heating' || state === 'cool' || state === 'cooling';
+    return { active: isActive, mode: state, temp: entity.attributes?.temperature };
+  }
+
+  // Get motion sensor status
+  _getMotionStatus() {
+    if (!this._hass || !this._config.motion_entity) return false;
+    const entity = this._hass.states[this._config.motion_entity];
+    return entity && entity.state === 'on';
+  }
+
+  // Get media player status
+  _getMediaStatus() {
+    if (!this._hass || !this._config.media_entity) return { active: false, title: null };
+    const entity = this._hass.states[this._config.media_entity];
+    if (!entity) return { active: false, title: null };
+    const isActive = entity.state === 'playing' || entity.state === 'paused';
+    return { 
+      active: isActive, 
+      playing: entity.state === 'playing',
+      title: entity.attributes?.media_title || null
+    };
+  }
+
+  // Count active lights from entities list (if no light_entity is set)
+  _getActiveLightsFromEntities() {
+    if (!this._hass || !this._config.entities) return { count: 0, total: 0 };
+    const entities = Array.isArray(this._config.entities) ? this._config.entities : [];
+    const lights = entities.filter(e => e.startsWith('light.'));
+    const activeLights = lights.filter(e => {
+      const entity = this._hass.states[e];
+      return entity && entity.state === 'on';
+    });
+    return { count: activeLights.length, total: lights.length };
+  }
+
+  // Get all entities with their states
+  _getEntitiesWithStates() {
+    if (!this._hass || !this._config.entities) return [];
+    const entities = Array.isArray(this._config.entities) ? this._config.entities : [];
+    
+    return entities.map(entityId => {
+      const entity = this._hass.states[entityId];
+      if (!entity) return null;
+      
+      const domain = entityId.split('.')[0];
+      const isActive = this._isEntityActive(entity, domain);
+      
+      return {
+        id: entityId,
+        name: entity.attributes?.friendly_name || entityId,
+        state: entity.state,
+        icon: entity.attributes?.icon || this._getDomainIcon(domain),
+        domain: domain,
+        isActive: isActive,
+        attributes: entity.attributes
+      };
+    }).filter(e => e !== null);
+  }
+
+  _isEntityActive(entity, domain) {
+    const state = entity.state;
+    switch(domain) {
+      case 'light':
+      case 'switch':
+      case 'fan':
+      case 'input_boolean':
+        return state === 'on';
+      case 'cover':
+        return state === 'open';
+      case 'lock':
+        return state === 'locked';
+      case 'climate':
+        return state === 'heat' || state === 'auto' || state === 'cool';
+      case 'media_player':
+        return state === 'playing' || state === 'paused';
+      case 'binary_sensor':
+        return state === 'on';
+      default:
+        return state === 'on';
+    }
+  }
+
+  _getDomainIcon(domain) {
+    const icons = {
+      'light': 'mdi:lightbulb',
+      'switch': 'mdi:power-socket-de',
+      'fan': 'mdi:fan',
+      'cover': 'mdi:blinds',
+      'lock': 'mdi:lock',
+      'climate': 'mdi:thermostat',
+      'media_player': 'mdi:play-circle',
+      'binary_sensor': 'mdi:motion-sensor',
+      'sensor': 'mdi:gauge',
+      'input_boolean': 'mdi:toggle-switch',
+      'scene': 'mdi:palette',
+      'script': 'mdi:script-text',
+      'vacuum': 'mdi:robot-vacuum'
+    };
+    return icons[domain] || 'mdi:help-circle';
+  }
+
+  _toggleEntity(entityId) {
+    if (!this._hass) return;
+    const domain = entityId.split('.')[0];
+    
+    if (['light', 'switch', 'fan', 'input_boolean'].includes(domain)) {
+      this._hass.callService(domain, 'toggle', { entity_id: entityId });
+    } else if (domain === 'cover') {
+      const entity = this._hass.states[entityId];
+      if (entity?.state === 'open') {
+        this._hass.callService('cover', 'close_cover', { entity_id: entityId });
+      } else {
+        this._hass.callService('cover', 'open_cover', { entity_id: entityId });
+      }
+    } else if (domain === 'lock') {
+      const entity = this._hass.states[entityId];
+      if (entity?.state === 'locked') {
+        this._hass.callService('lock', 'unlock', { entity_id: entityId });
+      } else {
+        this._hass.callService('lock', 'lock', { entity_id: entityId });
+      }
+    } else if (domain === 'media_player') {
+      this._hass.callService('media_player', 'media_play_pause', { entity_id: entityId });
+    } else if (domain === 'climate') {
+      this._handleEntityLongPress(entityId);
+    } else if (domain === 'scene') {
+      this._hass.callService('scene', 'turn_on', { entity_id: entityId });
+    } else if (domain === 'script') {
+      this._hass.callService('script', 'turn_on', { entity_id: entityId });
+    }
+  }
+
+  _openPopup() {
+    // Create popup overlay
+    this._popupElement = document.createElement('div');
+    this._popupElement.className = 'prism-room-popup-overlay';
+    this._popupElement.innerHTML = this._getPopupHTML();
+    document.body.appendChild(this._popupElement);
+    
+    // Add styles to document if not already present
+    if (!document.getElementById('prism-room-popup-styles')) {
+      const styleSheet = document.createElement('style');
+      styleSheet.id = 'prism-room-popup-styles';
+      styleSheet.textContent = this._getPopupStyles();
+      document.head.appendChild(styleSheet);
+    }
+    
+    // Setup popup event listeners
+    this._setupPopupListeners();
+    
+    // Trigger animation
+    requestAnimationFrame(() => {
+      this._popupElement.classList.add('visible');
+    });
+  }
+
+  _closePopup() {
+    if (this._popupElement) {
+      this._popupElement.classList.remove('visible');
+      setTimeout(() => {
+        if (this._popupElement && this._popupElement.parentNode) {
+          this._popupElement.parentNode.removeChild(this._popupElement);
+        }
+        this._popupElement = null;
+      }, 200);
+    }
+  }
+
+  _handleEntityLongPress(entityId) {
+    const event = new CustomEvent('hass-more-info', {
+      bubbles: true,
+      composed: true,
+      detail: { entityId: entityId }
+    });
+    this.dispatchEvent(event);
+  }
+
+  _getEntityColor(entity) {
+    const colors = {
+      'light': '#ffc864',
+      'switch': '#4ade80',
+      'fan': '#60a5fa',
+      'cover': '#a78bfa',
+      'lock': '#4ade80',
+      'climate': '#fb923c',
+      'media_player': '#a78bfa',
+      'binary_sensor': '#60a5fa',
+      'vacuum': '#4ade80'
+    };
+    return colors[entity.domain] || '#60a5fa';
+  }
+
+  // Translation helper - English default, German if HA is set to German
+  _t(key) {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
+    
+    const translations = {
+      // States
+      'on': isGerman ? 'An' : 'On',
+      'off': isGerman ? 'Aus' : 'Off',
+      'open': isGerman ? 'Offen' : 'Open',
+      'closed': isGerman ? 'Geschlossen' : 'Closed',
+      'locked': isGerman ? 'Verriegelt' : 'Locked',
+      'unlocked': isGerman ? 'Entriegelt' : 'Unlocked',
+      'heat': isGerman ? 'Heizen' : 'Heating',
+      'cool': isGerman ? 'Kühlen' : 'Cooling',
+      'auto': isGerman ? 'Auto' : 'Auto',
+      'playing': isGerman ? 'Spielt' : 'Playing',
+      'paused': isGerman ? 'Pausiert' : 'Paused',
+      'idle': isGerman ? 'Leerlauf' : 'Idle',
+      'unavailable': isGerman ? 'Nicht verfügbar' : 'Unavailable',
+      'unknown': isGerman ? 'Unbekannt' : 'Unknown',
+      // Status icons
+      'heating_on': isGerman ? 'Heizung' : 'Heating',
+      'heating_off': isGerman ? 'Heizung aus' : 'Heating off',
+      'light_on': isGerman ? 'an' : 'on',
+      'lights_on': isGerman ? 'er an' : 's on',
+      'light_off': isGerman ? 'Licht aus' : 'Light off',
+      'motion_detected': isGerman ? 'Bewegung erkannt' : 'Motion detected',
+      'no_motion': isGerman ? 'Keine Bewegung' : 'No motion',
+      'playback_active': isGerman ? 'Wiedergabe aktiv' : 'Playback active',
+      'no_playback': isGerman ? 'Keine Wiedergabe' : 'No playback',
+      // Popup
+      'devices': isGerman ? 'Geräte' : 'Devices',
+      'no_entities': isGerman ? 'Keine Entitäten konfiguriert' : 'No entities configured',
+      'room': isGerman ? 'Raum' : 'Room',
+      'light': isGerman ? 'Licht' : 'Light'
+    };
+    
+    return translations[key] || key;
+  }
+
+  _translateState(state) {
+    return this._t(state);
+  }
+
+  // Render the card structure once
+  _renderCard() {
+    if (!this._config) return;
+    
+    const activeColor = this._config.active_color || '#60a5fa';
+    
+    this.innerHTML = `
+      <style>
+        :host {
+          display: block;
+        }
+        .prism-room-card {
+          background: rgba(30, 32, 36, 0.6);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border-radius: 16px;
+          border: 1px solid rgba(255,255,255,0.05);
+          border-top: 1px solid rgba(255, 255, 255, 0.15);
+          border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+          box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0,0,0,0.3);
+          transition: all 0.15s ease-out;
+          cursor: pointer;
+          user-select: none;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .prism-room-card:hover {
+          box-shadow: 0 12px 24px -5px rgba(0, 0, 0, 0.6), 0 4px 8px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08);
+        }
+        .prism-room-card:active {
+          transform: scale(0.98);
+          background: rgba(20, 20, 20, 0.6);
+          box-shadow: inset 2px 2px 5px rgba(0,0,0,0.8), inset -1px -1px 2px rgba(255,255,255,0.1);
+        }
+        
+        .card-content {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 16px;
+          gap: 10px;
+        }
+        
+        .icon-container {
+          position: relative;
+          width: var(--icon-size, 42px);
+          height: var(--icon-size, 42px);
+          flex-shrink: 0;
+        }
+        
+        .icon-container.hidden {
+          display: none;
+        }
+        
+        .icon-circle {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          box-shadow: 
+            inset 3px 3px 8px rgba(0, 0, 0, 0.5),
+            inset -2px -2px 6px rgba(255, 255, 255, 0.05),
+            inset 1px 1px 3px rgba(0, 0, 0, 0.3);
+          transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .icon-circle.active {
+          background: linear-gradient(145deg, 
+            rgba(var(--active-color-rgb), 0.2), 
+            rgba(var(--active-color-rgb), 0.1));
+          border: none;
+          box-shadow: 
+            3px 3px 8px rgba(0, 0, 0, 0.3),
+            -2px -2px 6px rgba(255, 255, 255, 0.04),
+            0 0 12px rgba(var(--active-color-rgb), 0.6),
+            0 0 24px rgba(var(--active-color-rgb), 0.15),
+            inset 1px 1px 2px rgba(255, 255, 255, 0.1);
+        }
+        
+        .icon-wrapper {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .icon-wrapper ha-icon {
+          --mdc-icon-size: calc(var(--icon-size, 42px) * 0.52);
+          color: rgba(255, 255, 255, 0.4);
+          transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        .icon-wrapper.active ha-icon {
+          color: var(--active-color);
+          filter: drop-shadow(0 0 6px rgba(var(--active-color-rgb), 0.6));
+        }
+        
+        .info {
+          text-align: center;
+          width: 100%;
+        }
+        
+        .name {
+          font-size: var(--name-size, 1.125rem);
+          font-weight: 700;
+          color: rgba(255, 255, 255, 0.9);
+          line-height: 1.2;
+          margin-bottom: 2px;
+        }
+        
+        .state {
+          font-size: calc(var(--name-size, 1.125rem) * 0.65);
+          font-weight: 500;
+          color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* Status Icons Row */
+        .status-row {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          flex-wrap: wrap;
+          margin-top: 4px;
+        }
+        
+        .status-icon {
+          position: relative;
+          width: 32px;
+          height: 32px;
+          border-radius: 10px;
+          transition: all 0.2s ease;
+        }
+        
+        .status-icon-inner {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 10px;
+        }
+        
+        .status-icon.inactive .status-icon-inner {
+          background: linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1));
+          box-shadow: 
+            3px 3px 6px rgba(0, 0, 0, 0.4),
+            -2px -2px 4px rgba(255, 255, 255, 0.03);
+        }
+        
+        .status-icon.inactive ha-icon {
+          color: rgba(255, 255, 255, 0.25);
+        }
+        
+        .status-icon.active .status-icon-inner {
+          background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
+          box-shadow: 
+            inset 2px 2px 5px rgba(0, 0, 0, 0.6),
+            inset -1px -1px 3px rgba(255, 255, 255, 0.03);
+        }
+        
+        .status-icon ha-icon {
+          --mdc-icon-size: 16px;
+          transition: all 0.2s ease;
+        }
+        
+        .status-icon.active ha-icon {
+          filter: drop-shadow(0 0 4px currentColor);
+        }
+        
+        .status-badge {
+          position: absolute;
+          top: -4px;
+          right: -4px;
+          min-width: 16px;
+          height: 16px;
+          border-radius: 8px;
+          color: white;
+          font-size: 10px;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0 4px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+      </style>
+      
+      <div class="prism-room-card" style="--active-color: ${activeColor}; --active-color-rgb: ${this._hexToRgb(activeColor)}; --icon-size: ${this._config.icon_size}px; --name-size: ${this._config.name_size}rem;">
+        <div class="card-content">
+          <div class="icon-container ${this._config.show_icon ? '' : 'hidden'}">
+            <div class="icon-circle" id="icon-circle"></div>
+            <div class="icon-wrapper" id="icon-wrapper">
+              <ha-icon icon="${this._config.icon}"></ha-icon>
+            </div>
+          </div>
+          <div class="info">
+            <div class="name">${this._config.name}</div>
+            <div class="state" id="climate-text"></div>
+          </div>
+          <div class="status-row" id="status-row"></div>
+        </div>
+      </div>
+    `;
+    
+    this._cardRendered = true;
+    this._setupCardListeners();
+    this._updateCardContent();
+  }
+
+  _hexToRgb(hex) {
+    if (!hex) return '96, 165, 250';
+    hex = hex.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `${r}, ${g}, ${b}`;
+  }
+
+  // Update only the dynamic content
+  _updateCardContent() {
+    if (!this._config || !this._cardRendered || !this._hass) return;
+    
+    const temperature = this._getTemperature();
+    const humidity = this._getHumidity();
+    const climate = this._getClimateStatus();
+    const motion = this._getMotionStatus();
+    const media = this._getMediaStatus();
+    const lightStatus = this._getLightStatus();
+    const lightsFromEntities = this._getActiveLightsFromEntities();
+    
+    // Use light_entity if set, otherwise count from entities
+    const hasLightEntity = !!this._config.light_entity;
+    const lightsActive = hasLightEntity ? lightStatus.active : lightsFromEntities.count > 0;
+    const lightCount = hasLightEntity ? (lightStatus.active ? 1 : 0) : lightsFromEntities.count;
+    const lightTotal = hasLightEntity ? 1 : lightsFromEntities.total;
+    
+    // Determine if any status should be highlighted
+    const hasActiveStatus = climate.active || motion || media.active || lightsActive;
+    
+    // Update icon circle
+    const iconCircle = this.querySelector('#icon-circle');
+    const iconWrapper = this.querySelector('#icon-wrapper');
+    if (iconCircle) {
+      iconCircle.className = hasActiveStatus ? 'icon-circle active' : 'icon-circle';
+    }
+    if (iconWrapper) {
+      iconWrapper.className = hasActiveStatus ? 'icon-wrapper active' : 'icon-wrapper';
+    }
+    
+    // Climate info text
+    let climateText = '';
+    if (temperature !== null) {
+      climateText += `${temperature.toFixed(1)}°C`;
+    }
+    if (humidity !== null) {
+      if (climateText) climateText += ' · ';
+      climateText += `${humidity.toFixed(0)}%`;
+    }
+    
+    const climateEl = this.querySelector('#climate-text');
+    if (climateEl) {
+      climateEl.textContent = climateText;
+    }
+    
+    // Build status icons
+    const statusIcons = [];
+    
+    if (this._config.climate_entity) {
+      statusIcons.push({
+        icon: 'mdi:heating-coil',
+        active: climate.active,
+        color: '#fb923c',
+        title: climate.active ? `${this._t('heating_on')}: ${climate.temp}°C` : this._t('heating_off')
+      });
+    }
+    
+    if (lightTotal > 0 || hasLightEntity) {
+      statusIcons.push({
+        icon: 'mdi:lightbulb-group',
+        active: lightsActive,
+        color: '#ffc864',
+        title: lightsActive ? `${lightCount} ${this._t('light')}${lightCount > 1 ? this._t('lights_on') : ' ' + this._t('light_on')}` : this._t('light_off'),
+        badge: lightCount > 0 ? lightCount : null
+      });
+    }
+    
+    if (this._config.motion_entity) {
+      statusIcons.push({
+        icon: 'mdi:motion-sensor',
+        active: motion,
+        color: '#60a5fa',
+        title: motion ? this._t('motion_detected') : this._t('no_motion')
+      });
+    }
+    
+    if (this._config.media_entity) {
+      statusIcons.push({
+        icon: media.playing ? 'mdi:music' : 'mdi:music-off',
+        active: media.active,
+        color: '#a78bfa',
+        title: media.active ? (media.title || this._t('playback_active')) : this._t('no_playback')
+      });
+    }
+    
+    // Update status row
+    const statusRow = this.querySelector('#status-row');
+    if (statusRow) {
+      if (statusIcons.length > 0) {
+        statusRow.innerHTML = statusIcons.map(status => `
+          <div class="status-icon ${status.active ? 'active' : 'inactive'}" title="${status.title}">
+            <div class="status-icon-inner">
+              <ha-icon icon="${status.icon}" style="${status.active ? `color: ${status.color};` : ''}"></ha-icon>
+            </div>
+            ${status.badge ? `<div class="status-badge" style="background: ${status.color};">${status.badge}</div>` : ''}
+          </div>
+        `).join('');
+      } else {
+        statusRow.innerHTML = '';
+      }
+    }
+  }
+
+  _setupCardListeners() {
+    const card = this.querySelector('.prism-room-card');
+    if (card) {
+      card.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this._openPopup();
+      });
+    }
+  }
+
+  _getPopupStyles() {
+    const activeColor = this._config.active_color || '#60a5fa';
+    return `
+      .prism-room-popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0);
+        backdrop-filter: blur(0px);
+        -webkit-backdrop-filter: blur(0px);
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
+        pointer-events: none;
+      }
+      
+      .prism-room-popup-overlay.visible {
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        pointer-events: auto;
+      }
+      
+      .prism-room-popup {
+        width: 100%;
+        max-width: 400px;
+        max-height: 80vh;
+        background: rgba(30, 32, 36, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 
+          0 25px 50px -12px rgba(0, 0, 0, 0.8),
+          0 0 0 1px rgba(255, 255, 255, 0.05);
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      
+      .prism-room-popup-overlay.visible .prism-room-popup {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      
+      .prism-room-popup-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgba(0, 0, 0, 0.2);
+      }
+      
+      .prism-room-popup-header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      
+      .prism-room-popup-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1));
+        box-shadow: 
+          4px 4px 10px rgba(0, 0, 0, 0.5),
+          -2px -2px 6px rgba(255, 255, 255, 0.03);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: ${activeColor};
+      }
+      
+      .prism-room-popup-icon ha-icon {
+        --mdc-icon-size: 26px;
+        filter: drop-shadow(0 0 6px currentColor);
+      }
+      
+      .prism-room-popup-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.95);
+      }
+      
+      .prism-room-popup-subtitle {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 2px;
+      }
+      
+      .prism-room-popup-close {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(145deg, rgba(35, 38, 45, 1), rgba(28, 30, 35, 1));
+        box-shadow: 
+          3px 3px 8px rgba(0, 0, 0, 0.4),
+          -2px -2px 4px rgba(255, 255, 255, 0.03);
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: rgba(255, 255, 255, 0.6);
+        transition: all 0.2s ease;
+      }
+      
+      .prism-room-popup-close:hover {
+        color: #f87171;
+      }
+      
+      .prism-room-popup-close:hover ha-icon {
+        filter: drop-shadow(0 0 4px rgba(248, 113, 113, 0.5));
+      }
+      
+      .prism-room-popup-close:active {
+        background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
+        box-shadow: 
+          inset 2px 2px 5px rgba(0, 0, 0, 0.6),
+          inset -1px -1px 3px rgba(255, 255, 255, 0.03);
+      }
+      
+      .prism-room-popup-close ha-icon {
+        --mdc-icon-size: 20px;
+      }
+      
+      .prism-room-popup-climate {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+        padding: 16px 20px;
+        background: rgba(0, 0, 0, 0.15);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      
+      .prism-room-popup-climate-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .prism-room-popup-climate-item ha-icon {
+        --mdc-icon-size: 20px;
+      }
+      
+      .prism-room-popup-climate-item.temp ha-icon {
+        color: #fb923c;
+      }
+      
+      .prism-room-popup-climate-item.humidity ha-icon {
+        color: #60a5fa;
+      }
+      
+      .prism-room-popup-climate-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.9);
+      }
+      
+      .prism-room-popup-climate-unit {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.5);
+        margin-left: 2px;
+      }
+      
+      .prism-room-popup-content {
+        padding: 16px;
+        max-height: 50vh;
+        overflow-y: auto;
+      }
+      
+      .prism-room-popup-content::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      .prism-room-popup-content::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 3px;
+      }
+      
+      .prism-room-popup-content::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+      }
+      
+      .prism-room-entity-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      
+      .prism-room-entity-card {
+        background: rgba(30, 32, 36, 0.8);
+        border-radius: 16px;
+        padding: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      
+      .prism-room-entity-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      }
+      
+      .prism-room-entity-card:active {
+        transform: scale(0.96);
+      }
+      
+      .prism-room-entity-card.active {
+        background: rgba(20, 20, 20, 0.8);
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow: inset 2px 2px 5px rgba(0,0,0,0.6), inset -1px -1px 3px rgba(255,255,255,0.05);
+      }
+      
+      .prism-room-entity-icon-wrapper {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+      
+      .prism-room-entity-card.inactive .prism-room-entity-icon-wrapper {
+        background: rgba(255, 255, 255, 0.03);
+        box-shadow: 
+          inset 3px 3px 8px rgba(0, 0, 0, 0.5),
+          inset -2px -2px 6px rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.35);
+      }
+      
+      .prism-room-entity-card.active .prism-room-entity-icon-wrapper {
+        background: linear-gradient(145deg, rgba(25, 27, 30, 1), rgba(30, 32, 38, 1));
+        box-shadow: 
+          inset 3px 3px 6px rgba(0, 0, 0, 0.6),
+          inset -2px -2px 4px rgba(255, 255, 255, 0.03);
+      }
+      
+      .prism-room-entity-icon-wrapper ha-icon {
+        --mdc-icon-size: 22px;
+        transition: all 0.2s ease;
+      }
+      
+      .prism-room-entity-card.active .prism-room-entity-icon-wrapper ha-icon {
+        filter: drop-shadow(0 0 6px currentColor);
+      }
+      
+      .prism-room-entity-name {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.8);
+        text-align: center;
+        line-height: 1.2;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+      
+      .prism-room-entity-state {
+        font-size: 0.625rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.4);
+        text-transform: capitalize;
+      }
+      
+      .prism-room-empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: rgba(255, 255, 255, 0.4);
+      }
+      
+      .prism-room-empty-state ha-icon {
+        --mdc-icon-size: 48px;
+        margin-bottom: 12px;
+        opacity: 0.3;
+      }
+      
+      .prism-room-empty-state-text {
+        font-size: 0.875rem;
+      }
+    `;
+  }
+
+  _getPopupHTML() {
+    const entities = this._getEntitiesWithStates();
+    const temperature = this._getTemperature();
+    const humidity = this._getHumidity();
+    
+    const entitiesHTML = entities.length > 0 
+      ? `<div class="prism-room-entity-grid">
+          ${entities.map(entity => {
+            const iconColor = this._getEntityColor(entity);
+            return `
+              <div class="prism-room-entity-card ${entity.isActive ? 'active' : 'inactive'}" 
+                   data-entity-id="${entity.id}">
+                <div class="prism-room-entity-icon-wrapper" style="${entity.isActive ? `color: ${iconColor};` : ''}">
+                  <ha-icon icon="${entity.icon}"></ha-icon>
+                </div>
+                <div class="prism-room-entity-name">${entity.name}</div>
+                <div class="prism-room-entity-state">${this._translateState(entity.state)}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>`
+      : `<div class="prism-room-empty-state">
+          <ha-icon icon="mdi:lightbulb-group-off"></ha-icon>
+          <div class="prism-room-empty-state-text">${this._t('no_entities')}</div>
+        </div>`;
+    
+    return `
+      <div class="prism-room-popup">
+        <div class="prism-room-popup-header">
+          <div class="prism-room-popup-header-left">
+            <div class="prism-room-popup-icon">
+              <ha-icon icon="${this._config.icon}"></ha-icon>
+            </div>
+            <div>
+              <div class="prism-room-popup-title">${this._config.name}</div>
+              <div class="prism-room-popup-subtitle">${entities.length} ${this._t('devices')}</div>
+            </div>
+          </div>
+          <button class="prism-room-popup-close">
+            <ha-icon icon="mdi:close"></ha-icon>
+          </button>
+        </div>
+        
+        ${(temperature !== null || humidity !== null) ? `
+          <div class="prism-room-popup-climate">
+            ${temperature !== null ? `
+              <div class="prism-room-popup-climate-item temp">
+                <ha-icon icon="mdi:thermometer"></ha-icon>
+                <span class="prism-room-popup-climate-value">${temperature.toFixed(1)}<span class="prism-room-popup-climate-unit">°C</span></span>
+              </div>
+            ` : ''}
+            ${humidity !== null ? `
+              <div class="prism-room-popup-climate-item humidity">
+                <ha-icon icon="mdi:water-percent"></ha-icon>
+                <span class="prism-room-popup-climate-value">${humidity.toFixed(0)}<span class="prism-room-popup-climate-unit">%</span></span>
+              </div>
+            ` : ''}
+          </div>
+        ` : ''}
+        
+        <div class="prism-room-popup-content">
+          ${entitiesHTML}
+        </div>
+      </div>
+    `;
+  }
+
+  _setupPopupListeners() {
+    if (!this._popupElement) return;
+    
+    // Close button
+    const closeBtn = this._popupElement.querySelector('.prism-room-popup-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this._closePopup();
+      });
+    }
+    
+    // Overlay click (close on background click)
+    this._popupElement.addEventListener('click', (e) => {
+      if (e.target === this._popupElement) {
+        this._closePopup();
+      }
+    });
+    
+    // Entity cards
+    const entityCards = this._popupElement.querySelectorAll('.prism-room-entity-card');
+    entityCards.forEach(card => {
+      const entityId = card.dataset.entityId;
+      let pressTimer;
+      let longPressTriggered = false;
+      
+      card.addEventListener('click', (e) => {
+        if (!longPressTriggered) {
+          e.stopPropagation();
+          this._toggleEntity(entityId);
+          // Update popup content after toggle
+          setTimeout(() => {
+            if (this._popupElement) {
+              const popup = this._popupElement.querySelector('.prism-room-popup');
+              if (popup) {
+                popup.innerHTML = this._getPopupHTML().match(/<div class="prism-room-popup">([\s\S]*)<\/div>$/)[1];
+                this._setupPopupListeners();
+              }
+            }
+          }, 100);
+        }
+        longPressTriggered = false;
+      });
+      
+      card.addEventListener('mousedown', () => {
+        longPressTriggered = false;
+        pressTimer = setTimeout(() => {
+          longPressTriggered = true;
+          this._handleEntityLongPress(entityId);
+        }, 500);
+      });
+      
+      card.addEventListener('mouseup', () => clearTimeout(pressTimer));
+      card.addEventListener('mouseleave', () => clearTimeout(pressTimer));
+      
+      card.addEventListener('touchstart', () => {
+        longPressTriggered = false;
+        pressTimer = setTimeout(() => {
+          longPressTriggered = true;
+          this._handleEntityLongPress(entityId);
+        }, 500);
+      }, { passive: true });
+      
+      card.addEventListener('touchend', () => clearTimeout(pressTimer));
+      card.addEventListener('touchcancel', () => clearTimeout(pressTimer));
+      
+      card.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        this._handleEntityLongPress(entityId);
+      });
+    });
+  }
+}
+
+customElements.define('prism-room', PrismRoomCard);
+
+window.customCards = window.customCards || [];
+window.customCards.push({
+  type: "prism-room",
+  name: "Prism Room",
+  preview: true,
+  description: "A room overview card with temperature, humidity, and entity status icons. Click to open popup with all entities."
+});
 
 })();

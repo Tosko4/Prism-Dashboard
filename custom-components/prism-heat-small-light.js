@@ -82,6 +82,21 @@ class PrismHeatSmallLightCard extends HTMLElement {
     return 2;
   }
 
+  // Translation helper - English default, German if HA is set to German
+  _t(key) {
+    const lang = this._hass?.language || this._hass?.locale?.language || 'en';
+    const isGerman = lang.startsWith('de');
+    
+    const translations = {
+      'off': isGerman ? 'Aus' : 'Off',
+      'auto': isGerman ? 'Auto' : 'Auto',
+      'heating': isGerman ? 'Heizen' : 'Heating',
+      'thermostat': isGerman ? 'Heizung' : 'Thermostat'
+    };
+    
+    return translations[key] || key;
+  }
+
   connectedCallback() {
     if (this.config) {
       this.render();
@@ -126,10 +141,10 @@ class PrismHeatSmallLightCard extends HTMLElement {
     const state = this._entity ? this._entity.state : 'off';
     const targetTemp = attr.temperature !== undefined ? attr.temperature : 20;
     const currentTemp = this._currentTemp !== undefined ? this._currentTemp : (attr.current_temperature !== undefined ? attr.current_temperature : 20);
-    const name = this.config.name || (this._entity ? attr.friendly_name : null) || 'Heizung';
+    const name = this.config.name || (this._entity ? attr.friendly_name : null) || this._t('thermostat');
     
     const isHeating = state === 'heat' || state === 'heating';
-    const hvacMode = state === 'off' ? 'Aus' : (state === 'auto' ? 'Auto' : 'Heizen');
+    const hvacMode = state === 'off' ? this._t('off') : (state === 'auto' ? this._t('auto') : this._t('heating'));
     
     // Status Text with optional humidity
     const humidityText = (this._humidity !== null && this._humidity !== undefined) ? ` · ${this._humidity.toFixed(0)}%` : '';
