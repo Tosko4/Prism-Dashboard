@@ -3,7 +3,7 @@
  * https://github.com/BangerTech/Prism-Dashboard
  * 
  * Version: 1.0.0
- * Build Date: 2026-01-06T15:19:57.647Z
+ * Build Date: 2026-01-06T16:00:56.116Z
  * 
  * This file contains all Prism custom cards bundled together.
  * Just add this single file as a resource in Lovelace:
@@ -3775,6 +3775,90 @@ class PrismHeatSmallCard extends HTMLElement {
             font-size: 20px; font-weight: 700; color: rgba(255,255,255,0.9); font-family: monospace; letter-spacing: 1px;
         }
 
+        /* Responsive: Tablet (768px - 1024px) */
+        @media (max-width: 1024px) {
+          .card {
+            padding: 14px;
+          }
+          .header {
+            margin-bottom: 14px;
+          }
+          /* Chip kleiner machen */
+          .chip {
+            padding: 4px 8px;
+            height: 22px;
+            gap: 4px;
+          }
+          .chip ha-icon {
+            --mdc-icon-size: 10px;
+          }
+          .chip-text {
+            font-size: 8px;
+          }
+          /* Controls anpassen */
+          .controls {
+            gap: 10px;
+          }
+          .control-btn {
+            height: 34px;
+            width: 44px;
+            border-radius: 10px;
+          }
+          .control-btn ha-icon {
+            --mdc-icon-size: 18px;
+          }
+          .inlet-display {
+            height: 34px;
+            border-radius: 10px;
+          }
+          .temp-value {
+            font-size: 18px;
+          }
+        }
+
+        /* Responsive: Mobile (< 768px) */
+        @media (max-width: 768px) {
+          .card {
+            padding: 12px;
+            border-radius: 16px;
+          }
+          .header {
+            margin-bottom: 12px;
+          }
+          /* Chip noch kleiner auf Mobile */
+          .chip {
+            padding: 3px 6px;
+            height: 20px;
+            gap: 3px;
+            border-radius: 14px;
+          }
+          .chip ha-icon {
+            --mdc-icon-size: 9px;
+          }
+          .chip-text {
+            font-size: 7px;
+          }
+          /* Controls anpassen */
+          .controls {
+            gap: 8px;
+          }
+          .control-btn {
+            height: 32px;
+            width: 40px;
+            border-radius: 8px;
+          }
+          .control-btn ha-icon {
+            --mdc-icon-size: 16px;
+          }
+          .inlet-display {
+            height: 32px;
+            border-radius: 8px;
+          }
+          .temp-value {
+            font-size: 16px;
+          }
+        }
+
       </style>
       <div class="card">
         
@@ -4163,6 +4247,98 @@ class PrismHeatSmallLightCard extends HTMLElement {
         }
         .temp-value {
             font-size: 20px; font-weight: 700; color: rgba(0,0,0,0.9); font-family: monospace; letter-spacing: 1px;
+        }
+
+        /* Responsive: Tablet (768px - 1024px) */
+        @media (max-width: 1024px) {
+          .card {
+            padding: 14px;
+          }
+          .header {
+            margin-bottom: 14px;
+          }
+          /* Chip kleiner machen */
+          .chip {
+            padding: 4px 8px;
+            height: 22px;
+            gap: 4px;
+          }
+          .chip ha-icon {
+            --mdc-icon-size: 10px;
+          }
+          .chip-text {
+            font-size: 8px;
+          }
+          /* Controls anpassen */
+          .controls {
+            gap: 10px;
+          }
+          .control-btn {
+            height: 34px;
+            width: 44px;
+            border-radius: 10px;
+          }
+          .control-btn::before {
+            inset: 2px;
+            border-radius: 8px;
+          }
+          .control-btn ha-icon {
+            --mdc-icon-size: 18px;
+          }
+          .inlet-display {
+            height: 34px;
+            border-radius: 10px;
+          }
+          .temp-value {
+            font-size: 18px;
+          }
+        }
+
+        /* Responsive: Mobile (< 768px) */
+        @media (max-width: 768px) {
+          .card {
+            padding: 12px;
+            border-radius: 16px;
+          }
+          .header {
+            margin-bottom: 12px;
+          }
+          /* Chip noch kleiner auf Mobile */
+          .chip {
+            padding: 3px 6px;
+            height: 20px;
+            gap: 3px;
+            border-radius: 14px;
+          }
+          .chip ha-icon {
+            --mdc-icon-size: 9px;
+          }
+          .chip-text {
+            font-size: 7px;
+          }
+          /* Controls anpassen */
+          .controls {
+            gap: 8px;
+          }
+          .control-btn {
+            height: 32px;
+            width: 40px;
+            border-radius: 8px;
+          }
+          .control-btn::before {
+            inset: 2px;
+            border-radius: 6px;
+          }
+          .control-btn ha-icon {
+            --mdc-icon-size: 16px;
+          }
+          .inlet-display {
+            height: 32px;
+            border-radius: 8px;
+          }
+          .temp-value {
+            font-size: 16px;
+          }
         }
 
       </style>
@@ -4588,6 +4764,94 @@ class PrismMediaCard extends HTMLElement {
         ha-icon { pointer-events: none; }
         .play ha-icon { --mdc-icon-size: 18px; }
 
+        /* Responsive: Tablet (768px - 1024px) */
+        @media (max-width: 1024px) {
+          .content {
+            padding: 16px;
+            gap: 14px;
+          }
+          .art-cover {
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
+          }
+          .volume-slider {
+            height: 14px;
+          }
+          .volume-container {
+            margin-top: 10px;
+            gap: 10px;
+          }
+          .vol-icon {
+            --mdc-icon-size: 18px;
+          }
+          .controls {
+            padding: 14px;
+            gap: 20px;
+          }
+          .media-btn.circle {
+            width: 38px;
+            height: 38px;
+          }
+          .media-btn.play {
+            width: 72px;
+            height: 38px;
+            border-radius: 19px;
+            font-size: 9px;
+          }
+          .play ha-icon {
+            --mdc-icon-size: 16px;
+          }
+        }
+
+        /* Responsive: Mobile (< 768px) */
+        @media (max-width: 768px) {
+          .card {
+            border-radius: 14px;
+          }
+          .content {
+            padding: 14px;
+            gap: 12px;
+          }
+          .art-cover {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+          }
+          .volume-slider {
+            height: 12px;
+            border-radius: 12px;
+          }
+          .volume-fill {
+            border-radius: 10px;
+          }
+          .volume-container {
+            margin-top: 8px;
+            gap: 8px;
+          }
+          .vol-icon {
+            --mdc-icon-size: 16px;
+          }
+          .controls {
+            padding: 12px;
+            gap: 16px;
+          }
+          .media-btn.circle {
+            width: 34px;
+            height: 34px;
+          }
+          .media-btn.play {
+            width: 64px;
+            height: 34px;
+            border-radius: 17px;
+            font-size: 8px;
+            gap: 3px;
+          }
+          .play ha-icon {
+            --mdc-icon-size: 14px;
+          }
+        }
+
       </style>
       <div class="card">
         ${art ? `<div class="bg-art" style="background-image: url('${art}');"></div>` : ''}
@@ -4995,6 +5259,94 @@ class PrismMediaLightCard extends HTMLElement {
 
         ha-icon { pointer-events: none; }
         .play ha-icon { --mdc-icon-size: 18px; }
+
+        /* Responsive: Tablet (768px - 1024px) */
+        @media (max-width: 1024px) {
+          .content {
+            padding: 16px;
+            gap: 14px;
+          }
+          .art-cover {
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
+          }
+          .volume-slider {
+            height: 14px;
+          }
+          .volume-container {
+            margin-top: 10px;
+            gap: 10px;
+          }
+          .vol-icon {
+            --mdc-icon-size: 18px;
+          }
+          .controls {
+            padding: 14px;
+            gap: 20px;
+          }
+          .media-btn.circle {
+            width: 38px;
+            height: 38px;
+          }
+          .media-btn.play {
+            width: 72px;
+            height: 38px;
+            border-radius: 19px;
+            font-size: 9px;
+          }
+          .play ha-icon {
+            --mdc-icon-size: 16px;
+          }
+        }
+
+        /* Responsive: Mobile (< 768px) */
+        @media (max-width: 768px) {
+          .card {
+            border-radius: 14px;
+          }
+          .content {
+            padding: 14px;
+            gap: 12px;
+          }
+          .art-cover {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+          }
+          .volume-slider {
+            height: 12px;
+            border-radius: 12px;
+          }
+          .volume-fill {
+            border-radius: 10px;
+          }
+          .volume-container {
+            margin-top: 8px;
+            gap: 8px;
+          }
+          .vol-icon {
+            --mdc-icon-size: 16px;
+          }
+          .controls {
+            padding: 12px;
+            gap: 16px;
+          }
+          .media-btn.circle {
+            width: 34px;
+            height: 34px;
+          }
+          .media-btn.play {
+            width: 64px;
+            height: 34px;
+            border-radius: 17px;
+            font-size: 8px;
+            gap: 3px;
+          }
+          .play ha-icon {
+            --mdc-icon-size: 14px;
+          }
+        }
 
       </style>
       <div class="card">
@@ -6200,6 +6552,59 @@ class PrismShutterCard extends HTMLElement {
             filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.6));
         }
 
+        /* Responsive: Tablet (768px - 1024px) */
+        @media (max-width: 1024px) {
+          .card {
+            padding: 16px;
+          }
+          .header {
+            margin-bottom: 16px;
+          }
+          .slider-track {
+            height: 10px;
+            margin-bottom: 16px;
+          }
+          .controls {
+            gap: 10px;
+          }
+          .control-btn {
+            height: 34px;
+            border-radius: 10px;
+          }
+          .control-btn ha-icon {
+            --mdc-icon-size: 18px;
+          }
+        }
+
+        /* Responsive: Mobile (< 768px) */
+        @media (max-width: 768px) {
+          .card {
+            padding: 14px;
+            border-radius: 14px;
+          }
+          .header {
+            margin-bottom: 14px;
+          }
+          .slider-track {
+            height: 8px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+          }
+          .slider-fill {
+            border-radius: 8px;
+          }
+          .controls {
+            gap: 8px;
+          }
+          .control-btn {
+            height: 32px;
+            border-radius: 8px;
+          }
+          .control-btn ha-icon {
+            --mdc-icon-size: 16px;
+          }
+        }
+
       </style>
       <div class="card">
         <div class="header">
@@ -6514,6 +6919,59 @@ class PrismShutterLightCard extends HTMLElement {
             border: 1px solid rgba(0,0,0,0.08);
             transform: scale(0.98);
             color: #3b82f6;
+        }
+
+        /* Responsive: Tablet (768px - 1024px) */
+        @media (max-width: 1024px) {
+          .card {
+            padding: 16px;
+          }
+          .header {
+            margin-bottom: 16px;
+          }
+          .slider-track {
+            height: 10px;
+            margin-bottom: 16px;
+          }
+          .controls {
+            gap: 10px;
+          }
+          .control-btn {
+            height: 34px;
+            border-radius: 10px;
+          }
+          .control-btn ha-icon {
+            --mdc-icon-size: 18px;
+          }
+        }
+
+        /* Responsive: Mobile (< 768px) */
+        @media (max-width: 768px) {
+          .card {
+            padding: 14px;
+            border-radius: 14px;
+          }
+          .header {
+            margin-bottom: 14px;
+          }
+          .slider-track {
+            height: 8px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+          }
+          .slider-fill {
+            border-radius: 8px;
+          }
+          .controls {
+            gap: 8px;
+          }
+          .control-btn {
+            height: 32px;
+            border-radius: 8px;
+          }
+          .control-btn ha-icon {
+            --mdc-icon-size: 16px;
+          }
         }
 
       </style>
@@ -12071,12 +12529,12 @@ class PrismSidebarCard extends HTMLElement {
             <!-- Weather -->
             <div class="weather-box">
                 <div class="section-title">Outdoor</div>
-                <div class="current-temp-box">
+                <div class="current-temp-box" id="weather-temp-box" style="cursor: pointer;">
                     <span class="temp-val" id="val-temp">${currentTemp}</span>
                     <span class="temp-unit">°C</span>
                 </div>
                 
-                <div class="graph-container">
+                <div class="graph-container" id="temp-graph-container" style="cursor: pointer;">
                     <svg width="100%" height="100%" viewBox="0 0 280 60" preserveAspectRatio="none">
                         <defs>
                             <linearGradient id="grad-sidebar-${Date.now()}" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -12208,6 +12666,8 @@ class PrismSidebarCard extends HTMLElement {
         const energySolar = this.shadowRoot?.getElementById('energy-solar');
         const energyHome = this.shadowRoot?.getElementById('energy-home');
         const graphOverlay = this.shadowRoot?.getElementById('graph-overlay');
+        const weatherTempBox = this.shadowRoot?.getElementById('weather-temp-box');
+        const tempGraphContainer = this.shadowRoot?.getElementById('temp-graph-container');
 
         if (cameraBox) {
             cameraBox.addEventListener('click', () => this._handleCameraClick());
@@ -12223,6 +12683,16 @@ class PrismSidebarCard extends HTMLElement {
         }
         if (energyHome) {
             energyHome.addEventListener('click', () => this._handleEnergyClick(this.homeEntity));
+        }
+        
+        // Weather click - opens weather entity more-info
+        if (weatherTempBox) {
+            weatherTempBox.addEventListener('click', () => this._handleWeatherClick());
+        }
+        
+        // Graph click - opens temperature sensor more-info
+        if (tempGraphContainer) {
+            tempGraphContainer.addEventListener('click', () => this._handleTempGraphClick());
         }
         
         // Graph hover events
@@ -12244,14 +12714,313 @@ class PrismSidebarCard extends HTMLElement {
         this.dispatchEvent(event);
     }
 
-    _handleCalendarClick() {
+    async _handleCalendarClick() {
         if (!this._hass || !this.calendarEntity) return;
-        const event = new CustomEvent('hass-more-info', {
-            bubbles: true,
-            composed: true,
-            detail: { entityId: this.calendarEntity }
+        
+        // Load upcoming events
+        const now = new Date();
+        const endDate = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000); // Next 14 days
+        
+        try {
+            const events = await this._hass.callWS({
+                type: 'calendar/event/list',
+                entity_id: this.calendarEntity,
+                start: now.toISOString(),
+                end: endDate.toISOString()
+            });
+            
+            this._showCalendarPopup(events || []);
+        } catch (error) {
+            // Fallback: show more-info dialog
+            const event = new CustomEvent('hass-more-info', {
+                bubbles: true,
+                composed: true,
+                detail: { entityId: this.calendarEntity }
+            });
+            this.dispatchEvent(event);
+        }
+    }
+
+    _showCalendarPopup(events) {
+        // Remove existing popup
+        const existingPopup = this.shadowRoot?.querySelector('.calendar-popup-overlay');
+        if (existingPopup) existingPopup.remove();
+
+        // Limit to 5 events
+        const upcomingEvents = events.slice(0, 5);
+        
+        // Create popup
+        const popupOverlay = document.createElement('div');
+        popupOverlay.className = 'calendar-popup-overlay';
+        popupOverlay.innerHTML = `
+            <div class="calendar-popup">
+                <div class="calendar-popup-header">
+                    <ha-icon icon="mdi:calendar" style="--mdc-icon-size: 24px; color: #3b82f6;"></ha-icon>
+                    <span>Kommende Termine</span>
+                    <button class="calendar-popup-close">
+                        <ha-icon icon="mdi:close" style="--mdc-icon-size: 20px;"></ha-icon>
+                    </button>
+                </div>
+                <div class="calendar-popup-content">
+                    ${upcomingEvents.length === 0 ? `
+                        <div class="calendar-no-events">
+                            <ha-icon icon="mdi:calendar-blank" style="--mdc-icon-size: 48px; color: rgba(255,255,255,0.2);"></ha-icon>
+                            <span>Keine Termine</span>
+                        </div>
+                    ` : upcomingEvents.map(event => {
+                        const start = new Date(event.start.dateTime || event.start.date);
+                        const end = new Date(event.end.dateTime || event.end.date);
+                        const isAllDay = !event.start.dateTime;
+                        const isToday = start.toDateString() === new Date().toDateString();
+                        const isTomorrow = start.toDateString() === new Date(Date.now() + 86400000).toDateString();
+                        
+                        let dateStr;
+                        if (isToday) {
+                            dateStr = 'Heute';
+                        } else if (isTomorrow) {
+                            dateStr = 'Morgen';
+                        } else {
+                            dateStr = start.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' });
+                        }
+                        
+                        let timeStr;
+                        if (isAllDay) {
+                            timeStr = 'Ganztägig';
+                        } else {
+                            timeStr = start.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + 
+                                     ' - ' + end.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+                        }
+                        
+                        return `
+                            <div class="calendar-event ${isToday ? 'today' : ''} ${isTomorrow ? 'tomorrow' : ''}">
+                                <div class="calendar-event-date">
+                                    <span class="calendar-event-day">${start.getDate()}</span>
+                                    <span class="calendar-event-month">${start.toLocaleDateString('de-DE', { month: 'short' })}</span>
+                                </div>
+                                <div class="calendar-event-details">
+                                    <div class="calendar-event-title">${event.summary || 'Ohne Titel'}</div>
+                                    <div class="calendar-event-time">
+                                        <ha-icon icon="${isAllDay ? 'mdi:calendar-today' : 'mdi:clock-outline'}" style="--mdc-icon-size: 12px;"></ha-icon>
+                                        ${dateStr} • ${timeStr}
+                                    </div>
+                                    ${event.location ? `
+                                        <div class="calendar-event-location">
+                                            <ha-icon icon="mdi:map-marker" style="--mdc-icon-size: 12px;"></ha-icon>
+                                            ${event.location}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+                <div class="calendar-popup-footer">
+                    <button class="calendar-more-info-btn">
+                        <ha-icon icon="mdi:open-in-new" style="--mdc-icon-size: 16px;"></ha-icon>
+                        Alle Termine anzeigen
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Add styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .calendar-popup-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.7);
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                animation: fadeIn 0.2s ease;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            .calendar-popup {
+                background: rgba(30, 32, 36, 0.95);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 20px;
+                width: 90%;
+                max-width: 380px;
+                max-height: 80vh;
+                overflow: hidden;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+                animation: slideUp 0.3s ease;
+            }
+            @keyframes slideUp {
+                from { transform: translateY(20px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            .calendar-popup-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 16px 20px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                color: white;
+                font-weight: 600;
+                font-size: 16px;
+            }
+            .calendar-popup-close {
+                margin-left: auto;
+                background: rgba(255, 255, 255, 0.1);
+                border: none;
+                border-radius: 8px;
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                color: rgba(255, 255, 255, 0.6);
+                transition: all 0.2s;
+            }
+            .calendar-popup-close:hover {
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+            }
+            .calendar-popup-content {
+                padding: 12px;
+                max-height: 400px;
+                overflow-y: auto;
+            }
+            .calendar-no-events {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                padding: 40px 20px;
+                color: rgba(255, 255, 255, 0.4);
+            }
+            .calendar-event {
+                display: flex;
+                gap: 12px;
+                padding: 12px;
+                border-radius: 12px;
+                background: rgba(255, 255, 255, 0.03);
+                margin-bottom: 8px;
+                transition: background 0.2s;
+            }
+            .calendar-event:hover {
+                background: rgba(255, 255, 255, 0.08);
+            }
+            .calendar-event.today {
+                background: rgba(59, 130, 246, 0.15);
+                border-left: 3px solid #3b82f6;
+            }
+            .calendar-event.tomorrow {
+                background: rgba(139, 92, 246, 0.1);
+                border-left: 3px solid #8b5cf6;
+            }
+            .calendar-event-date {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-width: 44px;
+                padding: 8px;
+                border-radius: 10px;
+                background: rgba(0, 0, 0, 0.3);
+            }
+            .calendar-event-day {
+                font-size: 20px;
+                font-weight: 700;
+                color: white;
+                line-height: 1;
+            }
+            .calendar-event-month {
+                font-size: 10px;
+                text-transform: uppercase;
+                color: rgba(255, 255, 255, 0.5);
+                margin-top: 2px;
+            }
+            .calendar-event-details {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                min-width: 0;
+            }
+            .calendar-event-title {
+                font-weight: 500;
+                color: white;
+                font-size: 14px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .calendar-event-time,
+            .calendar-event-location {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 11px;
+                color: rgba(255, 255, 255, 0.5);
+            }
+            .calendar-event-location {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .calendar-popup-footer {
+                padding: 12px 16px;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .calendar-more-info-btn {
+                width: 100%;
+                padding: 10px 16px;
+                border-radius: 10px;
+                border: none;
+                background: rgba(59, 130, 246, 0.2);
+                color: #3b82f6;
+                font-size: 13px;
+                font-weight: 500;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                transition: all 0.2s;
+            }
+            .calendar-more-info-btn:hover {
+                background: rgba(59, 130, 246, 0.3);
+            }
+        `;
+        popupOverlay.appendChild(style);
+        
+        // Add to shadow root
+        this.shadowRoot.appendChild(popupOverlay);
+        
+        // Event listeners
+        popupOverlay.addEventListener('click', (e) => {
+            if (e.target === popupOverlay) {
+                popupOverlay.remove();
+            }
         });
-        this.dispatchEvent(event);
+        
+        const closeBtn = popupOverlay.querySelector('.calendar-popup-close');
+        closeBtn?.addEventListener('click', () => popupOverlay.remove());
+        
+        const moreInfoBtn = popupOverlay.querySelector('.calendar-more-info-btn');
+        moreInfoBtn?.addEventListener('click', () => {
+            popupOverlay.remove();
+            const event = new CustomEvent('hass-more-info', {
+                bubbles: true,
+                composed: true,
+                detail: { entityId: this.calendarEntity }
+            });
+            this.dispatchEvent(event);
+        });
     }
 
     _handleEnergyClick(entityId) {
@@ -12260,6 +13029,26 @@ class PrismSidebarCard extends HTMLElement {
             bubbles: true,
             composed: true,
             detail: { entityId: entityId }
+        });
+        this.dispatchEvent(event);
+    }
+
+    _handleWeatherClick() {
+        if (!this._hass || !this.weatherEntity) return;
+        const event = new CustomEvent('hass-more-info', {
+            bubbles: true,
+            composed: true,
+            detail: { entityId: this.weatherEntity }
+        });
+        this.dispatchEvent(event);
+    }
+
+    _handleTempGraphClick() {
+        if (!this._hass || !this.temperatureEntity) return;
+        const event = new CustomEvent('hass-more-info', {
+            bubbles: true,
+            composed: true,
+            detail: { entityId: this.temperatureEntity }
         });
         this.dispatchEvent(event);
     }
@@ -13394,12 +14183,12 @@ class PrismSidebarLightCard extends HTMLElement {
             <!-- Weather -->
             <div class="weather-box">
                 <div class="section-title">Outdoor</div>
-                <div class="current-temp-box">
+                <div class="current-temp-box" id="weather-temp-box" style="cursor: pointer;">
                     <span class="temp-val" id="val-temp">${currentTemp}</span>
                     <span class="temp-unit">°C</span>
                 </div>
                 
-                <div class="graph-container">
+                <div class="graph-container" id="temp-graph-container" style="cursor: pointer;">
                     <svg width="100%" height="100%" viewBox="0 0 280 60" preserveAspectRatio="none">
                         <defs>
                             <linearGradient id="grad-sidebar-light-${Date.now()}" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -13531,6 +14320,8 @@ class PrismSidebarLightCard extends HTMLElement {
         const energySolar = this.shadowRoot?.getElementById('energy-solar');
         const energyHome = this.shadowRoot?.getElementById('energy-home');
         const graphOverlay = this.shadowRoot?.getElementById('graph-overlay');
+        const weatherTempBox = this.shadowRoot?.getElementById('weather-temp-box');
+        const tempGraphContainer = this.shadowRoot?.getElementById('temp-graph-container');
 
         if (cameraBox) {
             cameraBox.addEventListener('click', () => this._handleCameraClick());
@@ -13546,6 +14337,16 @@ class PrismSidebarLightCard extends HTMLElement {
         }
         if (energyHome) {
             energyHome.addEventListener('click', () => this._handleEnergyClick(this.homeEntity));
+        }
+        
+        // Weather click - opens weather entity more-info
+        if (weatherTempBox) {
+            weatherTempBox.addEventListener('click', () => this._handleWeatherClick());
+        }
+        
+        // Graph click - opens temperature sensor more-info
+        if (tempGraphContainer) {
+            tempGraphContainer.addEventListener('click', () => this._handleTempGraphClick());
         }
         
         // Graph hover events
@@ -13567,14 +14368,313 @@ class PrismSidebarLightCard extends HTMLElement {
         this.dispatchEvent(event);
     }
 
-    _handleCalendarClick() {
+    async _handleCalendarClick() {
         if (!this._hass || !this.calendarEntity) return;
-        const event = new CustomEvent('hass-more-info', {
-            bubbles: true,
-            composed: true,
-            detail: { entityId: this.calendarEntity }
+        
+        // Load upcoming events
+        const now = new Date();
+        const endDate = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000); // Next 14 days
+        
+        try {
+            const events = await this._hass.callWS({
+                type: 'calendar/event/list',
+                entity_id: this.calendarEntity,
+                start: now.toISOString(),
+                end: endDate.toISOString()
+            });
+            
+            this._showCalendarPopup(events || []);
+        } catch (error) {
+            // Fallback: show more-info dialog
+            const event = new CustomEvent('hass-more-info', {
+                bubbles: true,
+                composed: true,
+                detail: { entityId: this.calendarEntity }
+            });
+            this.dispatchEvent(event);
+        }
+    }
+
+    _showCalendarPopup(events) {
+        // Remove existing popup
+        const existingPopup = this.shadowRoot?.querySelector('.calendar-popup-overlay');
+        if (existingPopup) existingPopup.remove();
+
+        // Limit to 5 events
+        const upcomingEvents = events.slice(0, 5);
+        
+        // Create popup
+        const popupOverlay = document.createElement('div');
+        popupOverlay.className = 'calendar-popup-overlay';
+        popupOverlay.innerHTML = `
+            <div class="calendar-popup">
+                <div class="calendar-popup-header">
+                    <ha-icon icon="mdi:calendar" style="--mdc-icon-size: 24px; color: #3b82f6;"></ha-icon>
+                    <span>Kommende Termine</span>
+                    <button class="calendar-popup-close">
+                        <ha-icon icon="mdi:close" style="--mdc-icon-size: 20px;"></ha-icon>
+                    </button>
+                </div>
+                <div class="calendar-popup-content">
+                    ${upcomingEvents.length === 0 ? `
+                        <div class="calendar-no-events">
+                            <ha-icon icon="mdi:calendar-blank" style="--mdc-icon-size: 48px; color: rgba(0,0,0,0.2);"></ha-icon>
+                            <span>Keine Termine</span>
+                        </div>
+                    ` : upcomingEvents.map(event => {
+                        const start = new Date(event.start.dateTime || event.start.date);
+                        const end = new Date(event.end.dateTime || event.end.date);
+                        const isAllDay = !event.start.dateTime;
+                        const isToday = start.toDateString() === new Date().toDateString();
+                        const isTomorrow = start.toDateString() === new Date(Date.now() + 86400000).toDateString();
+                        
+                        let dateStr;
+                        if (isToday) {
+                            dateStr = 'Heute';
+                        } else if (isTomorrow) {
+                            dateStr = 'Morgen';
+                        } else {
+                            dateStr = start.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' });
+                        }
+                        
+                        let timeStr;
+                        if (isAllDay) {
+                            timeStr = 'Ganztägig';
+                        } else {
+                            timeStr = start.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + 
+                                     ' - ' + end.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+                        }
+                        
+                        return `
+                            <div class="calendar-event ${isToday ? 'today' : ''} ${isTomorrow ? 'tomorrow' : ''}">
+                                <div class="calendar-event-date">
+                                    <span class="calendar-event-day">${start.getDate()}</span>
+                                    <span class="calendar-event-month">${start.toLocaleDateString('de-DE', { month: 'short' })}</span>
+                                </div>
+                                <div class="calendar-event-details">
+                                    <div class="calendar-event-title">${event.summary || 'Ohne Titel'}</div>
+                                    <div class="calendar-event-time">
+                                        <ha-icon icon="${isAllDay ? 'mdi:calendar-today' : 'mdi:clock-outline'}" style="--mdc-icon-size: 12px;"></ha-icon>
+                                        ${dateStr} • ${timeStr}
+                                    </div>
+                                    ${event.location ? `
+                                        <div class="calendar-event-location">
+                                            <ha-icon icon="mdi:map-marker" style="--mdc-icon-size: 12px;"></ha-icon>
+                                            ${event.location}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+                <div class="calendar-popup-footer">
+                    <button class="calendar-more-info-btn">
+                        <ha-icon icon="mdi:open-in-new" style="--mdc-icon-size: 16px;"></ha-icon>
+                        Alle Termine anzeigen
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Add styles (Light theme)
+        const style = document.createElement('style');
+        style.textContent = `
+            .calendar-popup-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.4);
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                animation: fadeIn 0.2s ease;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            .calendar-popup {
+                background: rgba(255, 255, 255, 0.95);
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                border-radius: 20px;
+                width: 90%;
+                max-width: 380px;
+                max-height: 80vh;
+                overflow: hidden;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+                animation: slideUp 0.3s ease;
+            }
+            @keyframes slideUp {
+                from { transform: translateY(20px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            .calendar-popup-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 16px 20px;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+                color: #1a1a1a;
+                font-weight: 600;
+                font-size: 16px;
+            }
+            .calendar-popup-close {
+                margin-left: auto;
+                background: rgba(0, 0, 0, 0.05);
+                border: none;
+                border-radius: 8px;
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                color: rgba(0, 0, 0, 0.4);
+                transition: all 0.2s;
+            }
+            .calendar-popup-close:hover {
+                background: rgba(0, 0, 0, 0.1);
+                color: #1a1a1a;
+            }
+            .calendar-popup-content {
+                padding: 12px;
+                max-height: 400px;
+                overflow-y: auto;
+            }
+            .calendar-no-events {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                padding: 40px 20px;
+                color: rgba(0, 0, 0, 0.4);
+            }
+            .calendar-event {
+                display: flex;
+                gap: 12px;
+                padding: 12px;
+                border-radius: 12px;
+                background: rgba(0, 0, 0, 0.03);
+                margin-bottom: 8px;
+                transition: background 0.2s;
+            }
+            .calendar-event:hover {
+                background: rgba(0, 0, 0, 0.06);
+            }
+            .calendar-event.today {
+                background: rgba(59, 130, 246, 0.1);
+                border-left: 3px solid #3b82f6;
+            }
+            .calendar-event.tomorrow {
+                background: rgba(139, 92, 246, 0.08);
+                border-left: 3px solid #8b5cf6;
+            }
+            .calendar-event-date {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-width: 44px;
+                padding: 8px;
+                border-radius: 10px;
+                background: rgba(0, 0, 0, 0.05);
+            }
+            .calendar-event-day {
+                font-size: 20px;
+                font-weight: 700;
+                color: #1a1a1a;
+                line-height: 1;
+            }
+            .calendar-event-month {
+                font-size: 10px;
+                text-transform: uppercase;
+                color: rgba(0, 0, 0, 0.5);
+                margin-top: 2px;
+            }
+            .calendar-event-details {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                min-width: 0;
+            }
+            .calendar-event-title {
+                font-weight: 500;
+                color: #1a1a1a;
+                font-size: 14px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .calendar-event-time,
+            .calendar-event-location {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 11px;
+                color: rgba(0, 0, 0, 0.5);
+            }
+            .calendar-event-location {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .calendar-popup-footer {
+                padding: 12px 16px;
+                border-top: 1px solid rgba(0, 0, 0, 0.1);
+            }
+            .calendar-more-info-btn {
+                width: 100%;
+                padding: 10px 16px;
+                border-radius: 10px;
+                border: none;
+                background: rgba(59, 130, 246, 0.1);
+                color: #3b82f6;
+                font-size: 13px;
+                font-weight: 500;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                transition: all 0.2s;
+            }
+            .calendar-more-info-btn:hover {
+                background: rgba(59, 130, 246, 0.2);
+            }
+        `;
+        popupOverlay.appendChild(style);
+        
+        // Add to shadow root
+        this.shadowRoot.appendChild(popupOverlay);
+        
+        // Event listeners
+        popupOverlay.addEventListener('click', (e) => {
+            if (e.target === popupOverlay) {
+                popupOverlay.remove();
+            }
         });
-        this.dispatchEvent(event);
+        
+        const closeBtn = popupOverlay.querySelector('.calendar-popup-close');
+        closeBtn?.addEventListener('click', () => popupOverlay.remove());
+        
+        const moreInfoBtn = popupOverlay.querySelector('.calendar-more-info-btn');
+        moreInfoBtn?.addEventListener('click', () => {
+            popupOverlay.remove();
+            const event = new CustomEvent('hass-more-info', {
+                bubbles: true,
+                composed: true,
+                detail: { entityId: this.calendarEntity }
+            });
+            this.dispatchEvent(event);
+        });
     }
 
     _handleEnergyClick(entityId) {
@@ -13583,6 +14683,26 @@ class PrismSidebarLightCard extends HTMLElement {
             bubbles: true,
             composed: true,
             detail: { entityId: entityId }
+        });
+        this.dispatchEvent(event);
+    }
+
+    _handleWeatherClick() {
+        if (!this._hass || !this.weatherEntity) return;
+        const event = new CustomEvent('hass-more-info', {
+            bubbles: true,
+            composed: true,
+            detail: { entityId: this.weatherEntity }
+        });
+        this.dispatchEvent(event);
+    }
+
+    _handleTempGraphClick() {
+        if (!this._hass || !this.temperatureEntity) return;
+        const event = new CustomEvent('hass-more-info', {
+            bubbles: true,
+            composed: true,
+            detail: { entityId: this.temperatureEntity }
         });
         this.dispatchEvent(event);
     }
@@ -29833,6 +30953,489 @@ window.customCards.push({
   name: "Prism Room",
   preview: true,
   description: "A room overview card with temperature, humidity, and entity status icons. Click to open popup with all entities."
+});
+
+})();
+
+// ============================================
+// prism-navigation.js
+// ============================================
+(function() {
+/**
+ * Prism Navigation Card
+ * A centered navigation bar for dashboard views with glassmorphism styling
+ */
+
+class PrismNavigationCard extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this._hass = null;
+    this._config = null;
+    this._currentPath = '';
+  }
+
+  static getStubConfig() {
+    return {
+      tab_1_name: "Home",
+      tab_1_path: "home",
+      tab_1_icon: "mdi:home",
+      tab_2_name: "Rooms",
+      tab_2_path: "rooms",
+      tab_2_icon: "",
+      active_color: "#2196f3",
+      show_icons: true
+    };
+  }
+
+  static getConfigForm() {
+    return {
+      schema: [
+        {
+          name: "active_color",
+          label: "Active Tab Color",
+          selector: { color_rgb: {} }
+        },
+        {
+          name: "show_icons",
+          label: "Show Icons next to Text",
+          selector: { boolean: {} }
+        },
+        {
+          name: "icon_only",
+          label: "Icon Only Mode (hide text, show only icons)",
+          selector: { boolean: {} }
+        },
+        // Tab 1
+        {
+          type: 'expandable',
+          name: '',
+          title: '📍 Tab 1',
+          schema: [
+            { name: "tab_1_name", label: "Name (displayed text)", selector: { text: {} } },
+            { name: "tab_1_path", label: "Path (view path, e.g. 'erdgeschoss')", selector: { text: {} } },
+            { name: "tab_1_icon", label: "Icon (optional, e.g. mdi:home)", selector: { icon: {} } }
+          ]
+        },
+        // Tab 2
+        {
+          type: 'expandable',
+          name: '',
+          title: '📍 Tab 2',
+          schema: [
+            { name: "tab_2_name", label: "Name", selector: { text: {} } },
+            { name: "tab_2_path", label: "Path", selector: { text: {} } },
+            { name: "tab_2_icon", label: "Icon", selector: { icon: {} } }
+          ]
+        },
+        // Tab 3
+        {
+          type: 'expandable',
+          name: '',
+          title: '📍 Tab 3',
+          schema: [
+            { name: "tab_3_name", label: "Name", selector: { text: {} } },
+            { name: "tab_3_path", label: "Path", selector: { text: {} } },
+            { name: "tab_3_icon", label: "Icon", selector: { icon: {} } }
+          ]
+        },
+        // Tab 4
+        {
+          type: 'expandable',
+          name: '',
+          title: '📍 Tab 4',
+          schema: [
+            { name: "tab_4_name", label: "Name", selector: { text: {} } },
+            { name: "tab_4_path", label: "Path", selector: { text: {} } },
+            { name: "tab_4_icon", label: "Icon", selector: { icon: {} } }
+          ]
+        },
+        // Tab 5
+        {
+          type: 'expandable',
+          name: '',
+          title: '📍 Tab 5',
+          schema: [
+            { name: "tab_5_name", label: "Name", selector: { text: {} } },
+            { name: "tab_5_path", label: "Path", selector: { text: {} } },
+            { name: "tab_5_icon", label: "Icon", selector: { icon: {} } }
+          ]
+        },
+        // Tab 6
+        {
+          type: 'expandable',
+          name: '',
+          title: '📍 Tab 6',
+          schema: [
+            { name: "tab_6_name", label: "Name", selector: { text: {} } },
+            { name: "tab_6_path", label: "Path", selector: { text: {} } },
+            { name: "tab_6_icon", label: "Icon", selector: { icon: {} } }
+          ]
+        },
+        // Tab 7
+        {
+          type: 'expandable',
+          name: '',
+          title: '📍 Tab 7',
+          schema: [
+            { name: "tab_7_name", label: "Name", selector: { text: {} } },
+            { name: "tab_7_path", label: "Path", selector: { text: {} } },
+            { name: "tab_7_icon", label: "Icon", selector: { icon: {} } }
+          ]
+        },
+        // Tab 8
+        {
+          type: 'expandable',
+          name: '',
+          title: '📍 Tab 8',
+          schema: [
+            { name: "tab_8_name", label: "Name", selector: { text: {} } },
+            { name: "tab_8_path", label: "Path", selector: { text: {} } },
+            { name: "tab_8_icon", label: "Icon", selector: { icon: {} } }
+          ]
+        }
+      ]
+    };
+  }
+
+  setConfig(config) {
+    // Build tabs array from individual tab_X fields OR from tabs array
+    let tabs = [];
+    
+    if (config.tabs && Array.isArray(config.tabs)) {
+      // Legacy support: tabs array directly provided
+      tabs = config.tabs;
+    } else {
+      // New format: individual tab_X_name, tab_X_path, tab_X_icon fields
+      for (let i = 1; i <= 8; i++) {
+        const name = config[`tab_${i}_name`];
+        const path = config[`tab_${i}_path`];
+        const icon = config[`tab_${i}_icon`];
+        
+        // Only add tab if at least name OR path is defined
+        if (name || path) {
+          tabs.push({
+            name: name || path || `Tab ${i}`,
+            path: path || name?.toLowerCase().replace(/[^a-z0-9]/g, '-') || `tab-${i}`,
+            icon: icon || ''
+          });
+        }
+      }
+    }
+    
+    if (tabs.length === 0) {
+      throw new Error('Please define at least one tab (set Tab 1 Name and Path)');
+    }
+    
+    this._config = { 
+      ...config,
+      tabs: tabs,
+      active_color: this._normalizeColor(config.active_color) || '#2196f3',
+      show_icons: config.show_icons || false,
+      icon_only: config.icon_only || false
+    };
+    
+    this._updateCard();
+  }
+
+  _normalizeColor(color) {
+    if (Array.isArray(color) && color.length >= 3) {
+      const r = color[0].toString(16).padStart(2, '0');
+      const g = color[1].toString(16).padStart(2, '0');
+      const b = color[2].toString(16).padStart(2, '0');
+      return `#${r}${g}${b}`;
+    }
+    return color;
+  }
+
+  set hass(hass) {
+    this._hass = hass;
+    // Get current path from URL
+    this._currentPath = this._getCurrentPath();
+    if (this._config) {
+      this._updateCard();
+    }
+  }
+
+  _getCurrentPath() {
+    // Try to get the current view path from the URL
+    const path = window.location.pathname;
+    // Extract view name from path like /lovelace/erdgeschoss or /dashboard-name/view-name
+    const match = path.match(/\/([^\/]+)\/([^\/]+)$/);
+    if (match) {
+      return match[2];
+    }
+    // Fallback: try to get from hash
+    const hash = window.location.hash;
+    if (hash) {
+      const hashMatch = hash.match(/#([^\/]+)/);
+      if (hashMatch) return hashMatch[1];
+    }
+    // Default to first segment after lovelace
+    const segments = path.split('/').filter(s => s);
+    if (segments.length >= 2 && segments[0].includes('lovelace')) {
+      return segments[1];
+    }
+    if (segments.length >= 2) {
+      return segments[segments.length - 1];
+    }
+    return '';
+  }
+
+  getCardSize() {
+    return 1;
+  }
+
+  connectedCallback() {
+    if (this._config) {
+      this._updateCard();
+    }
+    
+    // Listen for URL changes to update active state
+    window.addEventListener('popstate', () => this._handlePathChange());
+    window.addEventListener('location-changed', () => this._handlePathChange());
+    
+    // Also listen for custom event from HA
+    window.addEventListener('hass-more-info', () => {
+      setTimeout(() => this._handlePathChange(), 100);
+    });
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener('popstate', () => this._handlePathChange());
+    window.removeEventListener('location-changed', () => this._handlePathChange());
+  }
+
+  _handlePathChange() {
+    const newPath = this._getCurrentPath();
+    if (newPath !== this._currentPath) {
+      this._currentPath = newPath;
+      this._updateCard();
+    }
+  }
+
+  _isTabActive(tab) {
+    if (!tab.path) return false;
+    const tabPath = tab.path.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const currentPath = this._currentPath.toLowerCase().replace(/[^a-z0-9]/g, '');
+    return tabPath === currentPath;
+  }
+
+  _handleTabClick(tab) {
+    if (!tab.path) return;
+    
+    // Navigate to the view
+    const event = new CustomEvent('hass-navigate', {
+      bubbles: true,
+      composed: true,
+      detail: { path: tab.path }
+    });
+    this.dispatchEvent(event);
+    
+    // Fallback: direct navigation
+    const currentUrl = window.location.pathname;
+    const basePath = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
+    const newPath = `${basePath}/${tab.path}`;
+    
+    // Use History API
+    history.pushState(null, '', newPath);
+    window.dispatchEvent(new Event('location-changed'));
+    
+    // Update state immediately
+    this._currentPath = tab.path;
+    this._updateCard();
+  }
+
+  _updateCard() {
+    if (!this._config) return;
+    
+    const tabs = this._config.tabs || [];
+    const activeColor = this._config.active_color || '#2196f3';
+    const showIcons = this._config.show_icons;
+    const iconOnly = this._config.icon_only;
+    
+    // Re-check current path
+    this._currentPath = this._getCurrentPath();
+
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host {
+          display: flex;
+          justify-content: center;
+          width: 100%;
+          box-sizing: border-box;
+        }
+        
+        .nav-container {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0;
+          padding: 8px 16px;
+          border-radius: 50px;
+          background: rgba(0, 0, 0, 0.25);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          box-shadow: 
+            inset 2px 2px 5px rgba(0, 0, 0, 0.5),
+            inset -1px -1px 3px rgba(255, 255, 255, 0.08),
+            0 8px 32px rgba(0, 0, 0, 0.3);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .nav-tab {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          padding: 10px 20px;
+          margin: 0 4px;
+          border: none;
+          background: transparent;
+          color: rgba(255, 255, 255, 0.5);
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 13px;
+          font-weight: 400;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          cursor: pointer;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          border-radius: 25px;
+          white-space: nowrap;
+          outline: none;
+          -webkit-tap-highlight-color: transparent;
+        }
+        
+        .nav-tab:hover {
+          color: rgba(255, 255, 255, 0.85);
+          background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .nav-tab.active {
+          color: ${activeColor};
+          font-weight: 600;
+          background: rgba(255, 255, 255, 0.08);
+          box-shadow: 
+            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+            0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .nav-tab.active::after {
+          content: '';
+          position: absolute;
+          bottom: 4px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 20px;
+          height: 2px;
+          background: ${activeColor};
+          border-radius: 1px;
+          box-shadow: 0 0 8px ${activeColor};
+        }
+        
+        .nav-tab:active {
+          transform: scale(0.96);
+        }
+        
+        .nav-tab ha-icon {
+          --mdc-icon-size: 18px;
+          transition: all 0.25s ease;
+        }
+        
+        .nav-tab.active ha-icon {
+          filter: drop-shadow(0 0 4px ${activeColor});
+        }
+        
+        .nav-tab-text {
+          line-height: 1;
+        }
+        
+        /* Icon only mode */
+        .nav-tab.icon-only {
+          padding: 12px 16px;
+        }
+        
+        .nav-tab.icon-only .nav-tab-text {
+          display: none;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+          .nav-container {
+            padding: 6px 12px;
+          }
+          
+          .nav-tab {
+            padding: 8px 14px;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+          }
+          
+          .nav-tab ha-icon {
+            --mdc-icon-size: 16px;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .nav-tab {
+            padding: 8px 10px;
+            font-size: 10px;
+            letter-spacing: 1px;
+            margin: 0 2px;
+          }
+          
+          .nav-tab.icon-only {
+            padding: 10px 12px;
+          }
+        }
+      </style>
+      
+      <div class="nav-container">
+        ${tabs.map(tab => {
+          const isActive = this._isTabActive(tab);
+          const hasIcon = showIcons && tab.icon;
+          const isIconOnly = iconOnly && tab.icon;
+          
+          return `
+            <button class="nav-tab ${isActive ? 'active' : ''} ${isIconOnly ? 'icon-only' : ''}" 
+                    data-path="${tab.path || ''}">
+              ${hasIcon || isIconOnly ? `<ha-icon icon="${tab.icon}"></ha-icon>` : ''}
+              <span class="nav-tab-text">${tab.name || ''}</span>
+            </button>
+          `;
+        }).join('')}
+      </div>
+    `;
+
+    // Add event listeners
+    this._setupEventListeners();
+  }
+
+  _setupEventListeners() {
+    const tabs = this.shadowRoot.querySelectorAll('.nav-tab');
+    tabs.forEach(tabElement => {
+      tabElement.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const path = tabElement.dataset.path;
+        const tab = this._config.tabs.find(t => t.path === path);
+        if (tab) {
+          this._handleTabClick(tab);
+        }
+      });
+    });
+  }
+}
+
+customElements.define('prism-navigation', PrismNavigationCard);
+
+window.customCards = window.customCards || [];
+window.customCards.push({
+  type: "prism-navigation",
+  name: "Prism Navigation",
+  preview: true,
+  description: "A centered navigation bar for switching between dashboard views with glassmorphism styling"
 });
 
 })();

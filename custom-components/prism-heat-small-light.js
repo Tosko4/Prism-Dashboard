@@ -331,6 +331,98 @@ class PrismHeatSmallLightCard extends HTMLElement {
             font-size: 20px; font-weight: 700; color: rgba(0,0,0,0.9); font-family: monospace; letter-spacing: 1px;
         }
 
+        /* Responsive: Tablet (768px - 1024px) */
+        @media (max-width: 1024px) {
+          .card {
+            padding: 14px;
+          }
+          .header {
+            margin-bottom: 14px;
+          }
+          /* Chip kleiner machen */
+          .chip {
+            padding: 4px 8px;
+            height: 22px;
+            gap: 4px;
+          }
+          .chip ha-icon {
+            --mdc-icon-size: 10px;
+          }
+          .chip-text {
+            font-size: 8px;
+          }
+          /* Controls anpassen */
+          .controls {
+            gap: 10px;
+          }
+          .control-btn {
+            height: 34px;
+            width: 44px;
+            border-radius: 10px;
+          }
+          .control-btn::before {
+            inset: 2px;
+            border-radius: 8px;
+          }
+          .control-btn ha-icon {
+            --mdc-icon-size: 18px;
+          }
+          .inlet-display {
+            height: 34px;
+            border-radius: 10px;
+          }
+          .temp-value {
+            font-size: 18px;
+          }
+        }
+
+        /* Responsive: Mobile (< 768px) */
+        @media (max-width: 768px) {
+          .card {
+            padding: 12px;
+            border-radius: 16px;
+          }
+          .header {
+            margin-bottom: 12px;
+          }
+          /* Chip noch kleiner auf Mobile */
+          .chip {
+            padding: 3px 6px;
+            height: 20px;
+            gap: 3px;
+            border-radius: 14px;
+          }
+          .chip ha-icon {
+            --mdc-icon-size: 9px;
+          }
+          .chip-text {
+            font-size: 7px;
+          }
+          /* Controls anpassen */
+          .controls {
+            gap: 8px;
+          }
+          .control-btn {
+            height: 32px;
+            width: 40px;
+            border-radius: 8px;
+          }
+          .control-btn::before {
+            inset: 2px;
+            border-radius: 6px;
+          }
+          .control-btn ha-icon {
+            --mdc-icon-size: 16px;
+          }
+          .inlet-display {
+            height: 32px;
+            border-radius: 8px;
+          }
+          .temp-value {
+            font-size: 16px;
+          }
+        }
+
       </style>
       <div class="card">
         

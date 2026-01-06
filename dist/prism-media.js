@@ -364,6 +364,94 @@ class PrismMediaCard extends HTMLElement {
         ha-icon { pointer-events: none; }
         .play ha-icon { --mdc-icon-size: 18px; }
 
+        /* Responsive: Tablet (768px - 1024px) */
+        @media (max-width: 1024px) {
+          .content {
+            padding: 16px;
+            gap: 14px;
+          }
+          .art-cover {
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
+          }
+          .volume-slider {
+            height: 14px;
+          }
+          .volume-container {
+            margin-top: 10px;
+            gap: 10px;
+          }
+          .vol-icon {
+            --mdc-icon-size: 18px;
+          }
+          .controls {
+            padding: 14px;
+            gap: 20px;
+          }
+          .media-btn.circle {
+            width: 38px;
+            height: 38px;
+          }
+          .media-btn.play {
+            width: 72px;
+            height: 38px;
+            border-radius: 19px;
+            font-size: 9px;
+          }
+          .play ha-icon {
+            --mdc-icon-size: 16px;
+          }
+        }
+
+        /* Responsive: Mobile (< 768px) */
+        @media (max-width: 768px) {
+          .card {
+            border-radius: 14px;
+          }
+          .content {
+            padding: 14px;
+            gap: 12px;
+          }
+          .art-cover {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+          }
+          .volume-slider {
+            height: 12px;
+            border-radius: 12px;
+          }
+          .volume-fill {
+            border-radius: 10px;
+          }
+          .volume-container {
+            margin-top: 8px;
+            gap: 8px;
+          }
+          .vol-icon {
+            --mdc-icon-size: 16px;
+          }
+          .controls {
+            padding: 12px;
+            gap: 16px;
+          }
+          .media-btn.circle {
+            width: 34px;
+            height: 34px;
+          }
+          .media-btn.play {
+            width: 64px;
+            height: 34px;
+            border-radius: 17px;
+            font-size: 8px;
+            gap: 3px;
+          }
+          .play ha-icon {
+            --mdc-icon-size: 14px;
+          }
+        }
+
       </style>
       <div class="card">
         ${art ? `<div class="bg-art" style="background-image: url('${art}');"></div>` : ''}

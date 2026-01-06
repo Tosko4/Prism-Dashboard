@@ -870,12 +870,12 @@ class PrismSidebarCard extends HTMLElement {
             <!-- Weather -->
             <div class="weather-box">
                 <div class="section-title">Outdoor</div>
-                <div class="current-temp-box">
+                <div class="current-temp-box" id="weather-temp-box" style="cursor: pointer;">
                     <span class="temp-val" id="val-temp">${currentTemp}</span>
                     <span class="temp-unit">°C</span>
                 </div>
                 
-                <div class="graph-container">
+                <div class="graph-container" id="temp-graph-container" style="cursor: pointer;">
                     <svg width="100%" height="100%" viewBox="0 0 280 60" preserveAspectRatio="none">
                         <defs>
                             <linearGradient id="grad-sidebar-${Date.now()}" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -1007,6 +1007,8 @@ class PrismSidebarCard extends HTMLElement {
         const energySolar = this.shadowRoot?.getElementById('energy-solar');
         const energyHome = this.shadowRoot?.getElementById('energy-home');
         const graphOverlay = this.shadowRoot?.getElementById('graph-overlay');
+        const weatherTempBox = this.shadowRoot?.getElementById('weather-temp-box');
+        const tempGraphContainer = this.shadowRoot?.getElementById('temp-graph-container');
 
         if (cameraBox) {
             cameraBox.addEventListener('click', () => this._handleCameraClick());
@@ -1022,6 +1024,16 @@ class PrismSidebarCard extends HTMLElement {
         }
         if (energyHome) {
             energyHome.addEventListener('click', () => this._handleEnergyClick(this.homeEntity));
+        }
+        
+        // Weather click - opens weather entity more-info
+        if (weatherTempBox) {
+            weatherTempBox.addEventListener('click', () => this._handleWeatherClick());
+        }
+        
+        // Graph click - opens temperature sensor more-info
+        if (tempGraphContainer) {
+            tempGraphContainer.addEventListener('click', () => this._handleTempGraphClick());
         }
         
         // Graph hover events
@@ -1043,14 +1055,313 @@ class PrismSidebarCard extends HTMLElement {
         this.dispatchEvent(event);
     }
 
-    _handleCalendarClick() {
+    async _handleCalendarClick() {
         if (!this._hass || !this.calendarEntity) return;
-        const event = new CustomEvent('hass-more-info', {
-            bubbles: true,
-            composed: true,
-            detail: { entityId: this.calendarEntity }
+        
+        // Load upcoming events
+        const now = new Date();
+        const endDate = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000); // Next 14 days
+        
+        try {
+            const events = await this._hass.callWS({
+                type: 'calendar/event/list',
+                entity_id: this.calendarEntity,
+                start: now.toISOString(),
+                end: endDate.toISOString()
+            });
+            
+            this._showCalendarPopup(events || []);
+        } catch (error) {
+            // Fallback: show more-info dialog
+            const event = new CustomEvent('hass-more-info', {
+                bubbles: true,
+                composed: true,
+                detail: { entityId: this.calendarEntity }
+            });
+            this.dispatchEvent(event);
+        }
+    }
+
+    _showCalendarPopup(events) {
+        // Remove existing popup
+        const existingPopup = this.shadowRoot?.querySelector('.calendar-popup-overlay');
+        if (existingPopup) existingPopup.remove();
+
+        // Limit to 5 events
+        const upcomingEvents = events.slice(0, 5);
+        
+        // Create popup
+        const popupOverlay = document.createElement('div');
+        popupOverlay.className = 'calendar-popup-overlay';
+        popupOverlay.innerHTML = `
+            <div class="calendar-popup">
+                <div class="calendar-popup-header">
+                    <ha-icon icon="mdi:calendar" style="--mdc-icon-size: 24px; color: #3b82f6;"></ha-icon>
+                    <span>Kommende Termine</span>
+                    <button class="calendar-popup-close">
+                        <ha-icon icon="mdi:close" style="--mdc-icon-size: 20px;"></ha-icon>
+                    </button>
+                </div>
+                <div class="calendar-popup-content">
+                    ${upcomingEvents.length === 0 ? `
+                        <div class="calendar-no-events">
+                            <ha-icon icon="mdi:calendar-blank" style="--mdc-icon-size: 48px; color: rgba(255,255,255,0.2);"></ha-icon>
+                            <span>Keine Termine</span>
+                        </div>
+                    ` : upcomingEvents.map(event => {
+                        const start = new Date(event.start.dateTime || event.start.date);
+                        const end = new Date(event.end.dateTime || event.end.date);
+                        const isAllDay = !event.start.dateTime;
+                        const isToday = start.toDateString() === new Date().toDateString();
+                        const isTomorrow = start.toDateString() === new Date(Date.now() + 86400000).toDateString();
+                        
+                        let dateStr;
+                        if (isToday) {
+                            dateStr = 'Heute';
+                        } else if (isTomorrow) {
+                            dateStr = 'Morgen';
+                        } else {
+                            dateStr = start.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' });
+                        }
+                        
+                        let timeStr;
+                        if (isAllDay) {
+                            timeStr = 'Ganztägig';
+                        } else {
+                            timeStr = start.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + 
+                                     ' - ' + end.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+                        }
+                        
+                        return `
+                            <div class="calendar-event ${isToday ? 'today' : ''} ${isTomorrow ? 'tomorrow' : ''}">
+                                <div class="calendar-event-date">
+                                    <span class="calendar-event-day">${start.getDate()}</span>
+                                    <span class="calendar-event-month">${start.toLocaleDateString('de-DE', { month: 'short' })}</span>
+                                </div>
+                                <div class="calendar-event-details">
+                                    <div class="calendar-event-title">${event.summary || 'Ohne Titel'}</div>
+                                    <div class="calendar-event-time">
+                                        <ha-icon icon="${isAllDay ? 'mdi:calendar-today' : 'mdi:clock-outline'}" style="--mdc-icon-size: 12px;"></ha-icon>
+                                        ${dateStr} • ${timeStr}
+                                    </div>
+                                    ${event.location ? `
+                                        <div class="calendar-event-location">
+                                            <ha-icon icon="mdi:map-marker" style="--mdc-icon-size: 12px;"></ha-icon>
+                                            ${event.location}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+                <div class="calendar-popup-footer">
+                    <button class="calendar-more-info-btn">
+                        <ha-icon icon="mdi:open-in-new" style="--mdc-icon-size: 16px;"></ha-icon>
+                        Alle Termine anzeigen
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Add styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .calendar-popup-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.7);
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                animation: fadeIn 0.2s ease;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            .calendar-popup {
+                background: rgba(30, 32, 36, 0.95);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 20px;
+                width: 90%;
+                max-width: 380px;
+                max-height: 80vh;
+                overflow: hidden;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+                animation: slideUp 0.3s ease;
+            }
+            @keyframes slideUp {
+                from { transform: translateY(20px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            .calendar-popup-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 16px 20px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                color: white;
+                font-weight: 600;
+                font-size: 16px;
+            }
+            .calendar-popup-close {
+                margin-left: auto;
+                background: rgba(255, 255, 255, 0.1);
+                border: none;
+                border-radius: 8px;
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                color: rgba(255, 255, 255, 0.6);
+                transition: all 0.2s;
+            }
+            .calendar-popup-close:hover {
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+            }
+            .calendar-popup-content {
+                padding: 12px;
+                max-height: 400px;
+                overflow-y: auto;
+            }
+            .calendar-no-events {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                padding: 40px 20px;
+                color: rgba(255, 255, 255, 0.4);
+            }
+            .calendar-event {
+                display: flex;
+                gap: 12px;
+                padding: 12px;
+                border-radius: 12px;
+                background: rgba(255, 255, 255, 0.03);
+                margin-bottom: 8px;
+                transition: background 0.2s;
+            }
+            .calendar-event:hover {
+                background: rgba(255, 255, 255, 0.08);
+            }
+            .calendar-event.today {
+                background: rgba(59, 130, 246, 0.15);
+                border-left: 3px solid #3b82f6;
+            }
+            .calendar-event.tomorrow {
+                background: rgba(139, 92, 246, 0.1);
+                border-left: 3px solid #8b5cf6;
+            }
+            .calendar-event-date {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-width: 44px;
+                padding: 8px;
+                border-radius: 10px;
+                background: rgba(0, 0, 0, 0.3);
+            }
+            .calendar-event-day {
+                font-size: 20px;
+                font-weight: 700;
+                color: white;
+                line-height: 1;
+            }
+            .calendar-event-month {
+                font-size: 10px;
+                text-transform: uppercase;
+                color: rgba(255, 255, 255, 0.5);
+                margin-top: 2px;
+            }
+            .calendar-event-details {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                min-width: 0;
+            }
+            .calendar-event-title {
+                font-weight: 500;
+                color: white;
+                font-size: 14px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .calendar-event-time,
+            .calendar-event-location {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 11px;
+                color: rgba(255, 255, 255, 0.5);
+            }
+            .calendar-event-location {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .calendar-popup-footer {
+                padding: 12px 16px;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .calendar-more-info-btn {
+                width: 100%;
+                padding: 10px 16px;
+                border-radius: 10px;
+                border: none;
+                background: rgba(59, 130, 246, 0.2);
+                color: #3b82f6;
+                font-size: 13px;
+                font-weight: 500;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                transition: all 0.2s;
+            }
+            .calendar-more-info-btn:hover {
+                background: rgba(59, 130, 246, 0.3);
+            }
+        `;
+        popupOverlay.appendChild(style);
+        
+        // Add to shadow root
+        this.shadowRoot.appendChild(popupOverlay);
+        
+        // Event listeners
+        popupOverlay.addEventListener('click', (e) => {
+            if (e.target === popupOverlay) {
+                popupOverlay.remove();
+            }
         });
-        this.dispatchEvent(event);
+        
+        const closeBtn = popupOverlay.querySelector('.calendar-popup-close');
+        closeBtn?.addEventListener('click', () => popupOverlay.remove());
+        
+        const moreInfoBtn = popupOverlay.querySelector('.calendar-more-info-btn');
+        moreInfoBtn?.addEventListener('click', () => {
+            popupOverlay.remove();
+            const event = new CustomEvent('hass-more-info', {
+                bubbles: true,
+                composed: true,
+                detail: { entityId: this.calendarEntity }
+            });
+            this.dispatchEvent(event);
+        });
     }
 
     _handleEnergyClick(entityId) {
@@ -1059,6 +1370,26 @@ class PrismSidebarCard extends HTMLElement {
             bubbles: true,
             composed: true,
             detail: { entityId: entityId }
+        });
+        this.dispatchEvent(event);
+    }
+
+    _handleWeatherClick() {
+        if (!this._hass || !this.weatherEntity) return;
+        const event = new CustomEvent('hass-more-info', {
+            bubbles: true,
+            composed: true,
+            detail: { entityId: this.weatherEntity }
+        });
+        this.dispatchEvent(event);
+    }
+
+    _handleTempGraphClick() {
+        if (!this._hass || !this.temperatureEntity) return;
+        const event = new CustomEvent('hass-more-info', {
+            bubbles: true,
+            composed: true,
+            detail: { entityId: this.temperatureEntity }
         });
         this.dispatchEvent(event);
     }

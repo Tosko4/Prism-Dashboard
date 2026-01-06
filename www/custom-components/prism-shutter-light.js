@@ -264,6 +264,59 @@ class PrismShutterLightCard extends HTMLElement {
             color: #3b82f6;
         }
 
+        /* Responsive: Tablet (768px - 1024px) */
+        @media (max-width: 1024px) {
+          .card {
+            padding: 16px;
+          }
+          .header {
+            margin-bottom: 16px;
+          }
+          .slider-track {
+            height: 10px;
+            margin-bottom: 16px;
+          }
+          .controls {
+            gap: 10px;
+          }
+          .control-btn {
+            height: 34px;
+            border-radius: 10px;
+          }
+          .control-btn ha-icon {
+            --mdc-icon-size: 18px;
+          }
+        }
+
+        /* Responsive: Mobile (< 768px) */
+        @media (max-width: 768px) {
+          .card {
+            padding: 14px;
+            border-radius: 14px;
+          }
+          .header {
+            margin-bottom: 14px;
+          }
+          .slider-track {
+            height: 8px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+          }
+          .slider-fill {
+            border-radius: 8px;
+          }
+          .controls {
+            gap: 8px;
+          }
+          .control-btn {
+            height: 32px;
+            border-radius: 8px;
+          }
+          .control-btn ha-icon {
+            --mdc-icon-size: 16px;
+          }
+        }
+
       </style>
       <div class="card">
         <div class="header">
