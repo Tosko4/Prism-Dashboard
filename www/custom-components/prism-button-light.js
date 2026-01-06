@@ -303,16 +303,15 @@ class PrismButtonLightCard extends HTMLElement {
 
     this.innerHTML = `
       <style>
-        :host {
-          display: block;
-        }
-        
         /* ============================================
            GLASSMORPHISM LIGHT THEME
            Transparent glass with blur + neumorphic icons
            ============================================ */
         
-        :host > ha-card {
+        prism-button-light {
+          display: block;
+        }
+        prism-button-light > ha-card {
           /* Glassmorphism background - more transparent like dark version */
           background: ${isActive 
             ? 'rgba(240, 242, 245, 0.5)' 
@@ -353,7 +352,7 @@ class PrismButtonLightCard extends HTMLElement {
           cursor: pointer;
         }
         
-        :host > ha-card:hover {
+        prism-button-light > ha-card:hover {
           box-shadow: ${isActive 
             ? `inset 2px 2px 6px rgba(0, 0, 0, 0.15),
                inset -1px -1px 3px rgba(255, 255, 255, 0.7),
@@ -363,7 +362,7 @@ class PrismButtonLightCard extends HTMLElement {
                0 0 0 1px rgba(0, 0, 0, 0.03)`} !important;
         }
         
-        :host > ha-card:active {
+        prism-button-light > ha-card:active {
           transform: scale(0.98) ${isActive ? 'translateY(2px)' : ''};
         }
         
@@ -463,7 +462,7 @@ class PrismButtonLightCard extends HTMLElement {
           justify-content: center;
         }
         
-        :host > ha-card ha-icon {
+        prism-button-light > ha-card ha-icon {
           --mdc-icon-size: 24px;
           ${iconColor 
             ? `color: ${iconColor.color.replace(')', `, ${iconOpacity})`)} !important; 
