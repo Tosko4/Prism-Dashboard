@@ -6,6 +6,7 @@ A modern, glassmorphism-inspired dashboard for Home Assistant.
 
 This repository contains the following custom cards:
 
+- **prism-room** - Room overview card with grouped entities and status icons
 - **prism-heat** - Thermostat knob card with glassmorphism design
 - **prism-heat-small** - Compact heating card with inlet styling
 - **prism-button** - Entity button card with neumorphism effects
@@ -35,7 +36,7 @@ After installing via HACS:
    - **Type:** `JavaScript Module`
 4. Restart Home Assistant
 
-> **✨ All 25 cards included!** One file contains all dark and light theme cards with automatic cache updates.
+> **✨ All 27 cards included!** One file contains all dark and light theme cards with automatic cache updates.
 
 ## Usage
 

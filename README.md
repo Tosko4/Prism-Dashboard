@@ -11,7 +11,7 @@ A modern, glassmorphism-inspired dashboard for Home Assistant, built on the popu
 
 <p align="center">
   <strong>Custom Cards</strong><br>
-  <img src="https://raw.githubusercontent.com/BangerTech/Prism-Dashboard/main/custom-components/images/prism-dashboard-new.png" alt="Prism Dashboard - Custom Cards" width="85%">
+  <img src="https://raw.githubusercontent.com/BangerTech/Prism-Dashboard/main/custom-components/images/prism-dashboard-new2.png" alt="Prism Dashboard - Custom Cards" width="85%">
 </p>
 
 ---
@@ -114,7 +114,7 @@ For this dashboard to work, the following frontend integrations must be installe
    - **Type:** `JavaScript Module`
 7. Restart Home Assistant
 
-> **✨ That's it!** All 25 custom cards (dark + light themes) are included in this single file and will receive automatic cache updates via HACS.
+> **✨ That's it!** All 27 custom cards (dark + light themes) are included in this single file and will receive automatic cache updates via HACS.
 
 ### Option 2: Manual Installation
 
@@ -147,7 +147,7 @@ If you chose Option 2 (manual installation), the custom cards must be registered
    - **Type:** `JavaScript Module`
 5. Restart Home Assistant so the custom cards are loaded.
 
-> **✨ All 25 cards are included!** The bundled file contains all dark and light theme cards.
+> **✨ All 27 cards are included!** The bundled file contains all dark and light theme cards.
 
 ---
 
